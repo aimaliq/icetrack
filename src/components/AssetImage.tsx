@@ -15,10 +15,14 @@ export function AssetImage({
   asset,
   size = "md",
   bleed = false,
+  showBadge = true,
 }: {
   asset: Pick<Asset, "name" | "category" | "imageUrl" | "imageIsRepresentative">;
   size?: keyof typeof SIZES;
   bleed?: boolean;
+  /** Off at thumbnail sizes, where the label crowds the image and the entry
+   *  page it links to states the same caveat properly. */
+  showBadge?: boolean;
 }) {
   return (
     <div
@@ -26,7 +30,7 @@ export function AssetImage({
                   overflow-hidden bg-sunken ${bleed ? "" : "rounded-xl"}`}
     >
       {/* A photo of the model must never read as a photo of the actual item. */}
-      {asset.imageUrl && asset.imageIsRepresentative && (
+      {showBadge && asset.imageUrl && asset.imageIsRepresentative && (
         <span
           className="absolute right-2 top-2 z-10 rounded-full bg-surface/85 px-2
                      py-0.5 text-[10px] font-medium uppercase tracking-wide
