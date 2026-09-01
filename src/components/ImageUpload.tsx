@@ -50,10 +50,12 @@ export function ImageUpload({
   const [sourcePage, setSourcePage] = useState(currentCredit?.sourcePage ?? "");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function upload(file: File) {
     setError(null);
+    setPendingFile(file);
 
     if (file.size > MAX_BYTES) {
       setError("That file is over 5 MB. Try a smaller version.");
@@ -73,16 +75,20 @@ export function ImageUpload({
         .upload(path, file, { cacheControl: "31536000", upsert: false });
 
       if (uploadError) {
+        const m = uploadError.message.toLowerCase();
         setError(
-          uploadError.message.toLowerCase().includes("row-level security")
+          m.includes("row-level security")
             ? "You need to be signed in to upload an image."
-            : uploadError.message,
+            : m.includes("bucket not found")
+              ? "Image storage is not set up yet. Tell an administrator."
+              : uploadError.message,
         );
         return;
       }
 
       const { data } = db.storage.from("asset-images").getPublicUrl(path);
       setUrl(data.publicUrl);
+      setPendingFile(null);
     } catch {
       setError("The upload failed. Check your connection and try again.");
     } finally {
@@ -139,6 +145,18 @@ export function ImageUpload({
           <p className="mt-1.5 text-[12px] text-faint">
             {uploading ? "Uploading…" : "JPEG, PNG, WebP or AVIF. Up to 5 MB."}
           </p>
+
+          {pendingFile && !uploading && (
+            <button
+              type="button"
+              onClick={() => void upload(pendingFile)}
+              className="focus-ring mt-2 rounded-full border border-line px-4 py-1.5
+                         text-[13px] transition-colors duration-150 ease-out-strong
+                         hover:bg-sunken"
+            >
+              Try uploading again
+            </button>
+          )}
         </div>
       )}
 
