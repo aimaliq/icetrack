@@ -127,12 +127,16 @@ async function fillImages(dir: string, queryOf: (j: any) => string, wiki: (j: an
     if (!target) target = await search(queryOf(json));
 
     if (!target) {
-      console.log("    no candidate found");
+      console.log("    no freely licensed candidate found");
+      manualHints(queryOf(json));
       continue;
     }
 
     const img = await details(target);
-    if (!img) continue;
+    if (!img) {
+      manualHints(queryOf(json));
+      continue;
+    }
 
     console.log(`    found: ${img.license} — ${img.author ?? "unknown author"}`);
     if (!DRY) {
@@ -148,6 +152,27 @@ async function fillImages(dir: string, queryOf: (j: any) => string, wiki: (j: an
     // Commons asks for gentle pacing from scripted clients.
     await new Promise((r) => setTimeout(r, 400));
   }
+}
+
+/**
+ * Prints where to look by hand when the automated search comes up empty.
+ * Top-tier celebrities often genuinely have no freely licensed photo: their
+ * images are shot by agencies that license them commercially and never
+ * release them under CC. Sports figures and politicians fare much better.
+ *
+ * The Flickr link is pre-filtered to licences that permit commercial use and
+ * modification — NC and ND are excluded, since NC rules out ever monetising
+ * the site and ND forbids the circular avatar crop.
+ */
+function manualHints(name: string) {
+  const q = encodeURIComponent(name);
+  console.log("    search by hand:");
+  console.log(
+    `      Commons  https://commons.wikimedia.org/w/index.php?search=${q}&ns6=1`,
+  );
+  console.log(
+    `      Flickr   https://flickr.com/search/?text=${q}&license=4%2C5%2C9%2C10`,
+  );
 }
 
 async function main() {
