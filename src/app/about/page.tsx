@@ -1,7 +1,18 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "About" };
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "How IceTrack sources its entries: what counts as verified, why no precise locations are ever published, and how to request a correction or removal.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About — IceTrack",
+    description:
+      "How IceTrack sources its entries, and how to request a correction or removal.",
+    url: "/about",
+  },
+};
 
 const RULES = [
   {

@@ -5,7 +5,18 @@ import { CATEGORY_META, CATEGORY_ORDER } from "@/lib/categories";
 import { AssetCard } from "@/components/AssetCard";
 import type { AssetCategory } from "@/lib/types";
 
-export const metadata: Metadata = { title: "Assets" };
+export const metadata: Metadata = {
+  title: "Assets",
+  description:
+    "Every tracked asset on IceTrack — private jets, supercars, yachts, estates and accessories — each with its ownership status and sources.",
+  alternates: { canonical: "/assets" },
+  openGraph: {
+    title: "Assets — IceTrack",
+    description:
+      "Private jets, supercars, yachts, estates and accessories, each with its ownership status and sources.",
+    url: "/assets",
+  },
+};
 
 type Props = { searchParams: Promise<{ category?: string }> };
 

@@ -7,6 +7,8 @@ import { AssetCard } from "@/components/AssetCard";
 import { Avatar } from "@/components/Avatar";
 import { ImageCredit } from "@/components/ImageCredit";
 import { formatValue, formatValueExact, totalValue } from "@/lib/format";
+import { JsonLd } from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/site";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -17,7 +19,32 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const celeb = getCelebrity(id);
-  return { title: celeb?.name ?? "Not found" };
+  if (!celeb) return { title: "Not found", robots: { index: false } };
+
+  const total = formatValue(totalValue(celeb.assets));
+  const count = celeb.assets.length;
+  const description =
+    `${count} tracked ${count === 1 ? "asset" : "assets"}` +
+    (total ? ` worth an estimated ${total}` : "") +
+    `. Sourced, publicly reported ownership records for ${celeb.name} on IceTrack.`;
+
+  return {
+    title: celeb.name,
+    description,
+    alternates: { canonical: `/celebrities/${celeb.id}` },
+    openGraph: {
+      type: "profile",
+      title: `${celeb.name} — IceTrack`,
+      description,
+      url: `/celebrities/${celeb.id}`,
+      images: [{ url: `/celebrities/${celeb.id}/opengraph-image` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${celeb.name} — IceTrack`,
+      description,
+    },
+  };
 }
 
 export default async function CelebrityPage({ params }: Props) {
@@ -28,13 +55,35 @@ export default async function CelebrityPage({ params }: Props) {
   const total = totalValue(celeb.assets);
   const valued = celeb.assets.filter((a) => a.estimatedValueUsd);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: celeb.name,
+    ...(celeb.realName ? { alternateName: celeb.realName } : {}),
+    ...(celeb.bio ? { description: celeb.bio } : {}),
+    ...(celeb.nationality ? { nationality: celeb.nationality } : {}),
+    ...(celeb.bornYear ? { birthDate: String(celeb.bornYear) } : {}),
+    ...(celeb.imageUrl ? { image: celeb.imageUrl } : {}),
+    ...(celeb.wikipedia ? { sameAs: [celeb.wikipedia] } : {}),
+    url: `${SITE_URL}/celebrities/${celeb.id}`,
+    // Only assets we actually stand behind are asserted as owned.
+    owns: celeb.assets
+      .filter((a) => a.status === "verified" || a.status === "reported")
+      .map((a) => ({
+        "@type": "Product",
+        name: a.name,
+        url: `${SITE_URL}/assets/${a.id}`,
+      })),
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-16">
+      <JsonLd data={jsonLd} />
       <Link
         href="/celebrities"
-        className="focus-ring text-[13px] text-muted transition hover:text-ink"
+        className="focus-ring text-[15px] text-muted transition hover:text-ink"
       >
-        ← Celebrities
+        ← Back
       </Link>
 
       <header className="mt-6 border-b border-line pb-8 sm:mt-8 sm:pb-10">

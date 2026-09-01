@@ -5,7 +5,18 @@ import { CELEBRITY_CATEGORY_LABEL, CATEGORY_META } from "@/lib/categories";
 import { Avatar } from "@/components/Avatar";
 import { formatValue, totalValue } from "@/lib/format";
 
-export const metadata: Metadata = { title: "Celebrities" };
+export const metadata: Metadata = {
+  title: "Celebrities",
+  description:
+    "Public figures tracked on IceTrack, ranked by the estimated value of their documented luxury assets.",
+  alternates: { canonical: "/celebrities" },
+  openGraph: {
+    title: "Celebrities — IceTrack",
+    description:
+      "Public figures ranked by the estimated value of their documented luxury assets.",
+    url: "/celebrities",
+  },
+};
 
 export default function CelebritiesPage() {
   const celebrities = getCelebritiesWithAssets().sort(

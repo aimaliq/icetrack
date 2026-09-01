@@ -5,6 +5,8 @@ import { CategoryTile } from "@/components/CategoryTile";
 import { AssetCard } from "@/components/AssetCard";
 import { Avatar } from "@/components/Avatar";
 import { formatValue, totalValue } from "@/lib/format";
+import { JsonLd } from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/site";
 
 export default function Home() {
   const stats = getStats();
@@ -21,8 +23,22 @@ export default function Home() {
     .sort((a, b) => totalValue(b.assets) - totalValue(a.assets))
     .slice(0, 4);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "IceTrack",
+    alternateName: "IceTrack — Mapping VIP premium assets",
+    url: SITE_URL,
+    description:
+      "An open source, community-sourced database mapping the luxury assets of public figures.",
+    license: "https://creativecommons.org/licenses/by-sa/4.0/",
+    isAccessibleForFree: true,
+    creator: { "@type": "Organization", name: "IceTrack", url: SITE_URL },
+  };
+
   return (
     <>
+      <JsonLd data={jsonLd} />
       <section className="mx-auto max-w-6xl px-4 pb-14 pt-14 text-center sm:px-6 sm:pb-20 sm:pt-24">
         <p className="animate-fade-up text-[11px] uppercase tracking-[0.24em] text-accent sm:text-[12px]">
           Open source · Community sourced

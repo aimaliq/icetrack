@@ -2,15 +2,49 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ThemeScript } from "@/components/ThemeScript";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
+const TITLE = "IceTrack — Mapping VIP premium assets";
+const DESCRIPTION =
+  "An open source, community-sourced database mapping the luxury assets of public figures. Every entry carries its source.";
+
 export const metadata: Metadata = {
-  title: {
-    default: "IceTrack — Mapping VIP premium assets",
-    template: "%s — IceTrack",
+  metadataBase: new URL(SITE_URL),
+  title: { default: TITLE, template: "%s — IceTrack" },
+  description: DESCRIPTION,
+  applicationName: "IceTrack",
+  keywords: [
+    "celebrity assets",
+    "luxury assets database",
+    "private jets",
+    "supercars",
+    "yachts",
+    "celebrity net worth",
+    "open source database",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "IceTrack",
+    title: TITLE,
+    description: DESCRIPTION,
+    url: "/",
+    locale: "en_US",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: TITLE }],
   },
-  description:
-    "An open source, community-sourced database mapping the luxury assets of public figures. Every entry carries its source.",
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/opengraph-image"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
+  category: "reference",
 };
 
 export const viewport: Viewport = {

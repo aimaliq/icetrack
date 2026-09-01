@@ -9,6 +9,8 @@ import { Avatar } from "@/components/Avatar";
 import { ImageCredit } from "@/components/ImageCredit";
 import { isPlaceholderSource } from "@/lib/types";
 import { formatValueExact } from "@/lib/format";
+import { JsonLd } from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/site";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -19,7 +21,37 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const found = getAsset(id);
-  return { title: found?.asset.name ?? "Not found" };
+  if (!found) return { title: "Not found", robots: { index: false } };
+
+  const { asset, owner } = found;
+  const value = asset.estimatedValueUsd
+    ? ` Estimated at ${formatValueExact(asset.estimatedValueUsd)}.`
+    : "";
+
+  // The status is stated up front: an unverified entry must not read as a
+  // confirmed claim in a search result or a social card.
+  const description =
+    `${CATEGORY_META[asset.category].label} ${
+      owner ? `attributed to ${owner.name}` : "entry"
+    }, listed as ${asset.status} on IceTrack.${value}`;
+
+  return {
+    title: owner ? `${asset.name} — ${owner.name}` : asset.name,
+    description,
+    alternates: { canonical: `/assets/${asset.id}` },
+    openGraph: {
+      type: "article",
+      title: `${asset.name}${owner ? ` — ${owner.name}` : ""}`,
+      description,
+      url: `/assets/${asset.id}`,
+      images: [{ url: `/assets/${asset.id}/opengraph-image` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${asset.name}${owner ? ` — ${owner.name}` : ""}`,
+      description,
+    },
+  };
 }
 
 export default async function AssetPage({ params }: Props) {
@@ -45,8 +77,52 @@ export default async function AssetPage({ params }: Props) {
     string | number,
   ][];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: asset.name,
+    category: meta.label,
+    ...(asset.make ? { brand: { "@type": "Brand", name: asset.make } } : {}),
+    ...(asset.model ? { model: asset.model } : {}),
+    ...(asset.summary ? { description: asset.summary } : {}),
+    ...(asset.imageUrl ? { image: asset.imageUrl } : {}),
+    url: `${SITE_URL}/assets/${asset.id}`,
+    ...(asset.estimatedValueUsd
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: asset.estimatedValueUsd,
+            priceCurrency: "USD",
+            availability: "https://schema.org/OutOfStock",
+          },
+        }
+      : {}),
+    ...(owner && (asset.status === "verified" || asset.status === "reported")
+      ? {
+          owner: {
+            "@type": "Person",
+            name: owner.name,
+            url: `${SITE_URL}/celebrities/${owner.id}`,
+          },
+        }
+      : {}),
+    ...(realSources.length > 0
+      ? {
+          citation: realSources.map((src) => ({
+            "@type": "CreativeWork",
+            name: src.title,
+            url: src.url,
+            ...(src.publisher
+              ? { publisher: { "@type": "Organization", name: src.publisher } }
+              : {}),
+          })),
+        }
+      : {}),
+  };
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-16">
+      <JsonLd data={jsonLd} />
       <Link
         href="/assets"
         className="focus-ring text-[13px] text-muted transition hover:text-ink"
