@@ -181,7 +181,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={wordmark.variable} suppressHydrationWarning>
-      <body className="min-h-screen antialiased">
+      {/* Browser extensions commonly stamp attributes on <body> before React
+          hydrates — ColorZilla adds cz-shortcut-listen, password managers add
+          their own. None of it is ours, and the resulting mismatch warning
+          buries real ones, so the check is suppressed here as it is on <html>. */}
+      <body className="min-h-screen antialiased" suppressHydrationWarning>
         {/* Must be the first thing in body: it sets the theme before the page
             paints, so dark-theme users never see a white flash. */}
         <ThemeScript />
