@@ -17,15 +17,16 @@ export function AssetCard({
   return (
     <Link
       href={`/assets/${asset.id}`}
-      className="focus-ring group block overflow-hidden rounded-2xl bg-elevated
-                 transition-shadow duration-200 ease-out-strong hover:shadow-lg hover:shadow-black/5"
+      className="focus-ring group flex h-full flex-col overflow-hidden rounded-2xl
+                 bg-elevated transition-shadow duration-200 ease-out-strong
+                 hover:shadow-lg hover:shadow-black/5"
     >
       {/* Image fills the top half, edge to edge. */}
       {/* `contain`, not `cover`: a portrait photo — a watch, a standing
           figure — loses its subject to a crop at this aspect ratio. */}
       <AssetImage asset={asset} bleed fit="contain" />
 
-      <div className="p-4">
+      <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-2">
           <h3 className="text-[16px] font-semibold leading-snug tracking-tight">
             {asset.name}
@@ -35,7 +36,7 @@ export function AssetCard({
 
         {owner && <p className="mt-1 text-[14px] text-muted">{owner.name}</p>}
 
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-auto flex items-center justify-between pt-3">
           <span className="text-[12px] uppercase tracking-widest text-faint">
             {CATEGORY_META[asset.category].label}
             {asset.year ? ` · ${asset.year}` : ""}
