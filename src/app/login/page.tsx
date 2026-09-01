@@ -21,7 +21,7 @@ export default async function LoginPage({ searchParams }: Props) {
         Sign in
       </h1>
       <p className="mx-auto mt-3 max-w-sm text-center text-[15px] leading-relaxed text-muted">
-        Enter your email and we will send you a sign-in link.
+        Enter your email and we will send you a six-digit code.
       </p>
 
       {error && (
@@ -31,7 +31,7 @@ export default async function LoginPage({ searchParams }: Props) {
                      text-amber-700 dark:text-amber-300"
         >
           {error === "link_expired"
-            ? "That sign-in link has expired or was already used. Request a new one below."
+            ? "That code has expired or was already used. Request a new one below."
             : error}
         </p>
       )}

@@ -20,7 +20,7 @@ export default async function SignUpPage() {
       </h1>
       <p className="mx-auto mt-3 max-w-sm text-center text-[15px] leading-relaxed text-muted">
         Anyone with an account can add entries and fix mistakes. No password —
-        we email you a sign-in link.
+        we email you a code.
       </p>
 
       <div className="mt-8 sm:mt-10">
