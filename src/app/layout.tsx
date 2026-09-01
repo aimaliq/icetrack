@@ -1,10 +1,23 @@
 import type { Metadata, Viewport } from "next";
+import { Sora } from "next/font/google";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ThemeScript } from "@/components/ThemeScript";
 import { UserMenu } from "@/components/UserMenu";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
+
+/**
+ * Wordmark face. Self-hosted by next/font, so it costs no extra request and
+ * cannot shift the layout while it loads. Only the wordmark uses it — body
+ * text stays on the system stack, which is faster and more legible at size.
+ */
+const wordmark = Sora({
+  subsets: ["latin"],
+  weight: ["600"],
+  display: "swap",
+  variable: "--font-wordmark",
+});
 
 const TITLE = "IceTrack";
 const DESCRIPTION =
@@ -62,7 +75,10 @@ const LINKS = [
 
 async function Nav() {
   return (
-    <header className="sticky top-0 z-50 bg-elevated/75 backdrop-blur-xl">
+    <header
+      className="sticky top-0 z-50 border-b border-line/60 bg-elevated/75
+                 backdrop-blur-xl"
+    >
       {/* Three columns rather than flex spacing, so the links sit on the page
           centre instead of the midpoint between logo and controls. */}
       <nav className="mx-auto grid h-14 max-w-6xl grid-cols-[1fr_auto_1fr] items-center
@@ -74,7 +90,9 @@ async function Nav() {
           <span className="text-xl" aria-hidden>
             💎
           </span>
-          <span className="text-[20px] font-semibold tracking-tight">IceTrack</span>
+          <span className="font-wordmark text-[21px] font-semibold tracking-[-0.03em]">
+            IceTrack
+          </span>
         </Link>
 
         {/* Full nav on tablet and up; below that it moves to its own row. */}
@@ -152,7 +170,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={wordmark.variable} suppressHydrationWarning>
       <body className="min-h-screen antialiased">
         {/* Must be the first thing in body: it sets the theme before the page
             paints, so dark-theme users never see a white flash. */}

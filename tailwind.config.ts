@@ -29,6 +29,8 @@ export default {
           "sans-serif",
         ],
         mono: ["SF Mono", "ui-monospace", "Menlo", "Consolas", "monospace"],
+        // Wordmark only — loaded by next/font in the root layout.
+        wordmark: ["var(--font-wordmark)", "Segoe UI", "system-ui", "sans-serif"],
       },
       letterSpacing: { tightest: "-0.045em" },
       animation: {
