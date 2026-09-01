@@ -73,12 +73,10 @@ const LINKS = [
   { href: "/about", label: "About" },
 ];
 
+/** Deliberately not sticky: the header scrolls away with the page. */
 async function Nav() {
   return (
-    <header
-      className="sticky top-0 z-50 border-b border-line/60 bg-elevated/75
-                 backdrop-blur-xl"
-    >
+    <header className="border-b border-line/60 bg-elevated">
       {/* Three columns rather than flex spacing, so the links sit on the page
           centre instead of the midpoint between logo and controls. */}
       <nav className="mx-auto grid h-14 max-w-6xl grid-cols-[1fr_auto_1fr] items-center

@@ -9,8 +9,8 @@ export async function UserMenu() {
     return (
       <Link
         href="/login"
-        className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-muted
-                   transition hover:bg-sunken hover:text-ink"
+        className="focus-ring rounded-full bg-ink px-4 py-1.5 text-[13px] font-medium
+                   text-surface transition hover:opacity-90"
       >
         Sign in
       </Link>
