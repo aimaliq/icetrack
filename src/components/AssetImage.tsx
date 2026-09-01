@@ -5,7 +5,7 @@ const SIZES = {
   /** Inherits the parent's height, so the caller sets the aspect ratio. */
   fill: "h-full",
   sm: "h-28",
-  md: "h-44",
+  md: "h-52",
   /**
    * Detail pages cap the height instead of fixing it, so a portrait photo —
    * a watch, a standing figure — fills the space it needs rather than being
