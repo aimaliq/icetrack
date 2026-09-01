@@ -4,6 +4,7 @@ import { CATEGORY_ORDER } from "@/lib/categories";
 import { CategoryTile } from "@/components/CategoryTile";
 import { AssetCard } from "@/components/AssetCard";
 import { AssetMarquee } from "@/components/AssetMarquee";
+import { RotatingWord } from "@/components/RotatingWord";
 import { Avatar } from "@/components/Avatar";
 import { formatValue, totalValue } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
@@ -55,7 +56,10 @@ export default async function Home() {
             <h1 className="mt-5 text-[2.5rem] font-semibold leading-[1.05] tracking-tightest sm:mt-6 sm:text-6xl">
               Mapping VIP
               <br />
-              <span className="text-accent">premium assets</span>
+              <RotatingWord
+                words={["Jets", "Yachts", "Mansions", "Cars", "Watches"]}
+                className="text-accent"
+              />
             </h1>
 
             <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted sm:mt-6 sm:text-[17px] lg:mx-0">
