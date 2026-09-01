@@ -114,7 +114,6 @@ export function AssetForm({ asset }: { asset: Asset }) {
       <ImageUpload
         currentUrl={asset.imageUrl}
         currentCredit={asset.imageCredit}
-        currentIsRepresentative={asset.imageIsRepresentative}
       />
 
       <SourceEditor initial={asset.sources} />

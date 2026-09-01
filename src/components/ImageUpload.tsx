@@ -38,11 +38,9 @@ type Credit = {
 export function ImageUpload({
   currentUrl,
   currentCredit,
-  currentIsRepresentative,
 }: {
   currentUrl?: string;
   currentCredit?: Credit | null;
-  currentIsRepresentative?: boolean;
 }) {
   const [url, setUrl] = useState(currentUrl ?? "");
   const [author, setAuthor] = useState(currentCredit?.author ?? "");
@@ -215,20 +213,6 @@ export function ImageUpload({
             inputMode="url"
             className={input}
           />
-
-          <label className="flex items-start gap-2.5 text-[13px] text-muted">
-            <input
-              type="checkbox"
-              name="image_is_representative"
-              value="on"
-              defaultChecked={currentIsRepresentative}
-              className="mt-0.5"
-            />
-            <span>
-              This shows the model in general, not the exact item owned. The
-              entry will say so.
-            </span>
-          </label>
         </div>
       )}
     </div>
