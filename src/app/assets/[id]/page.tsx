@@ -70,7 +70,7 @@ export default async function AssetPage({ params }: Props) {
         </h1>
 
         {asset.estimatedValueUsd ? (
-          <p className="mt-3 text-xl font-semibold tabular-nums sm:text-2xl">
+          <p className="mt-3 text-xl font-semibold tabular-nums text-money sm:text-2xl">
             {formatValueExact(asset.estimatedValueUsd)}
             <span className="ml-2 align-middle text-[11px] font-normal uppercase tracking-widest text-faint">
               est.

@@ -65,7 +65,11 @@ export default function Home() {
             { label: "Categories", value: String(CATEGORY_ORDER.length) },
           ].map((s) => (
             <div key={s.label} className="bg-surface px-3 py-6 sm:px-4 sm:py-7">
-              <dd className="text-[26px] font-semibold tracking-tight tabular-nums sm:text-[32px]">
+              <dd
+                className={`text-[26px] font-semibold tracking-tight tabular-nums sm:text-[32px] ${
+                  s.label === "Tracked value" ? "text-money" : ""
+                }`}
+              >
                 {s.value}
               </dd>
               <dt className="mt-1.5 text-[11px] uppercase tracking-widest text-faint sm:text-[12px]">
@@ -111,7 +115,7 @@ export default function Home() {
                   </p>
                 </div>
                 {worth && (
-                  <p className="text-[16px] font-semibold tabular-nums">{worth}</p>
+                  <p className="text-[16px] font-semibold tabular-nums text-money">{worth}</p>
                 )}
               </Link>
             );

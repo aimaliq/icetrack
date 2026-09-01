@@ -16,6 +16,7 @@ export default {
         faint: "rgb(var(--faint) / <alpha-value>)",
         accent: "rgb(var(--accent) / <alpha-value>)",
         "accent-soft": "rgb(var(--accent-soft) / <alpha-value>)",
+        money: "rgb(var(--money) / <alpha-value>)",
       },
       fontFamily: {
         sans: [

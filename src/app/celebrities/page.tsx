@@ -32,7 +32,8 @@ export default function CelebritiesPage() {
             <Link
               key={c.id}
               href={`/celebrities/${c.id}`}
-              className="card focus-ring flex flex-col p-4 sm:p-5"
+              className="focus-ring group flex flex-col rounded-2xl bg-elevated p-4
+                         transition duration-300 hover:shadow-lg hover:shadow-black/5 sm:p-5"
             >
               <div className="flex items-start gap-4">
                 <Avatar person={c} size="md" />
@@ -56,7 +57,7 @@ export default function CelebritiesPage() {
                 </div>
 
                 {worth && (
-                  <span className="shrink-0 text-right text-[16px] font-semibold tabular-nums">
+                  <span className="shrink-0 text-right text-[17px] font-semibold tabular-nums text-money">
                     {worth}
                   </span>
                 )}

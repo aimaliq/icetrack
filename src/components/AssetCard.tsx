@@ -39,7 +39,7 @@ export function AssetCard({
             {asset.year ? ` · ${asset.year}` : ""}
           </span>
           {value && (
-            <span className="text-[15px] font-semibold tabular-nums">{value}</span>
+            <span className="text-[15px] font-semibold tabular-nums text-money">{value}</span>
           )}
         </div>
       </div>

@@ -13,6 +13,7 @@
   --faint: 139 147 156;
   --accent: 21 108 148;
   --accent-soft: 231 242 248;
+  --money: 13 124 96;
   color-scheme: light;
 }
 
@@ -26,6 +27,7 @@
   --faint: 106 114 123;
   --accent: 111 200 233;
   --accent-soft: 21 40 51;
+  --money: 74 208 160;
   color-scheme: dark;
 }
 

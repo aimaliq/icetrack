@@ -1,9 +1,9 @@
 import type { Celebrity } from "@/lib/types";
 
 const SIZES = {
-  sm: "h-11 w-11 text-[13px]",
-  md: "h-16 w-16 text-lg",
-  lg: "h-28 w-28 text-3xl sm:h-32 sm:w-32",
+  sm: "h-12 w-12 text-[14px]",
+  md: "h-20 w-20 text-xl",
+  lg: "h-32 w-32 text-4xl sm:h-40 sm:w-40",
 } as const;
 
 function initials(name: string) {
@@ -26,7 +26,7 @@ export function Avatar({
   return (
     <div
       className={`${SIZES[size]} relative shrink-0 overflow-hidden rounded-full
-                  border border-line bg-sunken`}
+                  bg-sunken ring-1 ring-line`}
     >
       {person.imageUrl ? (
         /* eslint-disable-next-line @next/next/no-img-element */
