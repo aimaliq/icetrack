@@ -5,15 +5,39 @@
 Open the Supabase dashboard → **SQL Editor** → paste the contents of
 `migrations/0001_init.sql` → **Run**.
 
-Then import the existing JSON dataset:
+Then import the existing JSON dataset.
 
-```bash
-SUPABASE_SERVICE_ROLE_KEY=your_secret_key npx tsx scripts/migrate-to-supabase.ts
+The importer needs the **service role key**, which bypasses Row Level Security
+entirely — it can read and delete anything, including auth tables. Treat it
+like a root password:
+
+- Do **not** put it in `.env.local`, in the repo, or in Vercel.
+- Do **not** prefix it with `NEXT_PUBLIC_` (that would ship it to every
+  visitor's browser).
+- Pass it only for the lifetime of the command, then clear it.
+
+You need it once, for this import. The website itself never uses it.
+
+Find it in **Project Settings → API → `service_role`** (click to reveal).
+
+**PowerShell (Windows):**
+
+```powershell
+$env:SUPABASE_SERVICE_ROLE_KEY = "paste_key_here"
+npx tsx scripts/migrate-to-supabase.ts
+Remove-Item Env:\SUPABASE_SERVICE_ROLE_KEY
 ```
 
-The service role key is in Project Settings → API. **Never commit it** and
-never put it in a `NEXT_PUBLIC_` variable — it bypasses Row Level Security
-entirely.
+**bash / zsh (macOS, Linux, Git Bash):**
+
+```bash
+SUPABASE_SERVICE_ROLE_KEY="paste_key_here" npx tsx scripts/migrate-to-supabase.ts
+```
+
+The bash form keeps the key out of your shell history file and unsets it
+automatically once the command exits.
+
+If the key ever leaks, rotate it immediately in Project Settings → API.
 
 ## Model
 

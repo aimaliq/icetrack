@@ -1,11 +1,17 @@
 /**
  * One-off import of the JSON dataset into Supabase.
  *
- * Requires the SERVICE ROLE key, because seeding bypasses RLS. Pass it as an
- * environment variable — never commit it, and never put it in a NEXT_PUBLIC_
- * variable:
+ * Requires the SERVICE ROLE key, because seeding bypasses RLS. Pass it for the
+ * lifetime of the command only — never commit it, never store it in
+ * .env.local, and never prefix it with NEXT_PUBLIC_.
  *
- *   SUPABASE_SERVICE_ROLE_KEY=... npx tsx scripts/migrate-to-supabase.ts
+ * PowerShell:
+ *   $env:SUPABASE_SERVICE_ROLE_KEY = "..."
+ *   npx tsx scripts/migrate-to-supabase.ts
+ *   Remove-Item Env:\SUPABASE_SERVICE_ROLE_KEY
+ *
+ * bash / zsh:
+ *   SUPABASE_SERVICE_ROLE_KEY="..." npx tsx scripts/migrate-to-supabase.ts
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -16,8 +22,13 @@ const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!url || !serviceKey) {
   console.error(
-    "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.\n" +
-      "Run: SUPABASE_SERVICE_ROLE_KEY=... npx tsx scripts/migrate-to-supabase.ts",
+    "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.\n\n" +
+      "PowerShell:\n" +
+      '  $env:SUPABASE_SERVICE_ROLE_KEY = "your_key"\n' +
+      "  npx tsx scripts/migrate-to-supabase.ts\n\n" +
+      "bash / zsh:\n" +
+      '  SUPABASE_SERVICE_ROLE_KEY="your_key" npx tsx scripts/migrate-to-supabase.ts\n\n' +
+      "Find the key in Supabase > Project Settings > API > service_role.",
   );
   process.exit(1);
 }
