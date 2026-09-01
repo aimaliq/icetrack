@@ -12,6 +12,13 @@ type Props = {
 const input =
   "focus-ring mt-1.5 w-full rounded-xl bg-elevated px-4 py-3 text-[15px] outline-none placeholder:text-faint";
 
+/**
+ * Supabase issues eight-digit codes. Kept as a constant because the form
+ * gates its submit button on the length, and a wrong guess here silently
+ * refuses a code that is perfectly valid.
+ */
+const CODE_LENGTH = 8;
+
 const button =
   "focus-ring w-full rounded-full bg-ink px-6 py-3 text-[15px] font-medium text-surface transition-opacity duration-150 ease-out-strong hover:opacity-90 disabled:opacity-50";
 
@@ -120,14 +127,14 @@ function CodeStep({
             Check your inbox
           </p>
           <p className="mx-auto mt-2 max-w-sm text-[14px] leading-relaxed text-muted">
-            We sent a six-digit code to{" "}
+            We sent a code to{" "}
             <strong className="text-ink">{email}</strong>.
           </p>
         </div>
 
         <div>
           <label htmlFor="token" className="sr-only">
-            Six-digit code
+            Sign-in code
           </label>
           <input
             id="token"
@@ -136,10 +143,12 @@ function CodeStep({
             autoComplete="one-time-code"
             // Lets a phone offer the code straight from the notification.
             autoFocus
-            maxLength={7}
-            placeholder="123456"
+            maxLength={CODE_LENGTH}
+            placeholder="12345678"
             value={code}
-            onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+            onChange={(e) =>
+              setCode(e.target.value.replace(/\D/g, "").slice(0, CODE_LENGTH))
+            }
             className={`${input} text-center text-[24px] font-semibold tabular-nums tracking-[0.4em]`}
           />
         </div>
@@ -148,7 +157,7 @@ function CodeStep({
 
         <button
           type="submit"
-          disabled={pending || code.length !== 6}
+          disabled={pending || code.length !== CODE_LENGTH}
           className={button}
         >
           {pending ? "Signing in…" : "Sign in"}

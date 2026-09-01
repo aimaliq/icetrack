@@ -21,7 +21,7 @@ export default async function LoginPage({ searchParams }: Props) {
         Sign in
       </h1>
       <p className="mx-auto mt-3 max-w-sm text-center text-[15px] leading-relaxed text-muted">
-        Enter your email and we will send you a six-digit code.
+        Enter your email and we will send you a sign-in code.
       </p>
 
       {error && (

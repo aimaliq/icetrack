@@ -139,8 +139,8 @@ export async function verifyCode(
   const token = String(formData.get("token") ?? "").replace(/\D/g, "");
 
   if (!email) return { error: "Something went wrong. Start again." };
-  if (token.length !== 6) {
-    return { error: "Enter the six digits from the email.", sent: email };
+  if (token.length < 6) {
+    return { error: "Enter the code from the email.", sent: email };
   }
 
   const db = await createClient();
