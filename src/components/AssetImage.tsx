@@ -6,7 +6,12 @@ const SIZES = {
   fill: "h-full",
   sm: "h-28",
   md: "h-44",
-  lg: "h-56 sm:h-72",
+  /**
+   * Detail pages cap the height instead of fixing it, so a portrait photo —
+   * a watch, a standing figure — fills the space it needs rather than being
+   * shrunk into the middle of a wide letterbox.
+   */
+  lg: "max-h-[520px] min-h-[240px]",
 } as const;
 
 /**
@@ -57,7 +62,7 @@ export function AssetImage({
               ? "h-full w-full object-contain p-1.5"
               : bleed
                 ? "h-full w-full object-cover transition-transform duration-500 ease-out-strong group-hover:scale-[1.03]"
-                : "h-full w-full object-contain p-3"
+                : "max-h-[520px] w-auto max-w-full object-contain p-3"
           }
         />
       ) : (
