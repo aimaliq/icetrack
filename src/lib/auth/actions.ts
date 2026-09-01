@@ -75,9 +75,25 @@ export async function signIn(
   });
 
   if (error) {
-    return error.message.toLowerCase().includes("signups not allowed")
-      ? { error: "No account uses that email. Sign up instead." }
-      : { error: error.message };
+    // `otp_disabled` here means no user has that address — shouldCreateUser is
+    // false, so Supabase refuses rather than registering one. Its own wording
+    // ("Signups not allowed for otp") reads as though sign-up were switched
+    // off site-wide, which sends people looking in the wrong place.
+    const code = (error as { code?: string }).code ?? "";
+    const message = error.message.toLowerCase();
+
+    if (code === "otp_disabled" || message.includes("signups not allowed")) {
+      return {
+        error: `No account uses ${email}. Check the address, or sign up to create one.`,
+      };
+    }
+    if (code === "over_email_send_rate_limit" || message.includes("rate limit")) {
+      return {
+        error:
+          "Too many sign-in emails have been sent recently. This is a limit on our mail service, not on your account — wait a few minutes and try again.",
+      };
+    }
+    return { error: error.message };
   }
   return { sent: email };
 }
