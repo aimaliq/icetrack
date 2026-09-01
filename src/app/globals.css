@@ -52,6 +52,12 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  /* Collapsing the duration of an infinite loop makes it flicker rather than
+     stop, which is worse than the motion it replaces. Halt it outright. */
+  .animate-marquee {
+    animation: none !important;
+  }
 }
 
 @layer components {

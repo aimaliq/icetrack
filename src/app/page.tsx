@@ -3,6 +3,7 @@ import { getAssets, getCelebritiesWithAssets, getStats } from "@/lib/db";
 import { CATEGORY_ORDER } from "@/lib/categories";
 import { CategoryTile } from "@/components/CategoryTile";
 import { AssetCard } from "@/components/AssetCard";
+import { AssetMarquee } from "@/components/AssetMarquee";
 import { Avatar } from "@/components/Avatar";
 import { formatValue, totalValue } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
@@ -18,6 +19,10 @@ export default async function Home() {
   const counts = Object.fromEntries(
     CATEGORY_ORDER.map((c) => [c, assets.filter((a) => a.category === c).length]),
   ) as Record<string, number>;
+
+  const ownerBySlug = new Map(celebrities.map((c) => [c.id, c]));
+  // Enough rows that the duplicated track is taller than its window.
+  const marqueeAssets = assets.length >= 4 ? assets : [...assets, ...assets];
 
   const top = [...celebrities]
     .sort((a, b) => totalValue(b.assets) - totalValue(a.assets))
@@ -39,60 +44,72 @@ export default async function Home() {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <section className="mx-auto max-w-6xl px-4 pb-14 pt-14 text-center sm:px-6 sm:pb-20 sm:pt-24">
-        <p className="animate-fade-up text-[11px] uppercase tracking-[0.24em] text-accent sm:text-[12px]">
-          Community sourced
-        </p>
+      <section className="mx-auto max-w-6xl px-4 pb-12 pt-12 sm:px-6 sm:pb-16 sm:pt-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[1fr_minmax(0,420px)] lg:gap-14">
+          {/* Left: the pitch. */}
+          <div className="text-center lg:text-left">
+            <p className="animate-fade-up text-[11px] uppercase tracking-[0.24em] text-accent sm:text-[12px]">
+              Community sourced
+            </p>
 
-        <h1 className="mt-5 text-[2.5rem] font-semibold leading-[1.05] tracking-tightest sm:mt-6 sm:text-6xl lg:text-7xl">
-          Mapping VIP
-          <br />
-          premium assets
-        </h1>
+            <h1 className="mt-5 text-[2.5rem] font-semibold leading-[1.05] tracking-tightest sm:mt-6 sm:text-6xl">
+              Mapping VIP
+              <br />
+              <span className="text-accent">premium assets</span>
+            </h1>
 
-        <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted sm:mt-7 sm:text-[17px]">
-          The jets, supercars, watches and yachts behind the world&apos;s
-          biggest names.
-        </p>
+            <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted sm:mt-6 sm:text-[17px] lg:mx-0">
+              The jets, supercars, watches and yachts behind the world&apos;s
+              biggest names — each entry sourced, and open for anyone to
+              correct.
+            </p>
 
-        <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center">
-          <Link
-            href="/celebrities"
-            className="focus-ring rounded-full bg-ink px-6 py-3 text-[15px] font-medium
-                       text-surface transition hover:opacity-90 sm:py-2.5 sm:text-[14px]"
-          >
-            Explore
-          </Link>
-          <Link
-            href="/about"
-            className="focus-ring rounded-full border border-line px-6 py-3 text-[15px]
-                       transition hover:bg-sunken sm:py-2.5 sm:text-[14px]"
-          >
-            How it works
-          </Link>
-        </div>
-
-        <dl className="mx-auto mt-14 grid max-w-2xl grid-cols-3 overflow-hidden
-                       rounded-2xl bg-elevated text-center sm:mt-20">
-          {[
-            { label: "Tracked value", value: tracked ?? "—" },
-            { label: "Assets", value: String(stats.assets) },
-            { label: "Celebrities", value: String(stats.celebrities) },
-          ].map((s) => (
-            <div key={s.label} className="px-3 py-6 sm:px-4 sm:py-7">
-              <dd
-                className={`text-[26px] font-semibold tracking-tight tabular-nums sm:text-[32px] ${
-                  s.label === "Tracked value" ? "text-money" : ""
-                }`}
+            <div className="mt-8 flex flex-col items-stretch justify-center gap-3
+                            sm:flex-row sm:items-center lg:justify-start">
+              <Link
+                href="/celebrities"
+                className="focus-ring rounded-full bg-ink px-6 py-3 text-[15px] font-medium
+                           text-surface transition hover:opacity-90 sm:py-2.5 sm:text-[14px]"
               >
-                {s.value}
-              </dd>
-              <dt className="mt-1.5 text-[11px] uppercase tracking-widest text-faint sm:text-[12px]">
-                {s.label}
-              </dt>
+                Explore
+              </Link>
+              <Link
+                href="/about"
+                className="focus-ring rounded-full border border-line px-6 py-3 text-[15px]
+                           transition hover:bg-sunken sm:py-2.5 sm:text-[14px]"
+              >
+                How it works
+              </Link>
             </div>
-          ))}
-        </dl>
+
+            <dl className="mx-auto mt-10 grid max-w-lg grid-cols-3 overflow-hidden
+                           rounded-2xl bg-elevated text-center sm:mt-12 lg:mx-0">
+              {[
+                { label: "Tracked value", value: tracked ?? "—" },
+                { label: "Assets", value: String(stats.assets) },
+                { label: "Celebrities", value: String(stats.celebrities) },
+              ].map((s) => (
+                <div key={s.label} className="px-3 py-5 sm:px-4 sm:py-6">
+                  <dd
+                    className={`text-[22px] font-semibold tracking-tight tabular-nums sm:text-[26px] ${
+                      s.label === "Tracked value" ? "text-money" : ""
+                    }`}
+                  >
+                    {s.value}
+                  </dd>
+                  <dt className="mt-1 text-[10px] uppercase tracking-widest text-faint sm:text-[11px]">
+                    {s.label}
+                  </dt>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          {/* Right: what is actually in the database, moving. */}
+          <div className="hidden lg:block">
+            <AssetMarquee assets={marqueeAssets} owners={ownerBySlug} />
+          </div>
+        </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">

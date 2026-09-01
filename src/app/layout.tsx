@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Sora } from "next/font/google";
+import { Instrument_Serif } from "next/font/google";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ThemeScript } from "@/components/ThemeScript";
@@ -12,9 +12,10 @@ import "./globals.css";
  * cannot shift the layout while it loads. Only the wordmark uses it — body
  * text stays on the system stack, which is faster and more legible at size.
  */
-const wordmark = Sora({
+const wordmark = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["600"],
+  weight: ["400"],
+  style: ["normal"],
   display: "swap",
   variable: "--font-wordmark",
 });
@@ -88,7 +89,7 @@ async function Nav() {
           <span className="text-xl" aria-hidden>
             💎
           </span>
-          <span className="font-wordmark text-[21px] font-semibold tracking-[-0.03em]">
+          <span className="font-wordmark text-[26px] leading-none tracking-[-0.01em]">
             IceTrack
           </span>
         </Link>

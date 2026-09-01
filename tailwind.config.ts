@@ -35,11 +35,18 @@ export default {
       letterSpacing: { tightest: "-0.045em" },
       animation: {
         "fade-up": "fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both",
+        // The list is rendered twice, so translating by half its height and
+        // resetting lands on an identical frame — the loop is seamless.
+        marquee: "marquee 42s linear infinite",
       },
       keyframes: {
         fadeUp: {
           "0%": { opacity: "0", transform: "translateY(14px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        marquee: {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(-50%)" },
         },
       },
     },
