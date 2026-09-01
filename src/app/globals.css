@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: theme("colors.carbon.950");
+  color: theme("colors.ice.50");
+}
+
+@layer components {
+  .ice-gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      100deg,
+      #ffffff 0%,
+      #c3e2ef 30%,
+      #ffffff 55%,
+      #8fcbe2 80%,
+      #ffffff 100%
+    );
+    background-size: 200% auto;
+  }
+
+  .card {
+    @apply rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl transition
+           duration-300 hover:border-white/20 hover:bg-white/[0.06];
+  }
+
+  .hairline {
+    @apply border-white/10;
+  }
+}

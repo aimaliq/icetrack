@@ -1,0 +1,19 @@
+{
+  "id": "drake-boeing-767",
+  "ownerId": "drake",
+  "category": "jet",
+  "name": "Boeing 767-200 \"Air Drake\"",
+  "make": "Boeing",
+  "model": "767-200",
+  "status": "unverified",
+  "confidence": "medium",
+  "summary": "Widely reported custom-liveried Boeing 767 associated with the artist. Tail number and current registration must be confirmed against the FAA registry before this entry is marked verified.",
+  "sources": [
+    {
+      "title": "TODO — confirm via FAA N-Number Registry",
+      "url": "TODO: https://registry.faa.gov/aircraftinquiry/",
+      "publisher": "FAA"
+    }
+  ],
+  "updatedAt": "2026-09-01"
+}

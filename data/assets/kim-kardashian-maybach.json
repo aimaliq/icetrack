@@ -1,0 +1,18 @@
+{
+  "id": "kim-kardashian-maybach",
+  "ownerId": "kim-kardashian",
+  "category": "car",
+  "name": "Mercedes-Maybach",
+  "make": "Mercedes-Benz",
+  "model": "Maybach",
+  "status": "unverified",
+  "confidence": "low",
+  "summary": "Placeholder entry pending a dated, linkable source. Do not publish as verified without one.",
+  "sources": [
+    {
+      "title": "TODO — add source",
+      "url": "TODO"
+    }
+  ],
+  "updatedAt": "2026-09-01"
+}

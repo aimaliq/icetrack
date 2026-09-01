@@ -1,0 +1,17 @@
+{
+  "id": "floyd-mayweather-gulfstream",
+  "ownerId": "floyd-mayweather",
+  "category": "jet",
+  "name": "Gulfstream business jet",
+  "make": "Gulfstream",
+  "status": "unverified",
+  "confidence": "low",
+  "summary": "Private jet ownership has been referenced repeatedly in press coverage and on the subject's own social media. Model and registration require confirmation.",
+  "sources": [
+    {
+      "title": "TODO — confirm model and registration",
+      "url": "TODO: https://registry.faa.gov/aircraftinquiry/"
+    }
+  ],
+  "updatedAt": "2026-09-01"
+}

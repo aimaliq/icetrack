@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://icetrack.dev/schema/celebrity.schema.json",
+  "title": "IceTrack Celebrity",
+  "description": "A public figure tracked by IceTrack. Public career facts only — no private personal data.",
+  "type": "object",
+  "required": ["id", "name", "category"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+    "realName": { "type": "string", "maxLength": 160 },
+    "category": {
+      "type": "string",
+      "enum": ["music", "sports", "film", "business", "fashion", "media"]
+    },
+    "nationality": { "type": "string", "maxLength": 80 },
+    "bornYear": { "type": "integer", "minimum": 1900, "maximum": 2100 },
+    "bio": { "type": "string", "maxLength": 600 },
+    "imageUrl": { "type": "string", "format": "uri" },
+    "wikipedia": { "type": "string", "minLength": 4 },
+    "updatedAt": { "type": "string", "format": "date" }
+  }
+}

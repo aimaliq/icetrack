@@ -1,0 +1,18 @@
+{
+  "id": "floyd-mayweather-bugatti-veyron",
+  "ownerId": "floyd-mayweather",
+  "category": "car",
+  "name": "Bugatti Veyron",
+  "make": "Bugatti",
+  "model": "Veyron",
+  "status": "unverified",
+  "confidence": "medium",
+  "summary": "Frequently photographed as part of the subject's car collection. Year and current ownership status need a dated source.",
+  "sources": [
+    {
+      "title": "TODO — add press or auction source",
+      "url": "TODO"
+    }
+  ],
+  "updatedAt": "2026-09-01"
+}

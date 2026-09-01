@@ -1,0 +1,17 @@
+{
+  "id": "jay-z-patek-philippe",
+  "ownerId": "jay-z",
+  "category": "watch",
+  "name": "Patek Philippe (model to confirm)",
+  "make": "Patek Philippe",
+  "status": "unverified",
+  "confidence": "low",
+  "summary": "The subject's watch collection is extensively covered by watch media. Individual references need to be tied to a specific dated photograph or article before publishing.",
+  "sources": [
+    {
+      "title": "TODO — add watch media source with date",
+      "url": "TODO"
+    }
+  ],
+  "updatedAt": "2026-09-01"
+}
