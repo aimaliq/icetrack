@@ -4,6 +4,9 @@ import type { Metadata } from "next";
 import { getCelebrities, getCelebrity } from "@/lib/data";
 import { CELEBRITY_CATEGORY_LABEL } from "@/lib/categories";
 import { AssetCard } from "@/components/AssetCard";
+import { Avatar } from "@/components/Avatar";
+import { ImageCredit } from "@/components/ImageCredit";
+import { formatValue, formatValueExact, totalValue } from "@/lib/format";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -22,74 +25,85 @@ export default async function CelebrityPage({ params }: Props) {
   const celeb = getCelebrity(id);
   if (!celeb) notFound();
 
+  const total = totalValue(celeb.assets);
+  const valued = celeb.assets.filter((a) => a.estimatedValueUsd);
+
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-16">
       <Link
         href="/celebrities"
-        className="text-[13px] text-carbon-400 transition hover:text-white"
+        className="focus-ring text-[13px] text-muted transition hover:text-ink"
       >
         ← Celebrities
       </Link>
 
-      <header className="mt-8 border-b border-white/10 pb-10">
-        <p className="text-[12px] uppercase tracking-[0.28em] text-ice-300">
-          {CELEBRITY_CATEGORY_LABEL[celeb.category]}
-        </p>
-        <h1 className="mt-4 text-5xl font-semibold tracking-tightest">
-          {celeb.name}
-        </h1>
-
-        {celeb.bio && (
-          <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-carbon-300">
-            {celeb.bio}
-          </p>
-        )}
-
-        <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4 text-[13px]">
-          {celeb.realName && (
-            <div>
-              <dt className="text-carbon-500">Full name</dt>
-              <dd className="mt-0.5 text-white">{celeb.realName}</dd>
-            </div>
-          )}
-          {celeb.nationality && (
-            <div>
-              <dt className="text-carbon-500">Nationality</dt>
-              <dd className="mt-0.5 text-white">{celeb.nationality}</dd>
-            </div>
-          )}
-          {celeb.bornYear && (
-            <div>
-              <dt className="text-carbon-500">Born</dt>
-              <dd className="mt-0.5 text-white">{celeb.bornYear}</dd>
-            </div>
-          )}
-          <div>
-            <dt className="text-carbon-500">Tracked assets</dt>
-            <dd className="mt-0.5 text-white">{celeb.assets.length}</dd>
+      <header className="mt-6 border-b border-line pb-8 sm:mt-8 sm:pb-10">
+        <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:gap-7 sm:text-left">
+          <div className="shrink-0">
+            <Avatar person={celeb} size="lg" />
           </div>
-        </dl>
 
-        {celeb.wikipedia && (
-          <a
-            href={celeb.wikipedia}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-6 inline-block text-[13px] text-ice-300 transition hover:text-white"
-          >
-            Wikipedia ↗
-          </a>
-        )}
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] uppercase tracking-[0.24em] text-accent">
+              {CELEBRITY_CATEGORY_LABEL[celeb.category]}
+            </p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tightest sm:text-5xl">
+              {celeb.name}
+            </h1>
+
+            {celeb.bio && (
+              <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted sm:text-[16px]">
+                {celeb.bio}
+              </p>
+            )}
+
+            {celeb.wikipedia && (
+              <a
+                href={celeb.wikipedia}
+                target="_blank"
+                rel="noreferrer"
+                className="focus-ring mt-4 inline-block text-[13px] text-accent hover:underline"
+              >
+                Wikipedia ↗
+              </a>
+            )}
+            <ImageCredit credit={celeb.imageCredit} />
+          </div>
+        </div>
+
+        <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl
+                       border border-line bg-line sm:grid-cols-4">
+          {[
+            {
+              label: "Tracked value",
+              value: total > 0 ? formatValue(total)! : "—",
+              title: total > 0 ? formatValueExact(total) : undefined,
+            },
+            { label: "Assets", value: String(celeb.assets.length) },
+            { label: "Valued", value: `${valued.length}/${celeb.assets.length}` },
+            { label: "Nationality", value: celeb.nationality ?? "—" },
+          ].map((s) => (
+            <div key={s.label} className="bg-surface px-3 py-5 sm:px-4">
+              <dd
+                className="text-lg font-semibold tracking-tight tabular-nums sm:text-xl"
+                title={s.title}
+              >
+                {s.value}
+              </dd>
+              <dt className="mt-1 text-[10px] uppercase tracking-widest text-faint sm:text-[11px]">
+                {s.label}
+              </dt>
+            </div>
+          ))}
+        </dl>
       </header>
 
-      <section className="mt-12">
-        <h2 className="text-2xl font-semibold tracking-tight">Assets</h2>
+      <section className="mt-10 sm:mt-12">
+        <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Assets</h2>
         {celeb.assets.length === 0 ? (
-          <p className="mt-6 text-[15px] text-carbon-400">
-            No assets catalogued yet.
-          </p>
+          <p className="mt-6 text-[15px] text-muted">No assets catalogued yet.</p>
         ) : (
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             {celeb.assets.map((a) => (
               <AssetCard key={a.id} asset={a} />
             ))}

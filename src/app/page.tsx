@@ -1,120 +1,145 @@
 import Link from "next/link";
-import { getAssets, getCelebrities, getStats } from "@/lib/data";
+import { getAssets, getCelebritiesWithAssets, getStats } from "@/lib/data";
 import { CATEGORY_META, CATEGORY_ORDER } from "@/lib/categories";
 import { AssetCard } from "@/components/AssetCard";
+import { Avatar } from "@/components/Avatar";
+import { formatValue, totalValue } from "@/lib/format";
 
 export default function Home() {
   const stats = getStats();
-  const celebrities = getCelebrities();
+  const celebrities = getCelebritiesWithAssets();
   const assets = getAssets();
   const byId = new Map(celebrities.map((c) => [c.id, c]));
+  const tracked = formatValue(totalValue(assets));
 
   const counts = Object.fromEntries(
     CATEGORY_ORDER.map((c) => [c, assets.filter((a) => a.category === c).length]),
   ) as Record<string, number>;
 
+  const top = [...celebrities]
+    .sort((a, b) => totalValue(b.assets) - totalValue(a.assets))
+    .slice(0, 4);
+
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div
-          className="pointer-events-none absolute inset-x-0 -top-40 h-[500px] opacity-40 blur-3xl"
-          style={{
-            background:
-              "radial-gradient(closest-side, rgba(83,175,209,0.35), transparent)",
-          }}
-          aria-hidden
-        />
-        <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-24 text-center sm:pt-32">
-          <p className="animate-fade-up text-[12px] uppercase tracking-[0.28em] text-ice-300">
-            Open source · Community sourced
-          </p>
+      <section className="mx-auto max-w-6xl px-4 pb-14 pt-14 text-center sm:px-6 sm:pb-20 sm:pt-24">
+        <p className="animate-fade-up text-[11px] uppercase tracking-[0.24em] text-accent sm:text-[12px]">
+          Open source · Community sourced
+        </p>
 
-          <h1 className="ice-gradient-text animate-shimmer mt-6 text-5xl font-semibold leading-[1.05] tracking-tightest sm:text-7xl">
-            Mapping VIP
-            <br />
-            premium assets
-          </h1>
+        <h1 className="mt-5 text-[2.5rem] font-semibold leading-[1.05] tracking-tightest sm:mt-6 sm:text-6xl lg:text-7xl">
+          Mapping VIP
+          <br />
+          premium assets
+        </h1>
 
-          <p className="mx-auto mt-7 max-w-xl text-[17px] leading-relaxed text-carbon-300">
-            The jets, supercars, watches and yachts behind the world&apos;s
-            biggest names — catalogued, sourced, and open to everyone.
-          </p>
+        <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted sm:mt-7 sm:text-[17px]">
+          The jets, supercars, watches and yachts behind the world&apos;s
+          biggest names — catalogued, sourced, and open to everyone.
+        </p>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/celebrities"
-              className="rounded-full bg-white px-6 py-2.5 text-[14px] font-medium text-carbon-950 transition hover:bg-ice-100"
-            >
-              Explore the database
-            </Link>
-            <Link
-              href="/about"
-              className="rounded-full border border-white/15 px-6 py-2.5 text-[14px] text-white transition hover:bg-white/5"
-            >
-              How it works
-            </Link>
-          </div>
-
-          {/* Stats */}
-          <dl className="mx-auto mt-20 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-4">
-            {[
-              { label: "Celebrities", value: stats.celebrities },
-              { label: "Assets", value: stats.assets },
-              { label: "Categories", value: CATEGORY_ORDER.length },
-              { label: "Verified", value: stats.verified },
-            ].map((s) => (
-              <div key={s.label} className="bg-carbon-950 px-4 py-7">
-                <dd className="text-3xl font-semibold tracking-tight text-white">
-                  {s.value}
-                </dd>
-                <dt className="mt-1 text-[11px] uppercase tracking-widest text-carbon-500">
-                  {s.label}
-                </dt>
-              </div>
-            ))}
-          </dl>
+        <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center">
+          <Link
+            href="/celebrities"
+            className="focus-ring rounded-full bg-ink px-6 py-3 text-[15px] font-medium
+                       text-surface transition hover:opacity-90 sm:py-2.5 sm:text-[14px]"
+          >
+            Explore the database
+          </Link>
+          <Link
+            href="/about"
+            className="focus-ring rounded-full border border-line px-6 py-3 text-[15px]
+                       transition hover:bg-sunken sm:py-2.5 sm:text-[14px]"
+          >
+            How it works
+          </Link>
         </div>
+
+        <dl className="mx-auto mt-14 grid max-w-3xl grid-cols-2 gap-px overflow-hidden
+                       rounded-2xl border border-line bg-line sm:mt-20 sm:grid-cols-4">
+          {[
+            { label: "Celebrities", value: String(stats.celebrities) },
+            { label: "Assets", value: String(stats.assets) },
+            { label: "Tracked value", value: tracked ?? "—" },
+            { label: "Categories", value: String(CATEGORY_ORDER.length) },
+          ].map((s) => (
+            <div key={s.label} className="bg-surface px-3 py-6 sm:px-4 sm:py-7">
+              <dd className="text-2xl font-semibold tracking-tight tabular-nums sm:text-3xl">
+                {s.value}
+              </dd>
+              <dt className="mt-1 text-[10px] uppercase tracking-widest text-faint sm:text-[11px]">
+                {s.label}
+              </dt>
+            </div>
+          ))}
+        </dl>
       </section>
 
-      {/* Categories */}
-      <section className="mx-auto max-w-6xl px-6 py-16">
-        <h2 className="text-2xl font-semibold tracking-tight">Categories</h2>
-        <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
+        <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Categories</h2>
+        <div className="mt-6 grid grid-cols-3 gap-3 sm:mt-8 sm:gap-4 lg:grid-cols-6">
           {CATEGORY_ORDER.map((cat) => (
             <Link
               key={cat}
               href={`/assets?category=${cat}`}
-              className="card flex flex-col items-center gap-2 p-6 text-center"
+              className="card focus-ring flex flex-col items-center gap-1.5 p-4 text-center sm:gap-2 sm:p-6"
             >
-              <span className="text-3xl" aria-hidden>
+              <span className="text-2xl sm:text-3xl" aria-hidden>
                 {CATEGORY_META[cat].icon}
               </span>
-              <span className="text-[13px] font-medium text-white">
+              <span className="text-[12px] font-medium sm:text-[13px]">
                 {CATEGORY_META[cat].plural}
               </span>
-              <span className="text-[11px] text-carbon-500">
-                {counts[cat] ?? 0}
-              </span>
+              <span className="text-[11px] text-faint">{counts[cat] ?? 0}</span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Latest */}
-      <section className="mx-auto max-w-6xl px-6 py-10">
-        <div className="flex items-end justify-between">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Recently catalogued
+      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+        <div className="flex items-end justify-between gap-4">
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+            Most tracked
           </h2>
-          <Link
-            href="/assets"
-            className="text-[13px] text-ice-300 transition hover:text-white"
-          >
+          <Link href="/celebrities" className="focus-ring text-[13px] text-accent hover:underline">
             View all →
           </Link>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4 lg:grid-cols-4">
+          {top.map((c) => {
+            const worth = formatValue(totalValue(c.assets));
+            return (
+              <Link
+                key={c.id}
+                href={`/celebrities/${c.id}`}
+                className="card focus-ring flex flex-col items-center gap-3 p-4 text-center sm:p-6"
+              >
+                <Avatar person={c} size="md" />
+                <div>
+                  <p className="text-[14px] font-semibold tracking-tight">{c.name}</p>
+                  <p className="mt-0.5 text-[12px] text-faint">
+                    {c.assets.length} {c.assets.length === 1 ? "asset" : "assets"}
+                  </p>
+                </div>
+                {worth && (
+                  <p className="text-[15px] font-semibold tabular-nums">{worth}</p>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+        <div className="flex items-end justify-between gap-4">
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+            Recently catalogued
+          </h2>
+          <Link href="/assets" className="focus-ring text-[13px] text-accent hover:underline">
+            View all →
+          </Link>
+        </div>
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {assets.slice(0, 6).map((a) => (
             <AssetCard key={a.id} asset={a} owner={byId.get(a.ownerId)} />
           ))}

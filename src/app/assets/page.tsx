@@ -21,20 +21,20 @@ export default async function AssetsPage({ searchParams }: Props) {
   const assets = active ? all.filter((a) => a.category === active) : all;
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
-      <h1 className="text-4xl font-semibold tracking-tightest">Assets</h1>
-      <p className="mt-3 text-[15px] text-carbon-400">
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
+      <h1 className="text-3xl font-semibold tracking-tightest sm:text-4xl">Assets</h1>
+      <p className="mt-2 text-[14px] text-muted sm:mt-3 sm:text-[15px]">
         {assets.length} {assets.length === 1 ? "entry" : "entries"}
         {active ? ` in ${CATEGORY_META[active].plural}` : ""}.
       </p>
 
-      <div className="mt-8 flex flex-wrap gap-2">
+      <div className="mt-6 flex gap-2 overflow-x-auto pb-1 sm:mt-8 sm:flex-wrap sm:overflow-visible">
         <Link
           href="/assets"
-          className={`rounded-full border px-4 py-1.5 text-[13px] transition ${
+          className={`focus-ring shrink-0 rounded-full border px-4 py-2 text-[13px] transition ${
             active
-              ? "border-white/15 text-carbon-300 hover:bg-white/5"
-              : "border-white bg-white text-carbon-950"
+              ? "border-line text-muted hover:bg-sunken"
+              : "border-ink bg-ink text-surface"
           }`}
         >
           All
@@ -43,10 +43,10 @@ export default async function AssetsPage({ searchParams }: Props) {
           <Link
             key={cat}
             href={`/assets?category=${cat}`}
-            className={`rounded-full border px-4 py-1.5 text-[13px] transition ${
+            className={`focus-ring shrink-0 rounded-full border px-4 py-2 text-[13px] transition ${
               active === cat
-                ? "border-white bg-white text-carbon-950"
-                : "border-white/15 text-carbon-300 hover:bg-white/5"
+                ? "border-ink bg-ink text-surface"
+                : "border-line text-muted hover:bg-sunken"
             }`}
           >
             {CATEGORY_META[cat].plural}
@@ -55,11 +55,11 @@ export default async function AssetsPage({ searchParams }: Props) {
       </div>
 
       {assets.length === 0 ? (
-        <p className="mt-14 text-[15px] text-carbon-400">
+        <p className="mt-14 text-[15px] text-muted">
           Nothing catalogued in this category yet.
         </p>
       ) : (
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {assets.map((a) => (
             <AssetCard key={a.id} asset={a} owner={byId.get(a.ownerId)} />
           ))}

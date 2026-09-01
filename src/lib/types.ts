@@ -23,6 +23,17 @@ export type CelebrityCategory =
   | "fashion"
   | "media";
 
+/**
+ * Image credit. Wikimedia Commons licences (CC BY-SA and friends) require
+ * attribution, so an image without these fields cannot legally be published.
+ */
+export interface ImageCredit {
+  url: string;
+  author?: string;
+  license?: string;
+  sourcePage?: string;
+}
+
 export interface Source {
   title: string;
   url: string;
@@ -46,6 +57,7 @@ export interface Asset {
   region?: string;
   summary?: string;
   imageUrl?: string;
+  imageCredit?: ImageCredit;
   sources: Source[];
   updatedAt?: string;
 }
@@ -59,6 +71,7 @@ export interface Celebrity {
   bornYear?: number;
   bio?: string;
   imageUrl?: string;
+  imageCredit?: ImageCredit;
   wikipedia?: string;
   updatedAt?: string;
 }

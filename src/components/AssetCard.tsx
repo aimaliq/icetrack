@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { Asset, Celebrity } from "@/lib/types";
 import { CATEGORY_META } from "@/lib/categories";
+import { formatValue } from "@/lib/format";
 import { StatusBadge } from "./StatusBadge";
+import { AssetImage } from "./AssetImage";
 
 export function AssetCard({
   asset,
@@ -10,29 +12,30 @@ export function AssetCard({
   asset: Asset;
   owner?: Celebrity | null;
 }) {
-  const meta = CATEGORY_META[asset.category];
+  const value = formatValue(asset.estimatedValueUsd);
 
   return (
-    <Link href={`/assets/${asset.id}`} className="card group block p-5">
-      <div className="flex items-start justify-between gap-3">
-        <span className="text-2xl" aria-hidden>
-          {meta.icon}
-        </span>
+    <Link href={`/assets/${asset.id}`} className="card focus-ring block p-3 sm:p-4">
+      <AssetImage asset={asset} />
+
+      <div className="mt-3.5 flex items-start justify-between gap-2">
+        <h3 className="text-[15px] font-semibold leading-snug tracking-tight">
+          {asset.name}
+        </h3>
         <StatusBadge status={asset.status} />
       </div>
 
-      <h3 className="mt-4 text-[15px] font-semibold leading-snug tracking-tight text-white">
-        {asset.name}
-      </h3>
+      {owner && <p className="mt-1 text-[13px] text-muted">{owner.name}</p>}
 
-      {owner && (
-        <p className="mt-1 text-[13px] text-carbon-400">{owner.name}</p>
-      )}
-
-      <p className="mt-4 text-[11px] uppercase tracking-widest text-carbon-500">
-        {meta.label}
-        {asset.year ? ` · ${asset.year}` : ""}
-      </p>
+      <div className="mt-3 flex items-center justify-between">
+        <span className="text-[11px] uppercase tracking-widest text-faint">
+          {CATEGORY_META[asset.category].label}
+          {asset.year ? ` · ${asset.year}` : ""}
+        </span>
+        {value && (
+          <span className="text-[13px] font-semibold tabular-nums">{value}</span>
+        )}
+      </div>
     </Link>
   );
 }

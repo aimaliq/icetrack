@@ -2,7 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light is the default theme. */
 :root {
+  --surface: 252 252 253;
+  --elevated: 255 255 255;
+  --sunken: 244 245 247;
+  --line: 226 229 233;
+  --ink: 16 18 21;
+  --muted: 92 100 109;
+  --faint: 139 147 156;
+  --accent: 21 108 148;
+  --accent-soft: 231 242 248;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --surface: 8 9 10;
+  --elevated: 19 22 25;
+  --sunken: 13 15 17;
+  --line: 38 43 49;
+  --ink: 242 248 251;
+  --muted: 148 156 165;
+  --faint: 106 114 123;
+  --accent: 111 200 233;
+  --accent-soft: 21 40 51;
   color-scheme: dark;
 }
 
@@ -10,33 +33,46 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Prevents iOS Safari from inflating text in landscape. */
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background-color: theme("colors.carbon.950");
-  color: theme("colors.ice.50");
+  background-color: rgb(var(--surface));
+  color: rgb(var(--ink));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @layer components {
-  .ice-gradient-text {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(
-      100deg,
-      #ffffff 0%,
-      #c3e2ef 30%,
-      #ffffff 55%,
-      #8fcbe2 80%,
-      #ffffff 100%
-    );
-    background-size: 200% auto;
-  }
-
   .card {
-    @apply rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl transition
-           duration-300 hover:border-white/20 hover:bg-white/[0.06];
+    @apply rounded-2xl border border-line bg-elevated transition duration-300;
   }
 
-  .hairline {
-    @apply border-white/10;
+  @media (hover: hover) {
+    .card:hover {
+      @apply border-faint/40 shadow-lg shadow-black/5;
+    }
+  }
+
+  /* Keyboard focus stays visible; mouse clicks stay clean. */
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-accent
+           focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
+  }
+}
+
+@layer utilities {
+  /* Comfortable tap target on touch screens (Apple HIG: 44px). */
+  .tap {
+    @apply min-h-11 min-w-11;
   }
 }
