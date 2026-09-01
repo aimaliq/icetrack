@@ -7,5 +7,12 @@
   "bornYear": 1977,
   "bio": "Undefeated former professional boxer and promoter, widely known for a highly public luxury lifestyle.",
   "wikipedia": "https://en.wikipedia.org/wiki/Floyd_Mayweather_Jr.",
-  "updatedAt": "2026-09-01"
+  "updatedAt": "2026-09-01",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Floyd_Mayweather_Jr_2011.jpg",
+  "imageCredit": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Floyd_Mayweather_Jr_2011.jpg",
+    "author": "DEWALT POWER TOOLS FIGHT NIGHT CLUB 2010",
+    "license": "CC BY-SA 2.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Floyd_Mayweather_Jr_2011.jpg"
+  }
 }

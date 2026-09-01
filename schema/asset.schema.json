@@ -158,6 +158,10 @@
           "type": "string"
         }
       }
+    },
+    "imageIsRepresentative": {
+      "type": "boolean",
+      "description": "True when the photo shows the model in general rather than this specific item. The UI labels it, so the page never implies we have a photo of the actual asset."
     }
   }
 }

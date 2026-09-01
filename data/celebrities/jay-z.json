@@ -7,5 +7,12 @@
   "bornYear": 1969,
   "bio": "Rapper and entrepreneur, founder of Roc Nation and one of the wealthiest musicians in the world.",
   "wikipedia": "https://en.wikipedia.org/wiki/Jay-Z",
-  "updatedAt": "2026-09-01"
+  "updatedAt": "2026-09-01",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/55/Jay-Z_meets_with_New_York_Senate_Majority_Leader_in_Albany_%28cropped%29.webp",
+  "imageCredit": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/55/Jay-Z_meets_with_New_York_Senate_Majority_Leader_in_Albany_%28cropped%29.webp",
+    "author": "Photo Courtesy of NYS Senate Media Services",
+    "license": "CC BY 2.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Jay-Z_meets_with_New_York_Senate_Majority_Leader_in_Albany_(cropped).webp"
+  }
 }

@@ -14,5 +14,13 @@
       "url": "TODO: https://registry.faa.gov/aircraftinquiry/"
     }
   ],
-  "updatedAt": "2026-09-01"
+  "updatedAt": "2026-09-01",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/N622PF_2021_GULFSTREAM_AEROSPACE_CORP_GVII-G600_by_Don_Ramey_Logan.jpg/960px-N622PF_2021_GULFSTREAM_AEROSPACE_CORP_GVII-G600_by_Don_Ramey_Logan.jpg",
+  "imageCredit": {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/N622PF_2021_GULFSTREAM_AEROSPACE_CORP_GVII-G600_by_Don_Ramey_Logan.jpg/960px-N622PF_2021_GULFSTREAM_AEROSPACE_CORP_GVII-G600_by_Don_Ramey_Logan.jpg",
+    "author": "WPPilot",
+    "license": "CC BY-SA 4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:N622PF_2021_GULFSTREAM_AEROSPACE_CORP_GVII-G600_by_Don_Ramey_Logan.jpg"
+  },
+  "imageIsRepresentative": true
 }

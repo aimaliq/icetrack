@@ -15,5 +15,13 @@
       "url": "TODO"
     }
   ],
-  "updatedAt": "2026-09-01"
+  "updatedAt": "2026-09-01",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/Mercedes-Maybach_Z223_680_1X7A5831.jpg/960px-Mercedes-Maybach_Z223_680_1X7A5831.jpg",
+  "imageCredit": {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/Mercedes-Maybach_Z223_680_1X7A5831.jpg/960px-Mercedes-Maybach_Z223_680_1X7A5831.jpg",
+    "author": "Alexander Migl",
+    "license": "CC BY-SA 4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Mercedes-Maybach_Z223_680_1X7A5831.jpg"
+  },
+  "imageIsRepresentative": true
 }

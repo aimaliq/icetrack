@@ -15,5 +15,13 @@
       "url": "TODO"
     }
   ],
-  "updatedAt": "2026-09-01"
+  "updatedAt": "2026-09-01",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Bugatti_Veyron_16.4_%E2%80%93_Frontansicht_%283%29%2C_5._April_2012%2C_D%C3%BCsseldorf.jpg/960px-Bugatti_Veyron_16.4_%E2%80%93_Frontansicht_%283%29%2C_5._April_2012%2C_D%C3%BCsseldorf.jpg",
+  "imageCredit": {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Bugatti_Veyron_16.4_%E2%80%93_Frontansicht_%283%29%2C_5._April_2012%2C_D%C3%BCsseldorf.jpg/960px-Bugatti_Veyron_16.4_%E2%80%93_Frontansicht_%283%29%2C_5._April_2012%2C_D%C3%BCsseldorf.jpg",
+    "author": "M 93",
+    "license": "CC BY-SA 3.0 de",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Bugatti_Veyron_16.4_%E2%80%93_Frontansicht_(3),_5._April_2012,_D%C3%BCsseldorf.jpg"
+  },
+  "imageIsRepresentative": true
 }

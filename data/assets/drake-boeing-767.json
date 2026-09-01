@@ -16,5 +16,13 @@
       "publisher": "FAA"
     }
   ],
-  "updatedAt": "2026-09-01"
+  "updatedAt": "2026-09-01",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/United_Boeing_767-200_N74007_MD1.jpg/960px-United_Boeing_767-200_N74007_MD1.jpg",
+  "imageCredit": {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/United_Boeing_767-200_N74007_MD1.jpg/960px-United_Boeing_767-200_N74007_MD1.jpg",
+    "author": "Acroterion",
+    "license": "CC BY-SA 4.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:United_Boeing_767-200_N74007_MD1.jpg"
+  },
+  "imageIsRepresentative": true
 }

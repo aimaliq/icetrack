@@ -58,6 +58,8 @@ export interface Asset {
   summary?: string;
   imageUrl?: string;
   imageCredit?: ImageCredit;
+  /** True when the photo shows the model generally, not this exact item. */
+  imageIsRepresentative?: boolean;
   sources: Source[];
   updatedAt?: string;
 }

@@ -7,5 +7,12 @@
   "bornYear": 1980,
   "bio": "Media personality and founder of SKIMS. A defining figure of modern celebrity business.",
   "wikipedia": "https://en.wikipedia.org/wiki/Kim_Kardashian",
-  "updatedAt": "2026-09-01"
+  "updatedAt": "2026-09-01",
+  "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Kim_Kardashian_West_2014.jpg/960px-Kim_Kardashian_West_2014.jpg",
+  "imageCredit": {
+    "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Kim_Kardashian_West_2014.jpg/960px-Kim_Kardashian_West_2014.jpg",
+    "author": "Eva Rinaldi",
+    "license": "CC BY-SA 2.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Kim_Kardashian_West_2014.jpg"
+  }
 }

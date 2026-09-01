@@ -7,5 +7,12 @@
   "bornYear": 1986,
   "bio": "Rapper, singer and producer from Toronto. One of the best-selling music artists of all time.",
   "wikipedia": "https://en.wikipedia.org/wiki/Drake_(musician)",
-  "updatedAt": "2026-09-01"
+  "updatedAt": "2026-09-01",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/15/Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg",
+  "imageCredit": {
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/15/Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg",
+    "author": "GabboT",
+    "license": "CC BY-SA 2.0",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Drake_at_The_Carter_Effect_2017_(36818935200)_(cropped).jpg"
+  }
 }
