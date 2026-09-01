@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { AssetCategory } from "@/lib/types";
 import { CATEGORY_META } from "@/lib/categories";
-import { CATEGORY_SILHOUETTE } from "@/lib/silhouettes";
 
 export function CategoryTile({
   category,
@@ -10,6 +9,8 @@ export function CategoryTile({
   category: AssetCategory;
   count: number;
 }) {
+  const meta = CATEGORY_META[category];
+
   return (
     <Link
       href={`/assets?category=${category}`}
@@ -17,17 +18,21 @@ export function CategoryTile({
                  bg-elevated p-5 text-center transition duration-300
                  hover:shadow-lg hover:shadow-black/5 sm:p-6"
     >
-      <span
-        className="h-12 w-12 text-faint transition duration-300
-                   group-hover:text-accent sm:h-14 sm:w-14"
-        aria-hidden
-      >
-        {CATEGORY_SILHOUETTE[category]}
-      </span>
+      {/* Fixed box with overflow hidden: the artwork varies from wide (jet) to
+          tall (watch), and object-contain keeps every one inside the same
+          footprint instead of pushing into the label. */}
+      <div className="h-20 w-full overflow-hidden sm:h-24">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={meta.image}
+          alt=""
+          loading="lazy"
+          className="h-full w-full object-contain transition duration-500
+                     group-hover:scale-105"
+        />
+      </div>
 
-      <span className="text-[15px] font-medium sm:text-[16px]">
-        {CATEGORY_META[category].plural}
-      </span>
+      <span className="text-[15px] font-medium sm:text-[16px]">{meta.plural}</span>
       <span className="text-[13px] tabular-nums text-faint sm:text-[14px]">
         {count}
       </span>

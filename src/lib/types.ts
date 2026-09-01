@@ -1,10 +1,9 @@
 export type AssetCategory =
   | "jet"
   | "car"
-  | "watch"
+  | "accessories"
   | "yacht"
-  | "estate"
-  | "jewelry";
+  | "estate";
 
 export type AssetStatus =
   | "verified"

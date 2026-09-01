@@ -29,10 +29,9 @@
       "enum": [
         "jet",
         "car",
-        "watch",
+        "accessories",
         "yacht",
-        "estate",
-        "jewelry"
+        "estate"
       ]
     },
     "name": {

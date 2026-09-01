@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getCelebritiesWithAssets } from "@/lib/data";
 import { CELEBRITY_CATEGORY_LABEL, CATEGORY_META } from "@/lib/categories";
-import { CATEGORY_SILHOUETTE } from "@/lib/silhouettes";
 import { Avatar } from "@/components/Avatar";
 import { formatValue, totalValue } from "@/lib/format";
 
@@ -70,15 +69,17 @@ export default function CelebritiesPage() {
               )}
 
               <div className="mt-4 flex items-center justify-between border-t border-line pt-3">
-                <div className="flex gap-2.5 text-faint" aria-hidden>
+                <div className="flex items-center gap-2.5" aria-hidden>
                   {cats.map((cat) => (
-                    <span
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
                       key={cat}
-                      className="h-[18px] w-[18px]"
+                      src={CATEGORY_META[cat].image}
+                      alt=""
                       title={CATEGORY_META[cat].label}
-                    >
-                      {CATEGORY_SILHOUETTE[cat]}
-                    </span>
+                      loading="lazy"
+                      className="h-5 w-7 object-contain opacity-70"
+                    />
                   ))}
                 </div>
                 <span className="text-[12px] uppercase tracking-widest text-faint">

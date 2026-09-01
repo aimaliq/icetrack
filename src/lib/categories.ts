@@ -2,23 +2,25 @@ import type { AssetCategory, CelebrityCategory } from "./types";
 
 export const CATEGORY_META: Record<
   AssetCategory,
-  { label: string; plural: string; icon: string }
+  { label: string; plural: string; image: string }
 > = {
-  jet: { label: "Private jet", plural: "Jets", icon: "✈️" },
-  car: { label: "Supercar", plural: "Cars", icon: "🏎️" },
-  watch: { label: "Watch", plural: "Watches", icon: "⌚" },
-  yacht: { label: "Yacht", plural: "Yachts", icon: "🛥️" },
-  estate: { label: "Estate", plural: "Estates", icon: "🏛️" },
-  jewelry: { label: "Jewelry", plural: "Jewelry", icon: "💎" },
+  jet: { label: "Private jet", plural: "Jets", image: "/categories/jet.webp" },
+  car: { label: "Supercar", plural: "Cars", image: "/categories/car.webp" },
+  yacht: { label: "Yacht", plural: "Yachts", image: "/categories/yacht.webp" },
+  estate: { label: "Estate", plural: "Estates", image: "/categories/house.webp" },
+  accessories: {
+    label: "Accessory",
+    plural: "Accessories",
+    image: "/categories/accessories.webp",
+  },
 };
 
 export const CATEGORY_ORDER: AssetCategory[] = [
   "jet",
   "car",
-  "watch",
   "yacht",
   "estate",
-  "jewelry",
+  "accessories",
 ];
 
 export const CELEBRITY_CATEGORY_LABEL: Record<CelebrityCategory, string> = {

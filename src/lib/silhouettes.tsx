@@ -29,7 +29,7 @@ export const CATEGORY_SILHOUETTE: Record<AssetCategory, ReactNode> = {
       <circle cx="34" cy="31" r="3.6" />
     </svg>
   ),
-  watch: (
+  accessories: (
     <svg viewBox="0 0 48 48" className="h-full w-full" {...P} aria-hidden>
       <circle cx="24" cy="24" r="10" />
       <path d="M24 19v5l3.5 2.4M18.5 14.5 17.5 5h13l-1 9.5M18.5 33.5l-1 9.5h13l-1-9.5M34 21h2.5v6H34" />
@@ -44,11 +44,6 @@ export const CATEGORY_SILHOUETTE: Record<AssetCategory, ReactNode> = {
     <svg viewBox="0 0 48 48" className="h-full w-full" {...P} aria-hidden>
       <path d="M4 42V20L24 6l20 14v22M4 42h40" />
       <path d="M17 42V29h14v13M11 24v5M37 24v5" />
-    </svg>
-  ),
-  jewelry: (
-    <svg viewBox="0 0 48 48" className="h-full w-full" {...P} aria-hidden>
-      <path d="M13 7h22l8 12-19 24L5 19 13 7ZM5 19h38M18 7l6 12 6-12M24 19v24" />
     </svg>
   ),
 };
