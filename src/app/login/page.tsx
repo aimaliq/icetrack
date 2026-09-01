@@ -9,8 +9,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/login" },
 };
 
-export default async function LoginPage() {
+type Props = { searchParams: Promise<{ error?: string; next?: string }> };
+
+export default async function LoginPage({ searchParams }: Props) {
   if (await getCurrentProfile()) redirect("/");
+  const { error } = await searchParams;
 
   return (
     <div className="mx-auto max-w-md px-4 py-12 sm:px-6 sm:py-20">
@@ -20,6 +23,18 @@ export default async function LoginPage() {
       <p className="mx-auto mt-3 max-w-sm text-center text-[15px] leading-relaxed text-muted">
         Enter your email and we will send you a sign-in link.
       </p>
+
+      {error && (
+        <p
+          role="alert"
+          className="mt-6 rounded-xl bg-amber-500/10 px-4 py-3 text-center text-[13px]
+                     text-amber-700 dark:text-amber-300"
+        >
+          {error === "link_expired"
+            ? "That sign-in link has expired or was already used. Request a new one below."
+            : error}
+        </p>
+      )}
 
       <div className="mt-8 sm:mt-10">
         <AuthForm action={signIn} mode="login" />

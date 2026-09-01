@@ -8,7 +8,7 @@ import "./globals.css";
 
 const TITLE = "IceTrack — Mapping VIP premium assets";
 const DESCRIPTION =
-  "An open source, community-sourced database mapping the luxury assets of public figures. Every entry carries its source.";
+  "A community-built database mapping the luxury assets of public figures. Every entry carries its source, and anyone can contribute.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     "supercars",
     "yachts",
     "celebrity net worth",
-    "open source database",
+    "community database",
   ],
   alternates: { canonical: "/" },
   openGraph: {
@@ -130,21 +130,15 @@ function Footer() {
           for our sourcing and removal policy.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[12px] text-faint">
-          <a
-            href="https://github.com/aimaliq/icetrack"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-ink"
-          >
-            GitHub
-          </a>
           <Link href="/contributors" className="hover:text-ink">
             Contributors
+          </Link>
+          <Link href="/changes" className="hover:text-ink">
+            Recent changes
           </Link>
           <Link href="/about#removals" className="hover:text-ink">
             Corrections &amp; removals
           </Link>
-          <span>Open source</span>
         </div>
       </div>
     </footer>

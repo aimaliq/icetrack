@@ -37,7 +37,7 @@ const STEPS = [
   {
     n: "1",
     title: "Create an account",
-    body: "Sign up with your email and confirm it. That is all — no GitHub account, no technical setup.",
+    body: "Sign up with your email and confirm it. That is all — no application, no technical setup.",
   },
   {
     n: "2",
@@ -96,21 +96,40 @@ export default function AboutPage() {
         marked Disputed while we review it.
       </p>
 
-      {/* --- Open source ------------------------------------------------ */}
+      {/* --- Contributing ----------------------------------------------- */}
       <h2 className="mt-12 text-xl font-semibold tracking-tight sm:mt-14 sm:text-2xl">
-        Open source
+        Contributing
       </h2>
       <p className="mt-4 text-[15px] leading-relaxed text-muted">
-        The code is public. If you want to report a bug or suggest
-        a feature the repository is accessible <a
-        href="https://github.com/aimaliq/icetrack"
-        target="_blank"
-        rel="noreferrer"
-        className="transition hover:bg-sunken sm:py-2.5 sm:text-[14px]"
-      >
-        here ↗.
-      </a>
+        Anyone with an account can add entries and correct existing ones,
+        directly on this site. Every change is recorded with your username and
+        a summary of what you changed, and the full history of an entry is
+        public — as is the{" "}
+        <Link href="/changes" className="text-accent hover:underline">
+          feed of recent changes
+        </Link>{" "}
+        across the whole database.
       </p>
+      <p className="mt-4 text-[15px] leading-relaxed text-muted">
+        There is no application process and nothing to install. The one thing
+        we ask is that you bring a source.
+      </p>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Link
+          href="/signup"
+          className="focus-ring rounded-full bg-ink px-6 py-3 text-[15px] font-medium
+                     text-surface transition hover:opacity-90 sm:py-2.5 sm:text-[14px]"
+        >
+          Create an account
+        </Link>
+        <Link
+          href="/contributors"
+          className="focus-ring rounded-full border border-line px-6 py-3 text-[15px]
+                     transition hover:bg-sunken sm:py-2.5 sm:text-[14px]"
+        >
+          See who contributes
+        </Link>
+      </div>
 
       {/* --- Disclaimer ------------------------------------------------- */}
       <h2 className="mt-12 text-xl font-semibold tracking-tight sm:mt-14 sm:text-2xl">

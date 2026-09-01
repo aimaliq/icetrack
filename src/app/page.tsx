@@ -30,7 +30,7 @@ export default async function Home() {
     alternateName: "IceTrack — Mapping VIP premium assets",
     url: SITE_URL,
     description:
-      "An open source, community-sourced database mapping the luxury assets of public figures.",
+      "A community-built database mapping the luxury assets of public figures.",
     license: "https://creativecommons.org/licenses/by-sa/4.0/",
     isAccessibleForFree: true,
     creator: { "@type": "Organization", name: "IceTrack", url: SITE_URL },
