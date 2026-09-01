@@ -31,8 +31,11 @@
         "sports",
         "film",
         "business",
+        "crypto",
         "fashion",
-        "media"
+        "media",
+        "royalty",
+        "art"
       ]
     },
     "nationality": {

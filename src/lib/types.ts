@@ -20,7 +20,10 @@ export type CelebrityCategory =
   | "film"
   | "business"
   | "fashion"
-  | "media";
+  | "media"
+  | "royalty"
+  | "crypto"
+  | "art";
 
 /**
  * Image credit. Wikimedia Commons licences (CC BY-SA and friends) require

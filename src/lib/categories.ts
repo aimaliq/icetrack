@@ -28,6 +28,11 @@ export const CELEBRITY_CATEGORY_LABEL: Record<CelebrityCategory, string> = {
   sports: "Sports",
   film: "Film & TV",
   business: "Business",
+  crypto: "Crypto",
   fashion: "Fashion",
-  media: "Media",
+  // Stored as `media` since the first schema; it always meant online
+  // personalities rather than media companies, so only the label changes.
+  media: "Social Media",
+  royalty: "Royalty & Politics",
+  art: "Art & Culture",
 };
