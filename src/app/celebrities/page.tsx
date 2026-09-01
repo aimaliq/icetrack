@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getCelebritiesWithAssets } from "@/lib/data";
 import { CELEBRITY_CATEGORY_LABEL, CATEGORY_META } from "@/lib/categories";
+import { CATEGORY_SILHOUETTE } from "@/lib/silhouettes";
 import { Avatar } from "@/components/Avatar";
 import { formatValue, totalValue } from "@/lib/format";
 
@@ -41,7 +42,7 @@ export default function CelebritiesPage() {
                   <h2 className="text-[19px] font-semibold leading-tight tracking-tight">
                     {c.name}
                   </h2>
-                  <p className="mt-1 text-[11px] uppercase tracking-widest text-faint">
+                  <p className="mt-1.5 text-[12px] uppercase tracking-widest text-faint">
                     {CELEBRITY_CATEGORY_LABEL[c.category]}
                     <span aria-hidden> · </span>
                     {c.assets.length}{" "}
@@ -56,31 +57,31 @@ export default function CelebritiesPage() {
                 </div>
 
                 {worth && (
-                  <span className="shrink-0 text-right text-[15px] font-semibold tabular-nums">
+                  <span className="shrink-0 text-right text-[16px] font-semibold tabular-nums">
                     {worth}
                   </span>
                 )}
               </div>
 
               {c.bio && (
-                <p className="mt-3.5 line-clamp-2 text-[13px] leading-relaxed text-muted">
+                <p className="mt-3.5 line-clamp-2 text-[14px] leading-relaxed text-muted">
                   {c.bio}
                 </p>
               )}
 
               <div className="mt-4 flex items-center justify-between border-t border-line pt-3">
-                <div className="flex gap-1.5" aria-hidden>
+                <div className="flex gap-2.5 text-faint" aria-hidden>
                   {cats.map((cat) => (
                     <span
                       key={cat}
-                      className="text-[15px]"
+                      className="h-[18px] w-[18px]"
                       title={CATEGORY_META[cat].label}
                     >
-                      {CATEGORY_META[cat].icon}
+                      {CATEGORY_SILHOUETTE[cat]}
                     </span>
                   ))}
                 </div>
-                <span className="text-[11px] uppercase tracking-widest text-faint">
+                <span className="text-[12px] uppercase tracking-widest text-faint">
                   View →
                 </span>
               </div>

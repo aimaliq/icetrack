@@ -31,7 +31,7 @@ export default async function AssetsPage({ searchParams }: Props) {
       <div className="mt-6 flex gap-2 overflow-x-auto pb-1 sm:mt-8 sm:flex-wrap sm:overflow-visible">
         <Link
           href="/assets"
-          className={`focus-ring shrink-0 rounded-full border px-4 py-2 text-[13px] transition ${
+          className={`focus-ring shrink-0 rounded-full border px-4 py-2 text-[14px] transition ${
             active
               ? "border-line text-muted hover:bg-sunken"
               : "border-ink bg-ink text-surface"
@@ -43,7 +43,7 @@ export default async function AssetsPage({ searchParams }: Props) {
           <Link
             key={cat}
             href={`/assets?category=${cat}`}
-            className={`focus-ring shrink-0 rounded-full border px-4 py-2 text-[13px] transition ${
+            className={`focus-ring shrink-0 rounded-full border px-4 py-2 text-[14px] transition ${
               active === cat
                 ? "border-ink bg-ink text-surface"
                 : "border-line text-muted hover:bg-sunken"

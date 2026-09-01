@@ -30,10 +30,10 @@ function Nav() {
     <header className="sticky top-0 z-50 border-b border-line bg-surface/80 backdrop-blur-xl">
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="focus-ring flex items-center gap-2 rounded-lg">
-          <span className="text-lg" aria-hidden>
-            ❄
+          <span className="text-xl" aria-hidden>
+            💎
           </span>
-          <span className="text-[15px] font-semibold tracking-tight">IceTrack</span>
+          <span className="text-[20px] font-semibold tracking-tight">IceTrack</span>
         </Link>
 
         <div className="flex items-center gap-1 sm:gap-6">

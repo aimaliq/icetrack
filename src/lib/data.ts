@@ -57,3 +57,4 @@ export function getStats() {
     categories: new Set(assets.map((a) => a.category)).size,
   };
 }
+

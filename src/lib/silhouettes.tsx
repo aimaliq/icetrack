@@ -4,47 +4,51 @@ import type { AssetCategory } from "./types";
 const P = {
   fill: "none",
   stroke: "currentColor",
-  strokeWidth: 1.4,
+  strokeWidth: 1.25,
   strokeLinecap: "round" as const,
   strokeLinejoin: "round" as const,
+  vectorEffect: "non-scaling-stroke" as const,
 };
 
-const box = "h-12 w-12";
-
-/** Line-art placeholders shown when an asset has no photograph. */
+/**
+ * Line-art marks for each category. Monochrome and stroke-based so they take
+ * the theme's colour and stay crisp at any size — sized by the caller.
+ */
 export const CATEGORY_SILHOUETTE: Record<AssetCategory, ReactNode> = {
   jet: (
-    <svg viewBox="0 0 24 24" className={box} {...P} aria-hidden>
-      <path d="M2 13.5 11 12l3.5-7.5a1.6 1.6 0 0 1 3 0L21 12l1 1.5-10 2-3 4.5H7l1-4.5-6-1.5Z" />
+    <svg viewBox="0 0 48 48" className="h-full w-full" {...P} aria-hidden>
+      <path d="M3 27.5 20 24l7.5-15.5a3 3 0 0 1 5.4 0L40.5 24 45 27.5l-19 4.5-6 9h-4.5l2-9L3 27.5Z" />
+      <path d="M20 24h13" />
     </svg>
   ),
   car: (
-    <svg viewBox="0 0 24 24" className={box} {...P} aria-hidden>
-      <path d="M3 15.5v-2l1.8-4.2A2 2 0 0 1 6.6 8h10.8a2 2 0 0 1 1.8 1.3L21 13.5v2" />
-      <path d="M3 15.5h18M6 9.5h12" />
-      <circle cx="7" cy="16" r="1.8" />
-      <circle cx="17" cy="16" r="1.8" />
+    <svg viewBox="0 0 48 48" className="h-full w-full" {...P} aria-hidden>
+      <path d="M5 31v-4.5l3.6-8.4A4 4 0 0 1 12.3 16h23.4a4 4 0 0 1 3.7 2.1L43 26.5V31" />
+      <path d="M5 31h38M11 19h26M5 31v3h5v-3M43 31v3h-5v-3" />
+      <circle cx="14" cy="31" r="3.6" />
+      <circle cx="34" cy="31" r="3.6" />
     </svg>
   ),
   watch: (
-    <svg viewBox="0 0 24 24" className={box} {...P} aria-hidden>
-      <circle cx="12" cy="12" r="5" />
-      <path d="M12 9.5V12l1.8 1.2M9.5 7 9 3h6l-.5 4M9.5 17l-.5 4h6l-.5-4" />
+    <svg viewBox="0 0 48 48" className="h-full w-full" {...P} aria-hidden>
+      <circle cx="24" cy="24" r="10" />
+      <path d="M24 19v5l3.5 2.4M18.5 14.5 17.5 5h13l-1 9.5M18.5 33.5l-1 9.5h13l-1-9.5M34 21h2.5v6H34" />
     </svg>
   ),
   yacht: (
-    <svg viewBox="0 0 24 24" className={box} {...P} aria-hidden>
-      <path d="M3 17h18l-2 3H5l-2-3ZM5 14h14l-1.5-3H6.5L5 14ZM12 11V3l6 5h-6" />
+    <svg viewBox="0 0 48 48" className="h-full w-full" {...P} aria-hidden>
+      <path d="M4 34h40l-4.5 7h-31L4 34ZM9 28h30l-3-6H12l-3 6ZM24 22V5l12 10H24" />
     </svg>
   ),
   estate: (
-    <svg viewBox="0 0 24 24" className={box} {...P} aria-hidden>
-      <path d="M3 20V10l9-6 9 6v10M3 20h18M9 20v-6h6v6" />
+    <svg viewBox="0 0 48 48" className="h-full w-full" {...P} aria-hidden>
+      <path d="M4 42V20L24 6l20 14v22M4 42h40" />
+      <path d="M17 42V29h14v13M11 24v5M37 24v5" />
     </svg>
   ),
   jewelry: (
-    <svg viewBox="0 0 24 24" className={box} {...P} aria-hidden>
-      <path d="M6 3h12l3 5-9 13L3 8l3-5ZM3 8h18M9 3l3 5 3-5M12 8v13" />
+    <svg viewBox="0 0 48 48" className="h-full w-full" {...P} aria-hidden>
+      <path d="M13 7h22l8 12-19 24L5 19 13 7ZM5 19h38M18 7l6 12 6-12M24 19v24" />
     </svg>
   ),
 };

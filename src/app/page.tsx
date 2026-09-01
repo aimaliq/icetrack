@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAssets, getCelebritiesWithAssets, getStats } from "@/lib/data";
-import { CATEGORY_META, CATEGORY_ORDER } from "@/lib/categories";
+import { CATEGORY_ORDER } from "@/lib/categories";
+import { CategoryTile } from "@/components/CategoryTile";
 import { AssetCard } from "@/components/AssetCard";
 import { Avatar } from "@/components/Avatar";
 import { formatValue, totalValue } from "@/lib/format";
@@ -64,10 +65,10 @@ export default function Home() {
             { label: "Categories", value: String(CATEGORY_ORDER.length) },
           ].map((s) => (
             <div key={s.label} className="bg-surface px-3 py-6 sm:px-4 sm:py-7">
-              <dd className="text-2xl font-semibold tracking-tight tabular-nums sm:text-3xl">
+              <dd className="text-[26px] font-semibold tracking-tight tabular-nums sm:text-[32px]">
                 {s.value}
               </dd>
-              <dt className="mt-1 text-[10px] uppercase tracking-widest text-faint sm:text-[11px]">
+              <dt className="mt-1.5 text-[11px] uppercase tracking-widest text-faint sm:text-[12px]">
                 {s.label}
               </dt>
             </div>
@@ -76,32 +77,20 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
-        <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Categories</h2>
-        <div className="mt-6 grid grid-cols-3 gap-3 sm:mt-8 sm:gap-4 lg:grid-cols-6">
+        <h2 className="text-[22px] font-semibold tracking-tight sm:text-[26px]">Categories</h2>
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
           {CATEGORY_ORDER.map((cat) => (
-            <Link
-              key={cat}
-              href={`/assets?category=${cat}`}
-              className="card focus-ring flex flex-col items-center gap-1.5 p-4 text-center sm:gap-2 sm:p-6"
-            >
-              <span className="text-2xl sm:text-3xl" aria-hidden>
-                {CATEGORY_META[cat].icon}
-              </span>
-              <span className="text-[12px] font-medium sm:text-[13px]">
-                {CATEGORY_META[cat].plural}
-              </span>
-              <span className="text-[11px] text-faint">{counts[cat] ?? 0}</span>
-            </Link>
+            <CategoryTile key={cat} category={cat} count={counts[cat] ?? 0} />
           ))}
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
         <div className="flex items-end justify-between gap-4">
-          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          <h2 className="text-[22px] font-semibold tracking-tight sm:text-[26px]">
             Most tracked
           </h2>
-          <Link href="/celebrities" className="focus-ring text-[13px] text-accent hover:underline">
+          <Link href="/celebrities" className="focus-ring text-[14px] text-accent hover:underline">
             View all →
           </Link>
         </div>
@@ -116,13 +105,13 @@ export default function Home() {
               >
                 <Avatar person={c} size="md" />
                 <div>
-                  <p className="text-[14px] font-semibold tracking-tight">{c.name}</p>
-                  <p className="mt-0.5 text-[12px] text-faint">
+                  <p className="text-[15px] font-semibold tracking-tight">{c.name}</p>
+                  <p className="mt-0.5 text-[13px] text-faint">
                     {c.assets.length} {c.assets.length === 1 ? "asset" : "assets"}
                   </p>
                 </div>
                 {worth && (
-                  <p className="text-[15px] font-semibold tabular-nums">{worth}</p>
+                  <p className="text-[16px] font-semibold tabular-nums">{worth}</p>
                 )}
               </Link>
             );
@@ -132,10 +121,10 @@ export default function Home() {
 
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
         <div className="flex items-end justify-between gap-4">
-          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          <h2 className="text-[22px] font-semibold tracking-tight sm:text-[26px]">
             Recently catalogued
           </h2>
-          <Link href="/assets" className="focus-ring text-[13px] text-accent hover:underline">
+          <Link href="/assets" className="focus-ring text-[14px] text-accent hover:underline">
             View all →
           </Link>
         </div>
