@@ -70,7 +70,7 @@ export default async function AssetPage({ params }: Props) {
         </h1>
 
         {asset.estimatedValueUsd ? (
-          <p className="mt-3 text-xl font-semibold tabular-nums text-money sm:text-2xl">
+          <p className="mt-3 text-[26px] font-semibold tabular-nums text-money sm:text-[32px]">
             {formatValueExact(asset.estimatedValueUsd)}
             <span className="ml-2 align-middle text-[11px] font-normal uppercase tracking-widest text-faint">
               est.
@@ -81,7 +81,8 @@ export default async function AssetPage({ params }: Props) {
         {owner && (
           <Link
             href={`/celebrities/${owner.id}`}
-            className="card focus-ring mt-5 flex items-center gap-3 p-3"
+            className="focus-ring mt-5 flex items-center gap-3 rounded-2xl bg-elevated
+                       p-3 transition duration-300 hover:shadow-lg hover:shadow-black/5"
           >
             <Avatar person={owner} size="sm" />
             <div className="min-w-0">

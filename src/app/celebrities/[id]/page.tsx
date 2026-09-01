@@ -85,7 +85,7 @@ export default async function CelebrityPage({ params }: Props) {
           ].map((s) => (
             <div key={s.label} className="bg-surface px-3 py-5 sm:px-4">
               <dd
-                className={`text-lg font-semibold tracking-tight tabular-nums sm:text-xl ${
+                className={`text-xl font-semibold tracking-tight tabular-nums sm:text-2xl ${
                   s.label === "Tracked value" ? "text-money" : ""
                 }`}
                 title={s.title}

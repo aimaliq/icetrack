@@ -105,7 +105,9 @@ export default function Home() {
               <Link
                 key={c.id}
                 href={`/celebrities/${c.id}`}
-                className="card focus-ring flex flex-col items-center gap-3 p-4 text-center sm:p-6"
+                className="focus-ring group flex flex-col items-center gap-3 rounded-2xl
+                           bg-elevated p-4 text-center transition duration-300
+                           hover:shadow-lg hover:shadow-black/5 sm:p-6"
               >
                 <Avatar person={c} size="md" />
                 <div>
@@ -115,7 +117,7 @@ export default function Home() {
                   </p>
                 </div>
                 {worth && (
-                  <p className="text-[16px] font-semibold tabular-nums text-money">{worth}</p>
+                  <p className="text-[20px] font-semibold tabular-nums text-money sm:text-[22px]">{worth}</p>
                 )}
               </Link>
             );

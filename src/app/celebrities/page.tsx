@@ -57,7 +57,7 @@ export default function CelebritiesPage() {
                 </div>
 
                 {worth && (
-                  <span className="shrink-0 text-right text-[17px] font-semibold tabular-nums text-money">
+                  <span className="shrink-0 text-right text-[20px] font-semibold tabular-nums text-money">
                     {worth}
                   </span>
                 )}

@@ -55,16 +55,6 @@ body {
 }
 
 @layer components {
-  .card {
-    @apply rounded-2xl border border-line bg-elevated transition duration-300;
-  }
-
-  @media (hover: hover) {
-    .card:hover {
-      @apply border-faint/40 shadow-lg shadow-black/5;
-    }
-  }
-
   /* Keyboard focus stays visible; mouse clicks stay clean. */
   .focus-ring {
     @apply outline-none focus-visible:ring-2 focus-visible:ring-accent
