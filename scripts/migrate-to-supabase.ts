@@ -17,6 +17,26 @@ import fs from "node:fs";
 import path from "node:path";
 import { createClient } from "@supabase/supabase-js";
 
+/**
+ * Load .env.local for the project URL. Only the service role key has to be
+ * supplied by hand — it deliberately does not live in any file.
+ */
+function loadEnvLocal() {
+  const file = path.join(process.cwd(), ".env.local");
+  if (!fs.existsSync(file)) return;
+  for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) continue;
+    const key = trimmed.slice(0, eq).trim();
+    const value = trimmed.slice(eq + 1).trim().replace(/^["']|["']$/g, "");
+    if (!process.env[key]) process.env[key] = value;
+  }
+}
+
+loadEnvLocal();
+
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -66,6 +86,8 @@ async function main() {
         born_year: c.bornYear ?? null,
         bio: c.bio ?? null,
         wikipedia: c.wikipedia ?? null,
+        image_url: c.imageUrl ?? null,
+        image_credit: c.imageCredit ?? null,
       })),
       { onConflict: "slug" },
     )
@@ -98,6 +120,9 @@ async function main() {
       region: a.region ?? null,
       summary: a.summary ?? null,
       sources: a.sources ?? [],
+      image_url: a.imageUrl ?? null,
+      image_credit: a.imageCredit ?? null,
+      image_is_representative: a.imageIsRepresentative ?? false,
     };
   });
 

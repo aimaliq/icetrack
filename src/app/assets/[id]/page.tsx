@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAsset, getAssets } from "@/lib/data";
+import { getAsset, getAssets } from "@/lib/db";
 import { CATEGORY_META } from "@/lib/categories";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AssetImage } from "@/components/AssetImage";
@@ -10,17 +10,18 @@ import { ImageCredit } from "@/components/ImageCredit";
 import { isPlaceholderSource } from "@/lib/types";
 import { formatValueExact } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
+import { EditButton } from "@/components/EditButton";
 import { SITE_URL } from "@/lib/site";
 
 type Props = { params: Promise<{ id: string }> };
 
-export function generateStaticParams() {
-  return getAssets().map((a) => ({ id: a.id }));
+export async function generateStaticParams() {
+  return (await getAssets()).map((a) => ({ id: a.id }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const found = getAsset(id);
+  const found = await getAsset(id);
   if (!found) return { title: "Not found", robots: { index: false } };
 
   const { asset, owner } = found;
@@ -56,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AssetPage({ params }: Props) {
   const { id } = await params;
-  const found = getAsset(id);
+  const found = await getAsset(id);
   if (!found) notFound();
 
   const { asset, owner } = found;
@@ -123,12 +124,23 @@ export default async function AssetPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-16">
       <JsonLd data={jsonLd} />
-      <Link
-        href="/assets"
-        className="focus-ring text-[13px] text-muted transition hover:text-ink"
-      >
-        ← Assets
-      </Link>
+      <div className="flex items-center justify-between gap-4">
+        <Link
+          href="/assets"
+          className="focus-ring text-[13px] text-muted transition hover:text-ink"
+        >
+          ← Assets
+        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/assets/${asset.id}/history`}
+            className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-muted transition hover:text-ink"
+          >
+            History
+          </Link>
+          <EditButton href={`/assets/${asset.id}/edit`} />
+        </div>
+      </div>
 
       <header className="mt-6 sm:mt-8">
         <AssetImage asset={asset} size="lg" />

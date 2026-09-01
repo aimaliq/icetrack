@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAssets, getCelebritiesWithAssets, getStats } from "@/lib/data";
+import { getAssets, getCelebritiesWithAssets, getStats } from "@/lib/db";
 import { CATEGORY_ORDER } from "@/lib/categories";
 import { CategoryTile } from "@/components/CategoryTile";
 import { AssetCard } from "@/components/AssetCard";
@@ -8,10 +8,10 @@ import { formatValue, totalValue } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_URL } from "@/lib/site";
 
-export default function Home() {
-  const stats = getStats();
-  const celebrities = getCelebritiesWithAssets();
-  const assets = getAssets();
+export default async function Home() {
+  const stats = await getStats();
+  const celebrities = await getCelebritiesWithAssets();
+  const assets = await getAssets();
   const byId = new Map(celebrities.map((c) => [c.id, c]));
   const tracked = formatValue(totalValue(assets));
 
@@ -41,7 +41,7 @@ export default function Home() {
       <JsonLd data={jsonLd} />
       <section className="mx-auto max-w-6xl px-4 pb-14 pt-14 text-center sm:px-6 sm:pb-20 sm:pt-24">
         <p className="animate-fade-up text-[11px] uppercase tracking-[0.24em] text-accent sm:text-[12px]">
-          Open source · Community sourced
+          Community sourced
         </p>
 
         <h1 className="mt-5 text-[2.5rem] font-semibold leading-[1.05] tracking-tightest sm:mt-6 sm:text-6xl lg:text-7xl">
@@ -52,7 +52,7 @@ export default function Home() {
 
         <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted sm:mt-7 sm:text-[17px]">
           The jets, supercars, watches and yachts behind the world&apos;s
-          biggest names — catalogued, sourced, and open to everyone.
+          biggest names.
         </p>
 
         <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-10 sm:flex-row sm:items-center">
@@ -61,7 +61,7 @@ export default function Home() {
             className="focus-ring rounded-full bg-ink px-6 py-3 text-[15px] font-medium
                        text-surface transition hover:opacity-90 sm:py-2.5 sm:text-[14px]"
           >
-            Explore the database
+            Explore
           </Link>
           <Link
             href="/about"
@@ -72,15 +72,14 @@ export default function Home() {
           </Link>
         </div>
 
-        <dl className="mx-auto mt-14 grid max-w-3xl grid-cols-2 gap-px overflow-hidden
-                       rounded-2xl border border-line bg-line sm:mt-20 sm:grid-cols-4">
+        <dl className="mx-auto mt-14 grid max-w-2xl grid-cols-3 overflow-hidden
+                       rounded-2xl bg-elevated text-center sm:mt-20">
           {[
-            { label: "Celebrities", value: String(stats.celebrities) },
-            { label: "Assets", value: String(stats.assets) },
             { label: "Tracked value", value: tracked ?? "—" },
-            { label: "Categories", value: String(CATEGORY_ORDER.length) },
+            { label: "Assets", value: String(stats.assets) },
+            { label: "Celebrities", value: String(stats.celebrities) },
           ].map((s) => (
-            <div key={s.label} className="bg-surface px-3 py-6 sm:px-4 sm:py-7">
+            <div key={s.label} className="px-3 py-6 sm:px-4 sm:py-7">
               <dd
                 className={`text-[26px] font-semibold tracking-tight tabular-nums sm:text-[32px] ${
                   s.label === "Tracked value" ? "text-money" : ""
@@ -108,9 +107,9 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
         <div className="flex items-end justify-between gap-4">
           <h2 className="text-[22px] font-semibold tracking-tight sm:text-[26px]">
-            Most tracked
+            Most relevant
           </h2>
-          <Link href="/celebrities" className="focus-ring text-[14px] text-accent hover:underline">
+          <Link href="/celebrities" className="focus-ring text-[15px] text-accent hover:underline">
             View all →
           </Link>
         </div>
@@ -144,9 +143,9 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
         <div className="flex items-end justify-between gap-4">
           <h2 className="text-[22px] font-semibold tracking-tight sm:text-[26px]">
-            Recently catalogued
+            Recently added
           </h2>
-          <Link href="/assets" className="focus-ring text-[14px] text-accent hover:underline">
+          <Link href="/assets" className="focus-ring text-[15px] text-accent hover:underline">
             View all →
           </Link>
         </div>

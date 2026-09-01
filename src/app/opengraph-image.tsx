@@ -1,12 +1,12 @@
 import { ImageResponse } from "next/og";
-import { getStats } from "@/lib/data";
+import { getStats } from "@/lib/db";
 
 export const alt = "IceTrack — Mapping VIP premium assets";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function Image() {
-  const stats = getStats();
+  const stats = await getStats();
 
   return new ImageResponse(
     (

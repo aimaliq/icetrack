@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ThemeScript } from "@/components/ThemeScript";
+import { UserMenu } from "@/components/UserMenu";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -56,13 +57,17 @@ export const viewport: Viewport = {
 const LINKS = [
   { href: "/celebrities", label: "Celebrities" },
   { href: "/assets", label: "Assets" },
+  { href: "/changes", label: "Changes" },
   { href: "/about", label: "About" },
 ];
 
-function Nav() {
+async function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-surface/80 backdrop-blur-xl">
-      <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+      {/* Mobile centres the wordmark, so the theme toggle is pulled out of the
+          flow to keep it from shifting the centre. */}
+      <nav className="relative mx-auto flex h-14 max-w-6xl items-center justify-center px-4
+                      sm:justify-between sm:px-6">
         <Link href="/" className="focus-ring flex items-center gap-2 rounded-lg">
           <span className="text-xl" aria-hidden>
             💎
@@ -70,7 +75,8 @@ function Nav() {
           <span className="text-[20px] font-semibold tracking-tight">IceTrack</span>
         </Link>
 
-        <div className="flex items-center gap-1 sm:gap-6">
+        <div className="absolute right-4 flex items-center gap-1
+                        sm:static sm:right-auto sm:gap-6">
           {/* Full nav on tablet and up. */}
           <div className="hidden items-center gap-6 text-[13px] text-muted sm:flex">
             {LINKS.map((l) => (
@@ -83,13 +89,14 @@ function Nav() {
               </Link>
             ))}
           </div>
+          <UserMenu />
           <ThemeToggle />
         </div>
       </nav>
 
-      {/* Mobile: a scrollable row instead of a hamburger — three links do not
+      {/* Mobile: a centred row instead of a hamburger — three links do not
           justify hiding navigation behind a tap. */}
-      <div className="flex gap-1 overflow-x-auto border-t border-line px-3 pb-2 pt-1.5 sm:hidden">
+      <div className="flex justify-center gap-1 border-t border-line px-3 pb-2 pt-1.5 sm:hidden">
         {LINKS.map((l) => (
           <Link
             key={l.href}
@@ -107,12 +114,12 @@ function Nav() {
 
 function Footer() {
   return (
-    <footer className="mt-20 border-t border-line sm:mt-24">
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
+    <footer className="mt-20 bg-sunken sm:mt-24">
+      <div className="mx-auto max-w-6xl px-4 py-10 text-center sm:px-6 sm:py-12">
         <p className="text-[15px] font-semibold tracking-tight">
           IceTrack — Mapping VIP premium assets
         </p>
-        <p className="mt-3 max-w-2xl text-[13px] leading-relaxed text-muted">
+        <p className="mx-auto mt-3 max-w-2xl text-[13px] leading-relaxed text-muted">
           IceTrack catalogues publicly reported information about public
           figures. Entries are community-contributed and may be incomplete or
           out of date. Values are press estimates, not appraisals, and no
@@ -122,7 +129,7 @@ function Footer() {
           </Link>{" "}
           for our sourcing and removal policy.
         </p>
-        <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[12px] text-faint">
+        <div className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[12px] text-faint">
           <a
             href="https://github.com/aimaliq/icetrack"
             target="_blank"
@@ -131,6 +138,9 @@ function Footer() {
           >
             GitHub
           </a>
+          <Link href="/contributors" className="hover:text-ink">
+            Contributors
+          </Link>
           <Link href="/about#removals" className="hover:text-ink">
             Corrections &amp; removals
           </Link>

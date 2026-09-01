@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAssets, getCelebrities } from "@/lib/data";
+import { getAssets, getCelebrities } from "@/lib/db";
 import { CATEGORY_META, CATEGORY_ORDER } from "@/lib/categories";
 import { AssetCard } from "@/components/AssetCard";
 import type { AssetCategory } from "@/lib/types";
+import { AddButton } from "@/components/AddButton";
 
 export const metadata: Metadata = {
   title: "Assets",
@@ -26,18 +27,17 @@ export default async function AssetsPage({ searchParams }: Props) {
     ? (category as AssetCategory)
     : null;
 
-  const celebrities = getCelebrities();
+  const celebrities = await getCelebrities();
   const byId = new Map(celebrities.map((c) => [c.id, c]));
-  const all = getAssets();
+  const all = await getAssets();
   const assets = active ? all.filter((a) => a.category === active) : all;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
-      <h1 className="text-3xl font-semibold tracking-tightest sm:text-4xl">Assets</h1>
-      <p className="mt-2 text-[14px] text-muted sm:mt-3 sm:text-[15px]">
-        {assets.length} {assets.length === 1 ? "entry" : "entries"}
-        {active ? ` in ${CATEGORY_META[active].plural}` : ""}.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-3xl font-semibold tracking-tightest sm:text-4xl">Assets</h1>
+        <AddButton href="/assets/new" label="Add an asset" />
+      </div>
 
       <div className="mt-6 flex gap-2 overflow-x-auto pb-1 sm:mt-8 sm:flex-wrap sm:overflow-visible">
         <Link

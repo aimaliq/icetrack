@@ -1,24 +1,26 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getCelebrities, getCelebrity } from "@/lib/data";
+import { getCelebrities, getCelebrity } from "@/lib/db";
 import { CELEBRITY_CATEGORY_LABEL } from "@/lib/categories";
 import { AssetCard } from "@/components/AssetCard";
 import { Avatar } from "@/components/Avatar";
 import { ImageCredit } from "@/components/ImageCredit";
 import { formatValue, formatValueExact, totalValue } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
+import { EditButton } from "@/components/EditButton";
+import { AddButton } from "@/components/AddButton";
 import { SITE_URL } from "@/lib/site";
 
 type Props = { params: Promise<{ id: string }> };
 
-export function generateStaticParams() {
-  return getCelebrities().map((c) => ({ id: c.id }));
+export async function generateStaticParams() {
+  return (await getCelebrities()).map((c) => ({ id: c.id }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const celeb = getCelebrity(id);
+  const celeb = await getCelebrity(id);
   if (!celeb) return { title: "Not found", robots: { index: false } };
 
   const total = formatValue(totalValue(celeb.assets));
@@ -49,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CelebrityPage({ params }: Props) {
   const { id } = await params;
-  const celeb = getCelebrity(id);
+  const celeb = await getCelebrity(id);
   if (!celeb) notFound();
 
   const total = totalValue(celeb.assets);
@@ -79,12 +81,23 @@ export default async function CelebrityPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-16">
       <JsonLd data={jsonLd} />
-      <Link
-        href="/celebrities"
-        className="focus-ring text-[15px] text-muted transition hover:text-ink"
-      >
-        ← Back
-      </Link>
+      <div className="flex items-center justify-between gap-4">
+        <Link
+          href="/celebrities"
+          className="focus-ring text-[15px] text-muted transition hover:text-ink"
+        >
+          ← Back
+        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/celebrities/${celeb.id}/history`}
+            className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-muted transition hover:text-ink"
+          >
+            History
+          </Link>
+          <EditButton href={`/celebrities/${celeb.id}/edit`} />
+        </div>
+      </div>
 
       <header className="mt-6 border-b border-line pb-8 sm:mt-8 sm:pb-10">
         <div className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:gap-7 sm:text-left">
@@ -120,8 +133,8 @@ export default async function CelebrityPage({ params }: Props) {
           </div>
         </div>
 
-        <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl
-                       border border-line bg-line sm:grid-cols-4">
+        <dl className="mt-8 grid grid-cols-2 overflow-hidden rounded-2xl
+                       bg-elevated text-center sm:grid-cols-4">
           {[
             {
               label: "Tracked value",
@@ -132,7 +145,7 @@ export default async function CelebrityPage({ params }: Props) {
             { label: "Valued", value: `${valued.length}/${celeb.assets.length}` },
             { label: "Nationality", value: celeb.nationality ?? "—" },
           ].map((s) => (
-            <div key={s.label} className="bg-surface px-3 py-5 sm:px-4">
+            <div key={s.label} className="px-3 py-5 sm:px-4">
               <dd
                 className={`text-xl font-semibold tracking-tight tabular-nums sm:text-2xl ${
                   s.label === "Tracked value" ? "text-money" : ""
@@ -150,7 +163,13 @@ export default async function CelebrityPage({ params }: Props) {
       </header>
 
       <section className="mt-10 sm:mt-12">
-        <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Assets</h2>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Assets</h2>
+          <AddButton
+            href={`/assets/new?owner=${celeb.id}`}
+            label="Add an asset"
+          />
+        </div>
         {celeb.assets.length === 0 ? (
           <p className="mt-6 text-[15px] text-muted">No assets catalogued yet.</p>
         ) : (

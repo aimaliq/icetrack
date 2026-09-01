@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getCelebrities, getCelebrity } from "@/lib/data";
+import { getCelebrities, getCelebrity } from "@/lib/db";
 import { CATEGORY_META } from "@/lib/categories";
 import { formatValue, totalValue } from "@/lib/format";
 
@@ -7,13 +7,13 @@ export const alt = "IceTrack celebrity profile";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export function generateStaticParams() {
-  return getCelebrities().map((c) => ({ id: c.id }));
+export async function generateStaticParams() {
+  return (await getCelebrities()).map((c) => ({ id: c.id }));
 }
 
 export default async function Image({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const celeb = getCelebrity(id);
+  const celeb = await getCelebrity(id);
 
   const total = celeb ? formatValue(totalValue(celeb.assets)) : null;
   const categories = celeb

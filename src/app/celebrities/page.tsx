@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getCelebritiesWithAssets } from "@/lib/data";
+import { getCelebritiesWithAssets } from "@/lib/db";
 import { CELEBRITY_CATEGORY_LABEL, CATEGORY_META } from "@/lib/categories";
 import { Avatar } from "@/components/Avatar";
 import { formatValue, totalValue } from "@/lib/format";
+import { AddButton } from "@/components/AddButton";
 
 export const metadata: Metadata = {
   title: "Celebrities",
@@ -18,21 +19,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CelebritiesPage() {
-  const celebrities = getCelebritiesWithAssets().sort(
+export default async function CelebritiesPage() {
+  const celebrities = (await getCelebritiesWithAssets()).sort(
     (a, b) => totalValue(b.assets) - totalValue(a.assets),
   );
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
-      <h1 className="text-3xl font-semibold tracking-tightest sm:text-4xl">
-        Celebrities
-      </h1>
-      <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">
-        {celebrities.length} public figures on file. Each owns one or more
-        luxury assets catalogued from public sources — click through for the
-        full breakdown.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-3xl font-semibold tracking-tightest sm:text-4xl">
+          Celebrities
+        </h1>
+        <AddButton href="/celebrities/new" label="Add a person" />
+      </div>
 
       <div className="mt-8 grid gap-3 sm:mt-10 sm:gap-4 lg:grid-cols-2">
         {celebrities.map((c) => {

@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getAsset, getAssets } from "@/lib/data";
+import { getAsset, getAssets } from "@/lib/db";
 import { CATEGORY_META } from "@/lib/categories";
 import { formatValue } from "@/lib/format";
 
@@ -7,8 +7,8 @@ export const alt = "IceTrack asset";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export function generateStaticParams() {
-  return getAssets().map((a) => ({ id: a.id }));
+export async function generateStaticParams() {
+  return (await getAssets()).map((a) => ({ id: a.id }));
 }
 
 const STATUS_COLOR: Record<string, string> = {
@@ -21,7 +21,7 @@ const STATUS_COLOR: Record<string, string> = {
 
 export default async function Image({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const found = getAsset(id);
+  const found = await getAsset(id);
   const asset = found?.asset;
   const owner = found?.owner;
   const value = asset?.estimatedValueUsd ? formatValue(asset.estimatedValueUsd) : null;

@@ -75,54 +75,7 @@ export default function AboutPage() {
       </h2>
       <p className="mt-4 text-[15px] leading-relaxed text-muted">
         IceTrack works like a wiki. Create an account, add what you know, cite
-        where you found it. Your edit appears straight away.
-      </p>
-
-      <ol className="mt-8 space-y-px overflow-hidden rounded-2xl border border-line bg-line">
-        {STEPS.map((s) => (
-          <li key={s.n} className="flex gap-4 bg-surface p-5 sm:p-6">
-            <span
-              className="grid h-7 w-7 shrink-0 place-items-center rounded-full
-                         bg-accent-soft text-[13px] font-semibold text-accent"
-              aria-hidden
-            >
-              {s.n}
-            </span>
-            <div>
-              <h3 className="text-[15px] font-semibold">{s.title}</h3>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-muted">
-                {s.body}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ol>
-
-      <p className="mt-6 text-[14px] leading-relaxed text-muted">
-        Publishing immediately is a deliberate choice: a database nobody can
-        edit is a database nobody corrects. What keeps it honest is that every
-        edit is attributed and reversible, and that anyone — including the
-        people we write about — can flag an entry.
-      </p>
-
-      {/* --- Editorial standards ---------------------------------------- */}
-      <h2 className="mt-12 text-xl font-semibold tracking-tight sm:mt-14 sm:text-2xl">
-        Editorial standards
-      </h2>
-
-      <div className="mt-8 space-y-px overflow-hidden rounded-2xl border border-line bg-line">
-        {RULES.map((r) => (
-          <div key={r.title} className="bg-surface p-5 sm:p-6">
-            <h3 className="text-[15px] font-semibold">{r.title}</h3>
-            <p className="mt-2 text-[14px] leading-relaxed text-muted">{r.body}</p>
-          </div>
-        ))}
-      </div>
-
-      <p className="mt-6 text-[14px] leading-relaxed text-muted">
-        Some limits are enforced by the database itself rather than left to good
-        intentions: an entry cannot be marked Verified or Reported without a
-        source, and street addresses and coordinates are rejected outright.
+        where you found it. Edits appears right away.
       </p>
 
       {/* --- Corrections and removals ----------------------------------- */}
@@ -148,19 +101,16 @@ export default function AboutPage() {
         Open source
       </h2>
       <p className="mt-4 text-[15px] leading-relaxed text-muted">
-        The code behind IceTrack is public. If you want to report a bug, suggest
-        a feature, or read exactly how the sourcing rules are enforced, the
-        repository is the place.
-      </p>
-      <a
+        The code is public. If you want to report a bug or suggest
+        a feature the repository is accessible <a
         href="https://github.com/aimaliq/icetrack"
         target="_blank"
         rel="noreferrer"
-        className="focus-ring mt-6 inline-block rounded-full border border-line px-6
-                   py-3 text-[15px] transition hover:bg-sunken sm:py-2.5 sm:text-[14px]"
+        className="transition hover:bg-sunken sm:py-2.5 sm:text-[14px]"
       >
-        View the code on GitHub ↗
+        here ↗.
       </a>
+      </p>
 
       {/* --- Disclaimer ------------------------------------------------- */}
       <h2 className="mt-12 text-xl font-semibold tracking-tight sm:mt-14 sm:text-2xl">
