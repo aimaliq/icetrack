@@ -16,6 +16,7 @@ export function AssetImage({
   size = "md",
   bleed = false,
   showBadge = true,
+  fit = "cover",
 }: {
   asset: Pick<Asset, "name" | "category" | "imageUrl" | "imageIsRepresentative">;
   size?: keyof typeof SIZES;
@@ -23,6 +24,9 @@ export function AssetImage({
   /** Off at thumbnail sizes, where the label crowds the image and the entry
    *  page it links to states the same caveat properly. */
   showBadge?: boolean;
+  /** `cover` fills the frame but crops; at small sizes that can leave a jet as
+   *  a patch of sky, so thumbnails ask for `contain` and show the whole item. */
+  fit?: "cover" | "contain";
 }) {
   return (
     <div
@@ -47,9 +51,11 @@ export function AssetImage({
           alt={asset.name}
           loading="lazy"
           className={
-            bleed
-              ? "h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-              : "h-full w-full object-contain p-3"
+            fit === "contain"
+              ? "h-full w-full object-contain p-1.5"
+              : bleed
+                ? "h-full w-full object-cover transition-transform duration-500 ease-out-strong group-hover:scale-[1.03]"
+                : "h-full w-full object-contain p-3"
           }
         />
       ) : (

@@ -50,8 +50,8 @@ export function AssetMarquee({
               className="focus-ring flex items-center gap-3 rounded-2xl bg-elevated p-3
                          transition-shadow duration-200 ease-out-strong hover:shadow-lg hover:shadow-black/5"
             >
-              <div className="h-16 w-20 shrink-0 overflow-hidden rounded-xl sm:h-[72px] sm:w-24">
-                <AssetImage asset={asset} bleed showBadge={false} />
+              <div className="h-16 w-20 shrink-0 overflow-hidden rounded-xl bg-sunken sm:h-[72px] sm:w-24">
+                <AssetImage asset={asset} bleed showBadge={false} fit="contain" />
               </div>
 
               <div className="min-w-0 flex-1">

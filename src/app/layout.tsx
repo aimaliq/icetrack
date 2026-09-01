@@ -14,7 +14,7 @@ import "./globals.css";
  */
 const wordmark = Outfit({
   subsets: ["latin"],
-  weight: ["600"],
+  weight: ["500"],
   display: "swap",
   variable: "--font-wordmark",
 });
@@ -88,7 +88,7 @@ async function Nav() {
           <span className="text-xl" aria-hidden>
             💎
           </span>
-          <span className="font-wordmark text-[21px] font-semibold leading-none tracking-[-0.02em]">
+          <span className="font-wordmark text-[21px] font-medium leading-none tracking-[-0.02em]">
             IceTrack
           </span>
         </Link>
