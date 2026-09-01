@@ -63,7 +63,7 @@ const LINKS = [
 
 async function Nav() {
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-elevated">
+    <header className="sticky top-0 z-50 bg-elevated/75 backdrop-blur-xl">
       {/* Three columns rather than flex spacing, so the links sit on the page
           centre instead of the midpoint between logo and controls. */}
       <nav className="mx-auto grid h-14 max-w-6xl grid-cols-[1fr_auto_1fr] items-center
@@ -100,7 +100,7 @@ async function Nav() {
 
       {/* Mobile: a centred row instead of a hamburger — three links do not
           justify hiding navigation behind a tap. */}
-      <div className="flex justify-center gap-1 border-t border-line px-3 pb-2 pt-1.5 sm:hidden">
+      <div className="flex justify-center gap-1 px-3 pb-2 sm:hidden">
         {LINKS.map((l) => (
           <Link
             key={l.href}
