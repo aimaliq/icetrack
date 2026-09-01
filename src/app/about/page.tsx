@@ -41,9 +41,8 @@ export default function AboutPage() {
 
       <p className={P}>
         In music, <em>ice</em> means diamonds, and more broadly expensive
-        things. <em>Track</em> means keeping a record — not of people, but of
-        who claimed what and on what evidence. Every entry keeps its sources and
-        a full history of edits.
+        things. <em>Track</em> means keeping a record. Every entry keeps its
+        sources and a full history of edits.
       </p>
 
       <h2 className={H2}>How it works</h2>
@@ -67,8 +66,8 @@ export default function AboutPage() {
       </p>
 
       <p className={P}>
-        Anyone can edit, so every change is saved with the name of the person
-        who made it. Nothing is changed quietly, and any edit can be undone.
+        Anyone can edit, so every change is saved with the tag of the person
+        who made it.
       </p>
 
       <h2 className={H2}>Contributing</h2>
@@ -118,7 +117,16 @@ export default function AboutPage() {
 
       <p className={P}>
         If an entry is about you, or about someone you represent, and something
-        is wrong, tell us. You do not need an account.
+        is wrong, message{" "}
+        <a
+          href="https://x.com/alimenjorf"
+          target="_blank"
+          rel="noreferrer"
+          className="text-accent hover:underline"
+        >
+          @alimenjorf
+        </a>{" "}
+        on X. You do not need an account.
       </p>
 
       <p className={P}>

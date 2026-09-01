@@ -159,6 +159,18 @@ function Footer() {
             Corrections &amp; removals
           </Link>
         </div>
+
+        <p className="mt-6 text-[12px] text-faint">
+          Built by{" "}
+          <a
+            href="https://x.com/alimenjorf"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors duration-150 ease-out-strong hover:text-ink"
+          >
+            @alimenjorf
+          </a>
+        </p>
       </div>
     </footer>
   );
