@@ -2,6 +2,8 @@ import type { Asset } from "@/lib/types";
 import { CATEGORY_SILHOUETTE } from "@/lib/silhouettes";
 
 const SIZES = {
+  /** Inherits the parent's height, so the caller sets the aspect ratio. */
+  fill: "h-full",
   sm: "h-28",
   md: "h-44",
   lg: "h-56 sm:h-72",
