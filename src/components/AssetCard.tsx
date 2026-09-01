@@ -22,9 +22,7 @@ export function AssetCard({
                  hover:shadow-lg hover:shadow-black/5"
     >
       {/* Image fills the top half, edge to edge. */}
-      {/* `contain`, not `cover`: a portrait photo — a watch, a standing
-          figure — loses its subject to a crop at this aspect ratio. */}
-      <AssetImage asset={asset} bleed fit="contain" />
+      <AssetImage asset={asset} bleed />
 
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-2">

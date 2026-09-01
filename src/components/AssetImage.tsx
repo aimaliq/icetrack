@@ -5,7 +5,7 @@ const SIZES = {
   /** Inherits the parent's height, so the caller sets the aspect ratio. */
   fill: "h-full",
   sm: "h-28",
-  md: "h-52",
+  md: "h-44",
   /**
    * Detail pages cap the height instead of fixing it, so a portrait photo —
    * a watch, a standing figure — fills the space it needs rather than being
@@ -61,7 +61,7 @@ export function AssetImage({
             fit === "contain"
               ? `h-full w-full object-contain ${bleed ? "p-4" : "p-1.5"}`
               : bleed
-                ? "h-full w-full object-cover transition-transform duration-500 ease-out-strong group-hover:scale-[1.03]"
+                ? "h-full w-full object-cover object-top transition-transform duration-500 ease-out-strong group-hover:scale-[1.03]"
                 : "max-h-[520px] w-auto max-w-full object-contain p-3"
           }
         />
