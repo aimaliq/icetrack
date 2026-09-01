@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { updateCelebrity, type EditState } from "@/lib/edit/actions";
 import { CELEBRITY_CATEGORY_LABEL } from "@/lib/categories";
 import { Field, TextArea, Select, EditFooter } from "@/components/EditFields";
+import { ImageUpload } from "@/components/ImageUpload";
 import type { Celebrity } from "@/lib/types";
 
 export function CelebrityForm({ celeb }: { celeb: Celebrity }) {
@@ -60,6 +61,11 @@ export function CelebrityForm({ celeb }: { celeb: Celebrity }) {
         defaultValue={celeb.wikipedia}
         inputMode="url"
         placeholder="https://en.wikipedia.org/wiki/…"
+      />
+
+      <ImageUpload
+        currentUrl={celeb.imageUrl}
+        currentCredit={celeb.imageCredit}
       />
 
       <EditFooter

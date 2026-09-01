@@ -87,6 +87,48 @@ function friendly(message: string): string {
   return message;
 }
 
+
+/**
+ * Image fields. The credit object is only built when a licence was chosen:
+ * an image whose licence is unknown cannot be attributed, and the accepted
+ * licences require attribution.
+ */
+function imageFields(form: FormData) {
+  const url = text(form, "image_url");
+  const license = text(form, "image_license");
+  const author = text(form, "image_author");
+  const sourcePage = text(form, "image_source_page");
+
+  return {
+    image_url: url ?? "",
+    image_credit: url
+      ? {
+          url,
+          ...(author ? { author } : {}),
+          ...(license ? { license } : {}),
+          ...(sourcePage ? { sourcePage } : {}),
+        }
+      : null,
+    image_is_representative: form.get("image_is_representative") === "on",
+  };
+}
+
+/** Licences that oblige us to name the photographer. */
+function creditProblem(form: FormData): string | null {
+  const url = text(form, "image_url");
+  if (!url) return null;
+
+  const license = text(form, "image_license");
+  if (!license) {
+    return "Choose the licence the photo is published under.";
+  }
+  const needsAuthor = !["CC0", "Public domain"].includes(license);
+  if (needsAuthor && !text(form, "image_author")) {
+    return `${license} requires crediting the photographer. Add their name.`;
+  }
+  return null;
+}
+
 export async function updateCelebrity(
   slug: string,
   _prev: EditState,
@@ -106,6 +148,7 @@ export async function updateCelebrity(
     born_year: text(form, "born_year") ?? "",
     bio: text(form, "bio") ?? "",
     wikipedia: text(form, "wikipedia") ?? "",
+    ...imageFields(form),
   };
 
   if (!patch.name) return { error: "Name is required." };
@@ -157,11 +200,15 @@ export async function updateAsset(
     region: region ?? "",
     summary: summaryText ?? "",
     sources: srcs,
+    ...imageFields(form),
   };
 
   if (!patch.name) return { error: "Name is required." };
   if (!patch.category) return { error: "Category is required." };
   if (!status) return { error: "Status is required." };
+
+  const creditIssue = creditProblem(form);
+  if (creditIssue) return { error: creditIssue };
 
   const problem = editorialProblem({
     status,
@@ -202,6 +249,7 @@ export async function createCelebrity(
     born_year: text(form, "born_year") ?? "",
     bio: text(form, "bio") ?? "",
     wikipedia: text(form, "wikipedia") ?? "",
+    ...imageFields(form),
   };
 
   if (!patch.name) return { error: "Name is required." };
@@ -251,11 +299,15 @@ export async function createAsset(
     region: region ?? "",
     summary: summaryText ?? "",
     sources: srcs,
+    ...imageFields(form),
   };
 
   if (!patch.owner_slug) return { error: "Choose who owns this asset." };
   if (!patch.name) return { error: "Name is required." };
   if (!patch.category) return { error: "Category is required." };
+
+  const creditIssue = creditProblem(form);
+  if (creditIssue) return { error: creditIssue };
 
   const problem = editorialProblem({
     status,

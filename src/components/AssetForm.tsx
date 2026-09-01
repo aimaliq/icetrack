@@ -10,6 +10,7 @@ import {
   SourceEditor,
   EditFooter,
 } from "@/components/EditFields";
+import { ImageUpload } from "@/components/ImageUpload";
 import type { Asset } from "@/lib/types";
 
 const STATUSES = [
@@ -108,6 +109,12 @@ export function AssetForm({ asset }: { asset: Asset }) {
         name="summary"
         defaultValue={asset.summary}
         maxLength={600}
+      />
+
+      <ImageUpload
+        currentUrl={asset.imageUrl}
+        currentCredit={asset.imageCredit}
+        currentIsRepresentative={asset.imageIsRepresentative}
       />
 
       <SourceEditor initial={asset.sources} />

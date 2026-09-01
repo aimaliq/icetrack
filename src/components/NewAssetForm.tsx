@@ -10,6 +10,7 @@ import {
   SourceEditor,
   EditFooter,
 } from "@/components/EditFields";
+import { ImageUpload } from "@/components/ImageUpload";
 
 const STATUSES = [
   { value: "unverified", label: "Unverified — not yet sourced" },
@@ -107,6 +108,8 @@ export function NewAssetForm({
       />
 
       <TextArea label="Summary" name="summary" maxLength={600} />
+
+      <ImageUpload />
 
       <SourceEditor initial={[]} />
 

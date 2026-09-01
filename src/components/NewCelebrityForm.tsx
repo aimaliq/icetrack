@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { createCelebrity, type EditState } from "@/lib/edit/actions";
 import { CELEBRITY_CATEGORY_LABEL } from "@/lib/categories";
 import { Field, TextArea, Select, EditFooter } from "@/components/EditFields";
+import { ImageUpload } from "@/components/ImageUpload";
 
 export function NewCelebrityForm() {
   const [state, formAction, pending] = useActionState<EditState, FormData>(
@@ -46,6 +47,8 @@ export function NewCelebrityForm() {
         inputMode="url"
         placeholder="https://en.wikipedia.org/wiki/…"
       />
+
+      <ImageUpload />
 
       <EditFooter pending={pending} error={state?.error} cancelHref="/celebrities" />
     </form>
