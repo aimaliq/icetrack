@@ -10,7 +10,21 @@
 -- Slugs are derived rather than typed: asking a contributor for a URL fragment
 -- invites collisions and typos, and the column has a strict format check.
 -- Accented characters are folded to ASCII so "Beyoncé" yields "beyonce".
+--
+-- Postgres validates a function body at creation time, so the helper has to be
+-- defined before the function that calls it.
 -- ---------------------------------------------------------------------------
+-- `unaccent` lives in an extension that may not be enabled, so fold the common
+-- Latin-1 range by hand. Anything left unmapped is stripped by slugify.
+create or replace function unaccent_fallback(input text)
+returns text language sql immutable as $$
+  select translate(
+    input,
+    'àáâãäåāăąèéêëēĕėęěìíîïĩīĭįıòóôõöøōŏőùúûüũūŭůűųçćĉċčñńņňŕřśŝşšţťýÿŷžźż',
+    'aaaaaaaaaeeeeeeeeeiiiiiiiiiooooooooouuuuuuuuuucccccnnnnrrssssttyyyzzz'
+  );
+$$;
+
 create or replace function slugify(input text)
 returns text language sql immutable as $$
   select trim(both '-' from
@@ -21,17 +35,6 @@ returns text language sql immutable as $$
       ),
       '-+', '-', 'g'
     )
-  );
-$$;
-
--- `unaccent` lives in an extension that may not be enabled, so fold the common
--- Latin-1 range by hand. Anything left unmapped is stripped by slugify.
-create or replace function unaccent_fallback(input text)
-returns text language sql immutable as $$
-  select translate(
-    input,
-    'àáâãäåāăąèéêëēĕėęěìíîïĩīĭįıòóôõöøōŏőùúûüũūŭůűųçćĉċčñńņňŕřśŝşšţťýÿŷžźż',
-    'aaaaaaaaaeeeeeeeeeiiiiiiiiiooooooooouuuuuuuuuucccccnnnnrrssssttyyyzzz'
   );
 $$;
 
