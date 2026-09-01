@@ -54,41 +54,45 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+/** Recent changes lives in the footer: useful, but not everyday navigation. */
 const LINKS = [
   { href: "/celebrities", label: "Celebrities" },
   { href: "/assets", label: "Assets" },
-  { href: "/changes", label: "Changes" },
   { href: "/about", label: "About" },
 ];
 
 async function Nav() {
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-surface/80 backdrop-blur-xl">
-      {/* Mobile centres the wordmark, so the theme toggle is pulled out of the
-          flow to keep it from shifting the centre. */}
-      <nav className="relative mx-auto flex h-14 max-w-6xl items-center justify-center px-4
-                      sm:justify-between sm:px-6">
-        <Link href="/" className="focus-ring flex items-center gap-2 rounded-lg">
+    <header className="sticky top-0 z-50 border-b border-line bg-elevated">
+      {/* Three columns rather than flex spacing, so the links sit on the page
+          centre instead of the midpoint between logo and controls. */}
+      <nav className="mx-auto grid h-14 max-w-6xl grid-cols-[1fr_auto_1fr] items-center
+                      gap-2 px-4 sm:px-6">
+        <Link
+          href="/"
+          className="focus-ring flex w-fit items-center gap-2 rounded-lg"
+        >
           <span className="text-xl" aria-hidden>
             💎
           </span>
           <span className="text-[20px] font-semibold tracking-tight">IceTrack</span>
         </Link>
 
-        <div className="absolute right-4 flex items-center gap-1
-                        sm:static sm:right-auto sm:gap-6">
-          {/* Full nav on tablet and up. */}
-          <div className="hidden items-center gap-6 text-[13px] text-muted sm:flex">
-            {LINKS.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="focus-ring rounded transition hover:text-ink"
-              >
-                {l.label}
-              </Link>
-            ))}
-          </div>
+        {/* Full nav on tablet and up; below that it moves to its own row. */}
+        <div className="hidden items-center gap-6 text-[13px] text-muted sm:flex">
+          {LINKS.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="focus-ring rounded transition hover:text-ink"
+            >
+              {l.label}
+            </Link>
+          ))}
+        </div>
+        <span className="sm:hidden" />
+
+        <div className="flex items-center justify-end gap-1">
           <UserMenu />
           <ThemeToggle />
         </div>
