@@ -6,9 +6,9 @@ import { UserMenu } from "@/components/UserMenu";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
-const TITLE = "IceTrack — Mapping VIP premium assets";
+const TITLE = "IceTrack";
 const DESCRIPTION =
-  "A community-built database mapping the luxury assets of public figures. Every entry carries its source, and anyone can contribute.";
+  "A database mapping the luxury assets of public figures.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -54,7 +54,6 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-/** Recent changes lives in the footer: useful, but not everyday navigation. */
 const LINKS = [
   { href: "/celebrities", label: "Celebrities" },
   { href: "/assets", label: "Assets" },

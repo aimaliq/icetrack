@@ -15,7 +15,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Validate dataset
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Validate seed dataset
         run: npm run validate
-      - name: Build
-        run: npm run build
+
+# The production build is not run here. Since the app reads from Supabase,
+# `next build` needs project credentials to collect page data, and those do
+# not belong in a public repository's CI. Vercel builds every push with the
+# real environment, so a broken build is caught there — this workflow covers
+# what Vercel does not: types, and the editorial rules over the seed data.
