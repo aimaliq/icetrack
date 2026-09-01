@@ -33,6 +33,12 @@ export default {
         wordmark: ["var(--font-wordmark)", "Segoe UI", "system-ui", "sans-serif"],
       },
       letterSpacing: { tightest: "-0.045em" },
+      // Emil Kowalski's curves — see the Motion section in CLAUDE.md.
+      transitionTimingFunction: {
+        "out-strong": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "in-out-strong": "cubic-bezier(0.77, 0, 0.175, 1)",
+        drawer: "cubic-bezier(0.32, 0.72, 0, 1)",
+      },
       animation: {
         "fade-up": "fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both",
         // The list is rendered twice, so translating by half its height and

@@ -16,7 +16,7 @@ export async function AddButton({
     <Link
       href={href}
       className="focus-ring rounded-full bg-ink px-4 py-2 text-[13px] font-medium
-                 text-surface transition hover:opacity-90"
+                 text-surface transition-opacity duration-150 ease-out-strong hover:opacity-90"
     >
       {label}
     </Link>

@@ -167,7 +167,7 @@ export function SourceEditor({ initial }: { initial: Source[] }) {
         type="button"
         onClick={() => setRows([...rows, { title: "", url: "" }])}
         className="focus-ring mt-3 rounded-full border border-line px-4 py-2
-                   text-[13px] transition hover:bg-sunken"
+                   text-[13px] transition-colors duration-150 ease-out-strong hover:bg-sunken"
       >
         Add a source
       </button>
@@ -220,7 +220,7 @@ export function EditFooter({
           type="submit"
           disabled={pending}
           className="focus-ring rounded-full bg-ink px-6 py-3 text-[15px] font-medium
-                     text-surface transition hover:opacity-90 disabled:opacity-50
+                     text-surface transition-opacity duration-150 ease-out-strong hover:opacity-90 disabled:opacity-50
                      sm:py-2.5 sm:text-[14px]"
         >
           {pending ? "Saving…" : "Publish changes"}
@@ -228,7 +228,7 @@ export function EditFooter({
         <a
           href={cancelHref}
           className="focus-ring rounded-full border border-line px-6 py-3 text-center
-                     text-[15px] transition hover:bg-sunken sm:py-2.5 sm:text-[14px]"
+                     text-[15px] transition-colors duration-150 ease-out-strong hover:bg-sunken sm:py-2.5 sm:text-[14px]"
         >
           Cancel
         </a>

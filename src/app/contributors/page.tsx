@@ -57,7 +57,7 @@ export default async function ContributorsPage() {
           <Link
             href="/signup"
             className="focus-ring mt-5 inline-block rounded-full bg-ink px-6 py-2.5
-                       text-[14px] font-medium text-surface transition hover:opacity-90"
+                       text-[14px] font-medium text-surface transition-opacity duration-150 ease-out-strong hover:opacity-90"
           >
             Create an account
           </Link>

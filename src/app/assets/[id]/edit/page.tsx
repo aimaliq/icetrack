@@ -24,7 +24,7 @@ export default async function EditAssetPage({ params }: Props) {
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-14">
       <Link
         href={`/assets/${id}`}
-        className="focus-ring text-[14px] text-muted transition hover:text-ink"
+        className="focus-ring text-[14px] text-muted transition-colors duration-150 ease-out-strong hover:text-ink"
       >
         ← Cancel
       </Link>

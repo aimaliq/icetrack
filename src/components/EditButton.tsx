@@ -13,7 +13,7 @@ export async function EditButton({ href }: { href: string }) {
     <Link
       href={href}
       className="focus-ring rounded-full border border-line px-4 py-1.5 text-[13px]
-                 transition hover:bg-sunken"
+                 transition-colors duration-150 ease-out-strong hover:bg-sunken"
     >
       Edit
     </Link>

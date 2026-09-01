@@ -32,7 +32,7 @@ export default async function NewAssetPage({ searchParams }: Props) {
         <Link
           href="/celebrities/new"
           className="focus-ring mt-6 inline-block rounded-full bg-ink px-6 py-2.5
-                     text-[14px] font-medium text-surface transition hover:opacity-90"
+                     text-[14px] font-medium text-surface transition-opacity duration-150 ease-out-strong hover:opacity-90"
         >
           Add a public figure
         </Link>
@@ -44,7 +44,7 @@ export default async function NewAssetPage({ searchParams }: Props) {
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-14">
       <Link
         href="/assets"
-        className="focus-ring text-[14px] text-muted transition hover:text-ink"
+        className="focus-ring text-[14px] text-muted transition-colors duration-150 ease-out-strong hover:text-ink"
       >
         ← Cancel
       </Link>

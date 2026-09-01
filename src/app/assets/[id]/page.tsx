@@ -127,14 +127,14 @@ export default async function AssetPage({ params }: Props) {
       <div className="flex items-center justify-between gap-4">
         <Link
           href="/assets"
-          className="focus-ring text-[13px] text-muted transition hover:text-ink"
+          className="focus-ring text-[13px] text-muted transition-colors duration-150 ease-out-strong hover:text-ink"
         >
           ← Assets
         </Link>
         <div className="flex items-center gap-2">
           <Link
             href={`/assets/${asset.id}/history`}
-            className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-muted transition hover:text-ink"
+            className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-muted transition-colors duration-150 ease-out-strong hover:text-ink"
           >
             History
           </Link>
@@ -170,7 +170,7 @@ export default async function AssetPage({ params }: Props) {
           <Link
             href={`/celebrities/${owner.id}`}
             className="focus-ring mt-5 flex items-center gap-3 rounded-2xl bg-elevated
-                       p-3 transition duration-300 hover:shadow-lg hover:shadow-black/5"
+                       p-3 transition-shadow duration-200 ease-out-strong hover:shadow-lg hover:shadow-black/5"
           >
             <Avatar person={owner} size="sm" />
             <div className="min-w-0">

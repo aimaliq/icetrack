@@ -118,14 +118,14 @@ export default function AboutPage() {
         <Link
           href="/signup"
           className="focus-ring rounded-full bg-ink px-6 py-3 text-[15px] font-medium
-                     text-surface transition hover:opacity-90 sm:py-2.5 sm:text-[14px]"
+                     text-surface transition-opacity duration-150 ease-out-strong hover:opacity-90 sm:py-2.5 sm:text-[14px]"
         >
           Create an account
         </Link>
         <Link
           href="/contributors"
           className="focus-ring rounded-full border border-line px-6 py-3 text-[15px]
-                     transition hover:bg-sunken sm:py-2.5 sm:text-[14px]"
+                     transition-colors duration-150 ease-out-strong hover:bg-sunken sm:py-2.5 sm:text-[14px]"
         >
           See who contributes
         </Link>

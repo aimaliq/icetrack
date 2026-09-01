@@ -43,7 +43,7 @@ export default async function CelebritiesPage() {
               key={c.id}
               href={`/celebrities/${c.id}`}
               className="focus-ring group flex flex-col rounded-2xl bg-elevated p-4
-                         transition duration-300 hover:shadow-lg hover:shadow-black/5 sm:p-5"
+                         transition-shadow duration-200 ease-out-strong hover:shadow-lg hover:shadow-black/5 sm:p-5"
             >
               <div className="flex items-start gap-4">
                 <Avatar person={c} size="md" />

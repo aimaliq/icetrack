@@ -31,7 +31,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       className="tap focus-ring grid place-items-center rounded-full text-muted
-                 transition hover:text-ink"
+                 transition-colors duration-150 ease-out-strong hover:text-ink"
       aria-label={
         mounted
           ? `Switch to ${theme === "dark" ? "light" : "dark"} theme`

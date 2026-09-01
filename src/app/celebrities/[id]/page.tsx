@@ -84,14 +84,14 @@ export default async function CelebrityPage({ params }: Props) {
       <div className="flex items-center justify-between gap-4">
         <Link
           href="/celebrities"
-          className="focus-ring text-[15px] text-muted transition hover:text-ink"
+          className="focus-ring text-[15px] text-muted transition-colors duration-150 ease-out-strong hover:text-ink"
         >
           ← Back
         </Link>
         <div className="flex items-center gap-2">
           <Link
             href={`/celebrities/${celeb.id}/history`}
-            className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-muted transition hover:text-ink"
+            className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-muted transition-colors duration-150 ease-out-strong hover:text-ink"
           >
             History
           </Link>

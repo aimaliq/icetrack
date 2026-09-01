@@ -15,7 +15,7 @@ export function CategoryTile({
     <Link
       href={`/assets?category=${category}`}
       className="focus-ring group flex flex-col items-center gap-3 rounded-2xl
-                 bg-elevated p-5 text-center transition duration-300
+                 bg-elevated p-5 text-center transition-shadow duration-200 ease-out-strong
                  hover:shadow-lg hover:shadow-black/5 sm:p-6"
     >
       {/* Fixed box with overflow hidden: the artwork varies from wide (jet) to

@@ -85,7 +85,7 @@ export function AuthForm({ action, mode }: Props) {
         type="submit"
         disabled={pending}
         className="focus-ring w-full rounded-full bg-ink px-6 py-3 text-[15px]
-                   font-medium text-surface transition hover:opacity-90
+                   font-medium text-surface transition-opacity duration-150 ease-out-strong hover:opacity-90
                    disabled:opacity-50"
       >
         {pending

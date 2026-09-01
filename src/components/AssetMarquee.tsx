@@ -48,7 +48,7 @@ export function AssetMarquee({
               aria-hidden={isClone}
               tabIndex={isClone ? -1 : undefined}
               className="focus-ring flex items-center gap-3 rounded-2xl bg-elevated p-3
-                         transition duration-300 hover:shadow-lg hover:shadow-black/5"
+                         transition-shadow duration-200 ease-out-strong hover:shadow-lg hover:shadow-black/5"
             >
               <div className="h-16 w-20 shrink-0 overflow-hidden rounded-xl sm:h-[72px] sm:w-24">
                 <AssetImage asset={asset} bleed />

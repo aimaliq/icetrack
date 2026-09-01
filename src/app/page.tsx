@@ -69,14 +69,14 @@ export default async function Home() {
               <Link
                 href="/celebrities"
                 className="focus-ring rounded-full bg-ink px-6 py-3 text-[15px] font-medium
-                           text-surface transition hover:opacity-90 sm:py-2.5 sm:text-[14px]"
+                           text-surface transition-opacity duration-150 ease-out-strong hover:opacity-90 sm:py-2.5 sm:text-[14px]"
               >
                 Explore
               </Link>
               <Link
                 href="/about"
                 className="focus-ring rounded-full border border-line px-6 py-3 text-[15px]
-                           transition hover:bg-sunken sm:py-2.5 sm:text-[14px]"
+                           transition-colors duration-150 ease-out-strong hover:bg-sunken sm:py-2.5 sm:text-[14px]"
               >
                 How it works
               </Link>
@@ -138,7 +138,7 @@ export default async function Home() {
                 key={c.id}
                 href={`/celebrities/${c.id}`}
                 className="focus-ring group flex flex-col items-center gap-3 rounded-2xl
-                           bg-elevated p-4 text-center transition duration-300
+                           bg-elevated p-4 text-center transition-shadow duration-200 ease-out-strong
                            hover:shadow-lg hover:shadow-black/5 sm:p-6"
               >
                 <Avatar person={c} size="md" />

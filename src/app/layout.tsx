@@ -100,7 +100,7 @@ async function Nav() {
             <Link
               key={l.href}
               href={l.href}
-              className="focus-ring rounded transition hover:text-ink"
+              className="focus-ring rounded transition-colors duration-150 ease-out-strong hover:text-ink"
             >
               {l.label}
             </Link>
@@ -122,7 +122,7 @@ async function Nav() {
             key={l.href}
             href={l.href}
             className="focus-ring shrink-0 rounded-full px-3.5 py-1.5 text-[13px]
-                       text-muted transition hover:bg-sunken hover:text-ink"
+                       text-muted transition-colors duration-150 ease-out-strong hover:bg-sunken hover:text-ink"
           >
             {l.label}
           </Link>

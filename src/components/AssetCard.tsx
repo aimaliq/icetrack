@@ -18,7 +18,7 @@ export function AssetCard({
     <Link
       href={`/assets/${asset.id}`}
       className="focus-ring group block overflow-hidden rounded-2xl bg-elevated
-                 transition duration-300 hover:shadow-lg hover:shadow-black/5"
+                 transition-shadow duration-200 ease-out-strong hover:shadow-lg hover:shadow-black/5"
     >
       {/* Image fills the top half, edge to edge. */}
       <AssetImage asset={asset} bleed />

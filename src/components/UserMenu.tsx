@@ -10,7 +10,7 @@ export async function UserMenu() {
       <Link
         href="/login"
         className="focus-ring rounded-full bg-ink px-4 py-1.5 text-[13px] font-medium
-                   text-surface transition hover:opacity-90"
+                   text-surface transition-opacity duration-150 ease-out-strong hover:opacity-90"
       >
         Sign in
       </Link>
@@ -22,7 +22,7 @@ export async function UserMenu() {
       <Link
         href={`/u/${profile.username}`}
         className="focus-ring max-w-[10ch] truncate rounded-full px-3 py-1.5
-                   text-[13px] font-medium transition hover:bg-sunken sm:max-w-none"
+                   text-[13px] font-medium transition-colors duration-150 ease-out-strong hover:bg-sunken sm:max-w-none"
       >
         {profile.username}
       </Link>
@@ -30,7 +30,7 @@ export async function UserMenu() {
         <button
           type="submit"
           className="focus-ring rounded-full px-2 py-1.5 text-[13px] text-faint
-                     transition hover:text-ink"
+                     transition-colors duration-150 ease-out-strong hover:text-ink"
         >
           Sign out
         </button>

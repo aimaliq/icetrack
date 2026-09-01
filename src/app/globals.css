@@ -44,6 +44,15 @@ body {
   color: rgb(var(--ink));
 }
 
+/* A tap on a touch screen leaves the element in :hover until the next tap
+   elsewhere, so hover affordances are gated to real pointers. Focus and
+   active states carry the interaction feedback on touch. */
+@media not all and (hover: hover) and (pointer: fine) {
+  .hover\:shadow-lg:hover {
+    box-shadow: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
