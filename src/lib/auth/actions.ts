@@ -17,6 +17,8 @@ export type AuthState = {
   error?: string;
   /** Set once a code has been sent, and carried back on the verify step. */
   sent?: string;
+  /** Set when a fresh code was just sent, so the form can confirm it. */
+  resent?: boolean;
 } | null;
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,24}$/;
@@ -102,6 +104,29 @@ export async function signIn(
 
   if (error) return { error: friendly(error) };
   return { sent: email };
+}
+
+/**
+ * Send another code to an address that already asked for one.
+ *
+ * Separate from signIn so the code step can offer this without falling back
+ * to a link to /login, which would just re-render the page it is already on.
+ */
+export async function resendCode(
+  _prev: AuthState,
+  formData: FormData,
+): Promise<AuthState> {
+  const email = String(formData.get("email") ?? "").trim();
+  if (!email) return { error: "Something went wrong. Start again." };
+
+  const db = await createClient();
+  const { error } = await db.auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: false },
+  });
+
+  if (error) return { error: friendly(error), sent: email };
+  return { sent: email, resent: true };
 }
 
 /** Step two, for both flows: exchange the code for a session. */

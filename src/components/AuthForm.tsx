@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import Link from "next/link";
-import { verifyCode, type AuthState } from "@/lib/auth/actions";
+import { resendCode, verifyCode, type AuthState } from "@/lib/auth/actions";
 
 type Props = {
   action: (prev: AuthState, formData: FormData) => Promise<AuthState>;
@@ -111,55 +111,89 @@ function CodeStep({
   const [code, setCode] = useState("");
 
   return (
-    <form action={formAction} className="space-y-4">
+    <>
+      <form action={formAction} className="space-y-4">
+        <input type="hidden" name="email" value={email} />
+
+        <div className="text-center">
+          <p className="text-[15px] font-semibold tracking-tight">
+            Check your inbox
+          </p>
+          <p className="mx-auto mt-2 max-w-sm text-[14px] leading-relaxed text-muted">
+            We sent a six-digit code to{" "}
+            <strong className="text-ink">{email}</strong>.
+          </p>
+        </div>
+
+        <div>
+          <label htmlFor="token" className="sr-only">
+            Six-digit code
+          </label>
+          <input
+            id="token"
+            name="token"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            // Lets a phone offer the code straight from the notification.
+            autoFocus
+            maxLength={7}
+            placeholder="123456"
+            value={code}
+            onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+            className={`${input} text-center text-[24px] font-semibold tabular-nums tracking-[0.4em]`}
+          />
+        </div>
+
+        {state?.error && <ErrorNote>{state.error}</ErrorNote>}
+
+        <button
+          type="submit"
+          disabled={pending || code.length !== 6}
+          className={button}
+        >
+          {pending ? "Signing in…" : "Sign in"}
+        </button>
+
+        <p className="text-center text-[13px] text-muted">
+          No code yet? Check your spam folder.
+        </p>
+      </form>
+
+      <ResendButton email={email} />
+    </>
+  );
+}
+
+/**
+ * Sends a fresh code. Its own form, because a button inside the verify form
+ * would submit that one instead.
+ */
+function ResendButton({ email }: { email: string }) {
+  const [state, formAction, pending] = useActionState<AuthState, FormData>(
+    resendCode,
+    null,
+  );
+
+  return (
+    <form action={formAction} className="mt-3 text-center">
       <input type="hidden" name="email" value={email} />
-
-      <div className="text-center">
-        <p className="text-[15px] font-semibold tracking-tight">
-          Check your inbox
-        </p>
-        <p className="mx-auto mt-2 max-w-sm text-[14px] leading-relaxed text-muted">
-          We sent a six-digit code to{" "}
-          <strong className="text-ink">{email}</strong>.
-        </p>
-      </div>
-
-      <div>
-        <label htmlFor="token" className="sr-only">
-          Six-digit code
-        </label>
-        <input
-          id="token"
-          name="token"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          // Lets a phone offer the code straight from the notification.
-          autoFocus
-          maxLength={7}
-          placeholder="123456"
-          value={code}
-          onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-          className={`${input} text-center text-[24px] font-semibold tabular-nums tracking-[0.4em]`}
-        />
-      </div>
-
-      {state?.error && <ErrorNote>{state.error}</ErrorNote>}
-
       <button
         type="submit"
-        disabled={pending || code.length !== 6}
-        className={button}
+        disabled={pending}
+        className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-accent
+                   transition-opacity duration-150 ease-out-strong hover:underline
+                   disabled:opacity-50"
       >
-        {pending ? "Signing in…" : "Sign in"}
+        {pending ? "Sending…" : "Send a new code"}
       </button>
-
-      <p className="text-center text-[13px] text-muted">
-        No code yet? Check spam, or{" "}
-        <Link href="/login" className="text-accent hover:underline">
-          request another
-        </Link>
-        .
-      </p>
+      {state?.resent && (
+        <p className="mt-1 text-[13px] text-money">A new code is on its way.</p>
+      )}
+      {state?.error && (
+        <p role="alert" className="mt-1 text-[13px] text-amber-700 dark:text-amber-300">
+          {state.error}
+        </p>
+      )}
     </form>
   );
 }
