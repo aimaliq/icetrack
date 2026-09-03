@@ -95,16 +95,26 @@ const NETWORKS = [
   },
 ] as const;
 
+/** "Roman Abramovich" -> "Roman Abramovich's", "Travis Scott" -> "Travis
+ *  Scott's", but "Beyoncé Knowles" -> "Beyoncé Knowles'". A name already
+ *  ending in s takes the bare apostrophe. */
+function possessive(name: string): string {
+  return /s$/i.test(name) ? `${name}'` : `${name}'s`;
+}
+
 export function EarningsBreakdown({
   value,
   assetName,
   ownerName,
+  categoryLabel,
   url,
   startAt,
 }: {
   value: number;
   assetName: string;
   ownerName?: string;
+  /** "Superyacht", "Private jet" — the words the share text calls it. */
+  categoryLabel: string;
   url: string;
   /** The span a shared link was read at, so someone arriving from a social
    *  post sees the figures the post showed rather than the default. */
@@ -124,11 +134,16 @@ export function EarningsBreakdown({
 
   const perDay = rows.find((r) => r.label === "Per day")!.amount;
 
-  const shareText = `${assetName}${
-    ownerName ? ` (${ownerName})` : ""
-  } costs ${money(value)}. To buy it in ${
-    stop.label
-  } you'd need ${money(perDay)} a day. — IceTrack`;
+  // Written to be read aloud, and to end on a question: a post that asks
+  // something gets replied to, where one that only states a number gets
+  // scrolled past. The first person is deliberate — the reader is being
+  // invited to compare themselves, not lectured at.
+  const owned = ownerName ? `${possessive(ownerName)} ` : "";
+  const shareText = [
+    `${owned}${money(value)} ${categoryLabel.toLowerCase()}, ${assetName}.`,
+    `To buy it in ${stop.label}, I'd need to earn ${money(perDay)} a day.`,
+    `How long would it take you?`,
+  ].join("\n");
 
   // The chosen span rides along, so the card the followers see shows the
   // figures the sharer was actually looking at rather than the default.
@@ -165,15 +180,15 @@ export function EarningsBreakdown({
 
           {/* The headline figure, restated from the table below: a daily wage
               is the one everybody can measure themselves against. */}
-          <p className="mt-2.5 text-[40px] font-semibold leading-none tracking-tightest tabular-nums text-money sm:text-[52px]">
+          <p className="mt-2.5 text-[40px] font-bold leading-none tracking-tightest tabular-nums text-money sm:text-[52px]">
             {money(perDay)}
             <span className="ml-2.5 align-middle text-[13px] font-normal uppercase tracking-widest text-faint">
               a day
             </span>
           </p>
 
-          <p className="mt-3 text-[15px] text-faint tabular-nums">
-            {money(value)} total
+          <p className="mt-3 text-[15px] text-muted tabular-nums">
+            <span className="font-bold">{money(value)}</span> total
           </p>
         </div>
 
@@ -202,7 +217,7 @@ export function EarningsBreakdown({
         <dl className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {shown.map((r) => (
             <div key={r.label} className="rounded-xl bg-sunken px-3 py-4 text-center">
-              <dd className="text-[19px] font-semibold tracking-tight tabular-nums sm:text-[21px]">
+              <dd className="text-[19px] font-bold tracking-tight tabular-nums sm:text-[21px]">
                 {money(r.amount)}
               </dd>
               <dt className="mt-1 text-[10px] uppercase tracking-widest text-faint sm:text-[11px]">

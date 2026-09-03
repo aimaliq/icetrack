@@ -41,6 +41,14 @@ export async function GET(
     Number.isInteger(raw) && raw >= 0 && raw < STOPS.length ? raw : 3;
   const stop = STOPS[index];
 
+  // Satori decodes PNG and JPEG only — a WebP source renders nothing and
+  // takes the whole card down with it, so it is left off rather than risked.
+  // The layout reads correctly either way; the photo is a bonus, not the
+  // point, and the figures are what the card is for.
+  const photo = /\.(png|jpe?g)(\?|$)/i.test(asset.imageUrl ?? "")
+    ? asset.imageUrl
+    : null;
+
   const rows = breakdown(value, stop.months);
   const perDay = rows.find((r) => r.label === "Per day")!.amount;
 
@@ -81,48 +89,69 @@ export async function GET(
           </span>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ display: "flex", fontSize: 34, letterSpacing: -1 }}>
-            {asset.name}
-            {owner ? ` · ${owner.name}` : ""}
-          </div>
+        {/* Photo and figures sit side by side in the flow. Absolute
+            positioning would be simpler but the card has a fixed height, so an
+            out-of-flow photo overlaps the tiles the moment a name wraps. */}
+        <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
+            <div style={{ display: "flex", fontSize: 34, letterSpacing: -1 }}>
+              {asset.name}
+              {owner ? ` · ${owner.name}` : ""}
+            </div>
 
-          <div style={{ display: "flex", fontSize: 24, color: "#949ca5" }}>
-            {`To buy it in ${stop.label}, you'd need`}
-          </div>
+            <div style={{ display: "flex", fontSize: 24, color: "#c3ccd4" }}>
+              {`To buy it in ${stop.label}, you'd need`}
+            </div>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "baseline",
-              gap: 16,
-              marginTop: 2,
-            }}
-          >
-            <span
+            <div
               style={{
                 display: "flex",
-                fontSize: 104,
-                fontWeight: 700,
-                letterSpacing: -4,
-                lineHeight: 1,
-                color: "#4ad0a0",
+                alignItems: "baseline",
+                gap: 16,
+                marginTop: 2,
               }}
             >
-              {money(perDay)}
-            </span>
-            <span
-              style={{
-                display: "flex",
-                fontSize: 26,
-                textTransform: "uppercase",
-                letterSpacing: 3,
-                color: "#6a727b",
-              }}
-            >
-              a day
-            </span>
+              <span
+                style={{
+                  display: "flex",
+                  fontSize: 96,
+                  fontWeight: 700,
+                  letterSpacing: -4,
+                  lineHeight: 1,
+                  color: "#4ad0a0",
+                }}
+              >
+                {money(perDay)}
+              </span>
+              <span
+                style={{
+                  display: "flex",
+                  fontSize: 26,
+                  textTransform: "uppercase",
+                  letterSpacing: 3,
+                  color: "#6a727b",
+                }}
+              >
+                a day
+              </span>
+            </div>
           </div>
+
+          {photo && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={photo}
+              alt=""
+              width={300}
+              height={200}
+              style={{
+                width: 300,
+                height: 200,
+                objectFit: "cover",
+                borderRadius: 18,
+              }}
+            />
+          )}
         </div>
 
         <div style={{ display: "flex", gap: 14 }}>
@@ -158,8 +187,13 @@ export async function GET(
         </div>
 
         <div style={{ display: "flex", alignItems: "center", fontSize: 22 }}>
-          <span style={{ display: "flex", color: "#6a727b" }}>
-            {`${money(value)} · listed as ${asset.status}`}
+          <span style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+            <span style={{ display: "flex", color: "#c3ccd4" }}>
+              {money(value)}
+            </span>
+            <span style={{ display: "flex", color: "#6a727b" }}>
+              {`· listed as ${asset.status}`}
+            </span>
           </span>
           <span style={{ display: "flex", marginLeft: "auto", color: "#6a727b" }}>
             icetrack.vip

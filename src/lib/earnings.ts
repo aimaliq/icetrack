@@ -74,3 +74,32 @@ export function breakdown(value: number, months: number): Row[] {
     { label: "Per second", amount: value / (days * 24 * 60 * 60) },
   ];
 }
+
+/**
+ * What to call the thing in a share post.
+ *
+ * `CATEGORY_META` labels are written for a table — "Yacht", "Accessory" —
+ * and read flatly in a sentence. These are the words people actually use,
+ * with "superyacht" reserved for the ones that earn it. The threshold is
+ * conventional rather than legal: the industry line is length, which we do
+ * not always hold, and no yacht past $50M is a small one.
+ */
+export function shareNoun(category: string, value?: number): string {
+  switch (category) {
+    case "yacht":
+      return value && value >= 50_000_000 ? "Superyacht" : "Yacht";
+    case "jet":
+      return "Private jet";
+    case "car":
+      return "Car";
+    case "estate":
+      return "Home";
+    case "accessories":
+      // "$2.5M accessory" reads like a category header rather than a thing.
+      // Not "watch": the category holds jewellery too, and the entry name
+      // already says which it is.
+      return "Piece";
+    default:
+      return "Asset";
+  }
+}

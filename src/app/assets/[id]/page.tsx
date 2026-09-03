@@ -17,7 +17,7 @@ import { formatValueExact } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
 import { EditButton } from "@/components/EditButton";
 import { SITE_URL } from "@/lib/site";
-import { STOPS } from "@/lib/earnings";
+import { STOPS, shareNoun } from "@/lib/earnings";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -284,6 +284,7 @@ export default async function AssetPage({ params, searchParams }: Props) {
           value={asset.estimatedValueUsd}
           assetName={asset.name}
           ownerName={owner?.name}
+          categoryLabel={shareNoun(asset.category, asset.estimatedValueUsd)}
           url={`${SITE_URL}/assets/${asset.id}`}
           startAt={stopIndex(t)}
         />
