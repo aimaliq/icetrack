@@ -14,6 +14,15 @@ import { flightsFor, trackFor } from "@/lib/flights/opensky";
  */
 export const maxDuration = 300;
 
+/**
+ * Days covered per run. Thirty days across nine aircraft is over 270 requests
+ * plus a track fetch for every flight found, which does not fit in the 300
+ * second function limit. The job runs daily, so a shorter window still keeps
+ * the 30 days on the page filled in — it just takes a few runs to backfill.
+ * `?days=` overrides it for a manual catch-up run.
+ */
+const DEFAULT_DAYS = 7;
+
 export async function GET(request: NextRequest) {
   // Vercel Cron signs its requests; anything else needs the shared secret.
   const secret = process.env.CRON_SECRET;
@@ -31,15 +40,27 @@ export async function GET(request: NextRequest) {
     auth: { persistSession: false },
   });
 
-  const { data: jets } = await db
+  const { data: jets, error: listError } = await db
     .from("assets")
     .select("id, slug, specs")
     .eq("category", "jet")
     .eq("is_deleted", false);
 
+  if (listError) {
+    return NextResponse.json(
+      { error: "could not list aircraft", detail: listError.message },
+      { status: 500 },
+    );
+  }
+
   const tracked = (jets ?? []).filter(
     (a) => typeof (a.specs as Record<string, unknown>)?.icao24 === "string",
   );
+
+  const requested = Number(request.nextUrl.searchParams.get("days"));
+  const days = Number.isFinite(requested) && requested > 0
+    ? Math.min(requested, 30)
+    : DEFAULT_DAYS;
 
   const now = Math.floor(Date.now() / 1000);
   let added = 0;
@@ -59,34 +80,44 @@ export async function GET(request: NextRequest) {
     const DAY = 86_400;
     const midnight = Math.floor(now / DAY) * DAY;
 
-    for (let back = 1; back <= 30; back++) {
+    for (let back = 1; back <= days; back++) {
       const begin = midnight - back * DAY;
       const end = begin + DAY;
 
-      const found = await flightsFor(icao24, begin, end);
-      for (const f of found) {
-        const path = await trackFor(icao24, f.firstSeen);
-        const { error } = await db.from("flights").upsert(
-          {
-            asset_id: jet.id,
-            icao24,
-            first_seen: f.firstSeen,
-            last_seen: f.lastSeen,
-            departure: f.estDepartureAirport,
-            arrival: f.estArrivalAirport,
-            path,
-          },
-          { onConflict: "icao24,first_seen", ignoreDuplicates: true },
+      try {
+        const found = await flightsFor(icao24, begin, end);
+        for (const f of found) {
+          const path = await trackFor(icao24, f.firstSeen);
+          const { error } = await db.from("flights").upsert(
+            {
+              asset_id: jet.id,
+              icao24,
+              first_seen: f.firstSeen,
+              last_seen: f.lastSeen,
+              departure: f.estDepartureAirport,
+              arrival: f.estArrivalAirport,
+              path,
+            },
+            { onConflict: "icao24,first_seen", ignoreDuplicates: true },
+          );
+          if (error) problems.push(`${jet.slug}: ${error.message}`);
+          else added += 1;
+        }
+      } catch (e) {
+        // One bad day should not abort the run and return an opaque 500.
+        problems.push(
+          `${jet.slug} day -${back}: ${e instanceof Error ? e.message : String(e)}`,
         );
-        if (!error) added += 1;
       }
     }
   }
 
-  await db.rpc("prune_flights");
+  const { error: pruneError } = await db.rpc("prune_flights");
+  if (pruneError) problems.push(`prune: ${pruneError.message}`);
 
   return NextResponse.json({
     tracked: tracked.length,
+    days,
     added,
     ...(problems.length ? { problems } : {}),
   });

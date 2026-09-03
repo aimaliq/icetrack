@@ -137,7 +137,7 @@ export function FlightMap({ flights }: { flights: StoredFlight[] }) {
         ) : (
           <>Last 30 days</>
         )}{" "}
-        · positions broadcast by the aircraft, collected by{" "}
+        · positions collected by{" "}
         <a
           href="https://opensky-network.org"
           target="_blank"
