@@ -136,17 +136,13 @@ function Footer() {
     <footer className="mt-20 bg-sunken sm:mt-24">
       <div className="mx-auto max-w-6xl px-4 py-10 text-center sm:px-6 sm:py-12">
         <p className="text-[15px] font-semibold tracking-tight">
-          IceTrack — Mapping VIP premium assets
+          IceTrack — Tracking VIP premium assets
         </p>
         <p className="mx-auto mt-3 max-w-2xl text-[13px] leading-relaxed text-muted">
           IceTrack catalogues publicly reported information about public
-          figures. Entries are community-contributed and may be incomplete or
+          figures. Info are community-driven and may be incomplete or
           out of date. Values are press estimates, not appraisals, and no
-          precise location data is published. See{" "}
-          <Link href="/about" className="text-accent hover:underline">
-            About
-          </Link>{" "}
-          for our sourcing and removal policy.
+          precise location data is published. 
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[12px] text-faint">
           <Link href="/contributors" className="hover:text-ink">
