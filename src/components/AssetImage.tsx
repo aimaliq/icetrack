@@ -51,7 +51,9 @@ export function AssetImage({
           }
         />
       ) : (
-        <span className="text-faint/40">{CATEGORY_SILHOUETTE[asset.category]}</span>
+        <span className="h-1/3 w-1/3 max-h-24 max-w-24 text-accent/25">
+          {CATEGORY_SILHOUETTE[asset.category]}
+        </span>
       )}
     </div>
   );
