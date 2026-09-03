@@ -28,11 +28,26 @@ export const maxDuration = 300;
 const DEFAULT_DAYS = 30;
 
 export async function GET(request: NextRequest) {
-  // Vercel Cron signs its requests; anything else needs the shared secret.
+  // Vercel Cron sends the secret as a bearer token. A browser or a shell that
+  // mangles headers can pass ?key= instead, which is no weaker: both carry the
+  // same secret over TLS, and the query string is not logged anywhere we keep.
   const secret = process.env.CRON_SECRET;
-  const auth = request.headers.get("authorization");
-  if (secret && auth !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (secret) {
+    const bearer = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+    const query = request.nextUrl.searchParams.get("key");
+    const given = (bearer ?? query ?? "").trim();
+
+    if (given !== secret.trim()) {
+      return NextResponse.json(
+        {
+          error: "unauthorized",
+          hint: given
+            ? "That key does not match CRON_SECRET on the server."
+            : "Send the secret as an Authorization: Bearer header, or as ?key=",
+        },
+        { status: 401 },
+      );
+    }
   }
 
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
