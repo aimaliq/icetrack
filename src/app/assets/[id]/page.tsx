@@ -88,10 +88,8 @@ export default async function AssetPage({ params }: Props) {
 
   // Aircraft that broadcast a transponder address can be shown on a map.
   const icao24 = String(asset.specs?.icao24 ?? "").trim();
-  const flights =
-    asset.category === "jet" && /^[0-9a-fA-F]{6}$/.test(icao24)
-      ? await flightsForAsset(asset.uuid ?? "")
-      : [];
+  const trackable = asset.category === "jet" && /^[0-9a-fA-F]{6}$/.test(icao24);
+  const flights = trackable ? await flightsForAsset(asset.uuid ?? "") : [];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -252,7 +250,7 @@ export default async function AssetPage({ params }: Props) {
         </section>
       )}
 
-      {flights.length > 0 && (
+      {trackable && (
         <section className="mt-10 sm:mt-12">
           <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">
             Recent flights

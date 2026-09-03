@@ -1,25 +1,36 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { StoredFlight } from "@/lib/flights/store";
 
 /**
  * Flight paths on a map.
  *
- * Leaflet is loaded on the client only: it reaches for `window` at import
- * time, so it cannot be part of the server bundle. Tiles come from
- * OpenStreetMap, which needs no key.
+ * Leaflet is imported on the client only: it touches `window` at module scope,
+ * so it cannot be part of the server bundle. Tiles are CartoDB's Positron and
+ * Dark Matter — near-monochrome basemaps that stay quiet under the flight
+ * lines and match the site's two themes.
  *
- * Each flight gets its own colour so overlapping routes stay separable.
+ * The map renders even with nothing to draw. An empty frame says the feature
+ * exists and this aircraft simply has not been seen; no frame at all says
+ * nothing.
  */
 const COLOURS = [
   "#2563eb", "#dc2626", "#ca8a04", "#7c3aed",
   "#0d9488", "#db2777", "#ea580c", "#4338ca",
 ];
 
+const TILES = {
+  light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+  dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+};
+
 export function FlightMap({ flights }: { flights: StoredFlight[] }) {
   const holder = useRef<HTMLDivElement>(null);
   const map = useRef<import("leaflet").Map | null>(null);
+  const [ready, setReady] = useState(false);
+
+  const drawable = flights.filter((f) => (f.path?.length ?? 0) > 1);
 
   useEffect(() => {
     if (!holder.current || map.current) return;
@@ -29,43 +40,56 @@ export function FlightMap({ flights }: { flights: StoredFlight[] }) {
       const L = await import("leaflet");
       if (cancelled || !holder.current) return;
 
-      const m = L.map(holder.current, {
-        scrollWheelZoom: false, // A map inside a page should not hijack scrolling.
-        attributionControl: true,
-      }).setView([30, 0], 2);
+      const dark =
+        document.documentElement.dataset.theme === "dark" ||
+        (!document.documentElement.dataset.theme &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
 
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 12,
-        attribution: "&copy; OpenStreetMap contributors",
+      const m = L.map(holder.current, {
+        // A map inside an article should never swallow the page scroll.
+        scrollWheelZoom: false,
+        zoomControl: true,
+        attributionControl: true,
+      }).setView([25, 5], 2);
+
+      L.tileLayer(dark ? TILES.dark : TILES.light, {
+        maxZoom: 11,
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
       }).addTo(m);
 
       const bounds: [number, number][] = [];
 
-      flights.forEach((flight, i) => {
-        const points = (flight.path ?? [])
+      drawable.forEach((flight, i) => {
+        const points = flight.path
           .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lon))
           .map((p) => [p.lat, p.lon] as [number, number]);
         if (points.length < 2) return;
 
         const colour = COLOURS[i % COLOURS.length];
-        L.polyline(points, { color: colour, weight: 2, opacity: 0.8 }).addTo(m);
 
-        // Mark the ends, which is where the flight actually says something.
+        // A wider, faint line under the sharp one lifts the route off the map
+        // where several cross.
+        L.polyline(points, { color: colour, weight: 6, opacity: 0.12 }).addTo(m);
+        L.polyline(points, { color: colour, weight: 1.75, opacity: 0.95 }).addTo(m);
+
         for (const end of [points[0], points[points.length - 1]]) {
           L.circleMarker(end, {
-            radius: 3.5,
-            color: colour,
+            radius: 4,
+            color: "#fff",
+            weight: 1.5,
             fillColor: colour,
             fillOpacity: 1,
-            weight: 0,
           }).addTo(m);
         }
 
         bounds.push(...points);
       });
 
-      if (bounds.length > 0) m.fitBounds(bounds, { padding: [24, 24] });
+      if (bounds.length > 0) m.fitBounds(bounds, { padding: [28, 28] });
+
       map.current = m;
+      setReady(true);
     })();
 
     return () => {
@@ -73,9 +97,7 @@ export function FlightMap({ flights }: { flights: StoredFlight[] }) {
       map.current?.remove();
       map.current = null;
     };
-  }, [flights]);
-
-  const withPath = flights.filter((f) => (f.path?.length ?? 0) > 1).length;
+  }, [drawable]);
 
   return (
     <div className="overflow-hidden rounded-2xl bg-elevated">
@@ -83,20 +105,44 @@ export function FlightMap({ flights }: { flights: StoredFlight[] }) {
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       />
-      <div ref={holder} className="h-[380px] w-full sm:h-[460px]" />
-      <p className="px-4 py-3 text-[12px] text-faint">
-        {withPath} flight{withPath === 1 ? "" : "s"} in the last 30 days. Each
-        colour is one flight; dots are its start and end. Positions are ADS-B
-        broadcasts collected by{" "}
+
+      <div className="relative">
+        <div ref={holder} className="h-[380px] w-full sm:h-[440px]" />
+
+        {/* Sits over the map until it draws, and stays over an empty one. */}
+        {(!ready || drawable.length === 0) && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            {drawable.length === 0 && ready && (
+              <div className="rounded-2xl bg-surface/85 px-5 py-4 text-center backdrop-blur">
+                <p className="text-[14px] font-medium">No flights recorded yet</p>
+                <p className="mt-1 max-w-xs text-[13px] leading-relaxed text-muted">
+                  This aircraft has not been picked up by the receiver network in
+                  the last 30 days.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <p className="border-t border-line px-4 py-3 text-[12px] leading-relaxed text-faint">
+        {drawable.length > 0 ? (
+          <>
+            {drawable.length} flight{drawable.length === 1 ? "" : "s"} in the last
+            30 days · each colour is one flight
+          </>
+        ) : (
+          <>Last 30 days</>
+        )}{" "}
+        · positions broadcast by the aircraft, collected by{" "}
         <a
           href="https://opensky-network.org"
           target="_blank"
           rel="noreferrer"
-          className="hover:text-ink"
+          className="underline-offset-2 hover:text-ink hover:underline"
         >
           OpenSky Network
         </a>
-        .
       </p>
     </div>
   );
