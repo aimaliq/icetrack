@@ -36,6 +36,7 @@ export function Reactions({
   const [busy, setBusy] = useState<string | null>(null);
   // Which button is mid-animation, so the pop restarts on each fresh click.
   const [popping, setPopping] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
 
   const storageKey = `icetrack-reactions:${slug}`;
 
@@ -73,12 +74,15 @@ export function Reactions({
     });
 
     if (error) {
-      // Put it back rather than leaving a number that is not real.
+      // Put it back rather than leaving a number that is not real, and say so:
+      // a count that appears and then vanishes reads as a broken page.
       setCounts((c) => ({ ...c, [key]: Math.max(0, (c[key] ?? 1) - 1) }));
       const reverted = new Set(next);
       reverted.delete(key);
       setMine(reverted);
+      setFailed(true);
     } else if (typeof data === "number") {
+      setFailed(false);
       setCounts((c) => ({ ...c, [key]: data }));
     }
 
@@ -93,7 +97,8 @@ export function Reactions({
   );
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-col items-end gap-1.5">
+      <div className="flex flex-wrap gap-2">
       {ordered.map((r) => {
         const count = counts[r.key] ?? 0;
         const picked = mine.has(r.key);
@@ -107,7 +112,7 @@ export function Reactions({
             aria-label={`${r.label}${count ? `, ${count}` : ""}`}
             aria-pressed={picked}
             className={`focus-ring group flex items-center gap-1.5 rounded-full border
-                        px-3 py-1.5 text-[15px] transition-[transform,background-color,border-color]
+                        px-3.5 py-2 text-[19px] transition-[transform,background-color,border-color]
                         duration-150 ease-out-strong active:scale-[0.97]
                         ${
                           picked
@@ -140,7 +145,7 @@ export function Reactions({
             </span>
             {count > 0 && (
               <span
-                className={`text-[13px] font-medium tabular-nums ${
+                className={`text-[14px] font-medium tabular-nums ${
                   picked ? "text-accent" : "text-muted"
                 }`}
               >
@@ -150,6 +155,13 @@ export function Reactions({
           </button>
         );
       })}
+      </div>
+
+      {failed && (
+        <p role="alert" className="text-[12px] text-amber-700 dark:text-amber-300">
+          Could not save that. Try again shortly.
+        </p>
+      )}
     </div>
   );
 }

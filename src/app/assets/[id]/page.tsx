@@ -170,14 +170,20 @@ export default async function AssetPage({ params }: Props) {
           {asset.name}
         </h1>
 
-        {asset.estimatedValueUsd ? (
-          <p className="mt-3 text-[26px] font-semibold tabular-nums text-money sm:text-[32px]">
-            {formatValueExact(asset.estimatedValueUsd)}
-            <span className="ml-2 align-middle text-[11px] font-normal uppercase tracking-widest text-faint">
-              est.
-            </span>
-          </p>
-        ) : null}
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+          {asset.estimatedValueUsd ? (
+            <p className="text-[26px] font-semibold tabular-nums text-money sm:text-[32px]">
+              {formatValueExact(asset.estimatedValueUsd)}
+              <span className="ml-2 align-middle text-[11px] font-normal uppercase tracking-widest text-faint">
+                est.
+              </span>
+            </p>
+          ) : (
+            <span />
+          )}
+
+          <Reactions slug={asset.id} initial={reactions} />
+        </div>
 
         <div className="mt-6">
           <AssetImage asset={asset} size="lg" />
@@ -205,9 +211,6 @@ export default async function AssetPage({ params }: Props) {
           </p>
         )}
 
-        <div className="mt-6">
-          <Reactions slug={asset.id} initial={reactions} />
-        </div>
       </header>
 
       {realSources.length === 0 && (
