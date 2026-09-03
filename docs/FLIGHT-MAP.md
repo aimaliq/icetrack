@@ -1,7 +1,11 @@
 # Flight maps
 
-Jet entries carrying an ICAO 24-bit address show where the aircraft has flown
-in the last 30 days.
+**Paused.** The code is all here and works; what does not work is collecting
+the data inside a serverless function. Read the last section before picking
+this up again.
+
+The intent: jet entries carrying an ICAO 24-bit address show where the
+aircraft has flown in the last 30 days.
 
 ## Where the data comes from
 
@@ -69,3 +73,36 @@ The site shows 30 days, which is also as long as OpenSky keeps tracks. The
 collector prunes anything older on every run. Keeping more would build a
 longer record of where identified people have been than the source itself
 retains, which is not the point of this.
+
+## Why this is paused
+
+Two things stopped it, and neither is a bug to fix in this repository.
+
+**Collection does not fit in a function invocation.** Requests to OpenSky from
+Vercel took around eighteen seconds each, against one to five from a desktop on
+a domestic connection. A Hobby function is killed at sixty. Even reduced to a
+single aircraft per run, a run managed two calls and wrote nothing.
+
+**OpenSky's own map cannot be embedded.** `map.opensky-network.org` sends
+`X-Frame-Options: DENY`, and visiting it asks for a human verification check,
+so it is no use as an iframe or as a link.
+
+### What a working version would need
+
+- A collector that runs somewhere without a per-request time limit: a GitHub
+  Action on a schedule, a small VPS, or a Supabase edge function with a longer
+  budget. It writes to the same `flights` table and nothing else changes.
+- Or a paid flight data API with a normal request/response shape, which removes
+  the batching problem but costs money and, for most providers, forbids
+  redistribution.
+
+### What is already in place
+
+- `specs.icao24` on the jet form, filled in for nine aircraft
+- `flights` table, RLS and pruning — migrations 0010 and 0011
+- `src/lib/flights/` — OpenSky client and reader
+- `src/components/FlightMap.tsx` — Leaflet map, tested and working
+- `src/app/api/flights/collect/` — the collector, with `?probe=1` and `?only=`
+
+To switch it back on, set `trackable` in `src/app/assets/[id]/page.tsx` back to
+the ICAO check and restore the cron entry in `vercel.json`.

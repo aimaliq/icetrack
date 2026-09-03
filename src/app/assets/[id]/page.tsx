@@ -87,9 +87,14 @@ export default async function AssetPage({ params }: Props) {
   const specs = readSpecs(asset.category, asset.specs);
 
   // Aircraft that broadcast a transponder address can be shown on a map.
-  const icao24 = String(asset.specs?.icao24 ?? "").trim();
-  const trackable = asset.category === "jet" && /^[0-9a-fA-F]{6}$/.test(icao24);
-  const flights = trackable ? await flightsForAsset(asset.uuid ?? "") : [];
+  // Flight maps are paused. Collecting the positions needs far longer than a
+  // serverless function is allowed to run — requests to OpenSky from Vercel
+  // took around eighteen seconds each — and OpenSky's own map refuses to be
+  // embedded and asks for a human check. The pieces are all still here: the
+  // ICAO field, the flights table, the collector and the map component. See
+  // docs/FLIGHT-MAP.md for what a working version needs.
+  const trackable = false;
+  const flights: Awaited<ReturnType<typeof flightsForAsset>> = [];
 
   const jsonLd = {
     "@context": "https://schema.org",
