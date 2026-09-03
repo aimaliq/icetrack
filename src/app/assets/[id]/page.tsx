@@ -232,10 +232,12 @@ export default async function AssetPage({ params }: Props) {
           <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">
             {meta.label} details
           </h2>
-          <dl className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-2xl
-                         bg-line sm:mt-5 sm:grid-cols-3">
+          <dl className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:grid-cols-3">
             {specs.map((s) => (
-              <div key={s.label} className="bg-elevated px-4 py-4">
+              <div
+                key={s.label}
+                className="rounded-2xl bg-elevated px-4 py-4 text-center"
+              >
                 <dd className="text-[18px] font-semibold tracking-tight tabular-nums">
                   {s.value}
                 </dd>

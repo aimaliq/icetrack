@@ -46,7 +46,6 @@ export const CATEGORY_SPECS: Record<AssetCategory, SpecField[]> = {
     { key: "guests", label: "Guests", type: "number", placeholder: "12" },
     { key: "crew", label: "Crew", type: "number" },
     { key: "top_speed", label: "Top speed", type: "number", unit: "kn" },
-    { key: "builder", label: "Builder", placeholder: "Feadship" },
   ],
 
   car: [
