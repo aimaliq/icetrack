@@ -54,10 +54,14 @@ export async function GET(request: NextRequest) {
       continue;
     }
 
-    // OpenSky caps a query at two days, so walk back in two-day steps.
-    for (let day = 0; day < 30; day += 2) {
-      const end = now - day * 86_400;
-      const begin = end - 2 * 86_400;
+    // OpenSky rejects a window that spans more than two calendar days, not
+    // two arbitrary 24-hour periods, so query one UTC day at a time.
+    const DAY = 86_400;
+    const midnight = Math.floor(now / DAY) * DAY;
+
+    for (let back = 1; back <= 30; back++) {
+      const begin = midnight - back * DAY;
+      const end = begin + DAY;
 
       const found = await flightsFor(icao24, begin, end);
       for (const f of found) {
