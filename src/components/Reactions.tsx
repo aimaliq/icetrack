@@ -85,9 +85,16 @@ export function Reactions({
     setBusy(null);
   }
 
+  // Most-voted first. Sorted off `initial` rather than the live counts, so a
+  // click does not make the buttons jump out from under the cursor; the new
+  // order settles on the next load.
+  const ordered = [...REACTIONS].sort(
+    (a, b) => (initial[b.key] ?? 0) - (initial[a.key] ?? 0),
+  );
+
   return (
     <div className="flex flex-wrap gap-2">
-      {REACTIONS.map((r) => {
+      {ordered.map((r) => {
         const count = counts[r.key] ?? 0;
         const picked = mine.has(r.key);
 
