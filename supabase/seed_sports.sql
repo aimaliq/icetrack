@@ -103,7 +103,35 @@ from (values
    null::bigint, null::integer, 'reported', 'medium', 'United States',
    'A 2005 aircraft, reported as retained alongside the G650ER.',
    '{"passengers":"14"}'::jsonb,
-   '[{"title":"Michael Jordan Vs. LeBron James: A Comparison Of These NBA Superstars Private Jets","url":"https://simpleflying.com/michael-jordan-lebron-james-private-jet-comparison/","publisher":"Simple Flying","retrieved":"2026-09-01"}]'::jsonb)
+   '[{"title":"Michael Jordan Vs. LeBron James: A Comparison Of These NBA Superstars Private Jets","url":"https://simpleflying.com/michael-jordan-lebron-james-private-jet-comparison/","publisher":"Simple Flying","retrieved":"2026-09-01"}]'::jsonb),
+
+  ('cristiano-ronaldo-bugatti-centodieci', 'cristiano-ronaldo', 'car',
+   'Bugatti Centodieci', 'Bugatti', 'Centodieci', null,
+   10000000::bigint, null::integer, 'reported', 'medium', 'Portugal',
+   'One of ten built. Reported as the most valuable car in his collection.',
+   '{"engine":"8.0 L quad-turbo W16","power":"1578","top_speed":"380","production":"10"}'::jsonb,
+   '[{"title":"Cristiano Ronaldo Has Three Bugattis In One Garage","url":"https://www.carscoops.com/2026/08/cristiano-ronaldo-car-collection/","publisher":"Carscoops","retrieved":"2026-09-01"}]'::jsonb),
+
+  ('cristiano-ronaldo-bugatti-veyron', 'cristiano-ronaldo', 'car',
+   'Bugatti Veyron Grand Sport Vitesse', 'Bugatti', 'Veyron 16.4 Grand Sport Vitesse', null,
+   2500000::bigint, null::integer, 'reported', 'medium', 'Portugal',
+   'Reported as his first Bugatti.',
+   '{"engine":"8.0 L quad-turbo W16","power":"1200","top_speed":"408"}'::jsonb,
+   '[{"title":"Cristiano Ronaldo Has Three Bugattis In One Garage","url":"https://www.carscoops.com/2026/08/cristiano-ronaldo-car-collection/","publisher":"Carscoops","retrieved":"2026-09-01"}]'::jsonb),
+
+  ('cristiano-ronaldo-bugatti-chiron', 'cristiano-ronaldo', 'car',
+   'Bugatti Chiron', 'Bugatti', 'Chiron', null,
+   3000000::bigint, null::integer, 'reported', 'medium', 'Portugal',
+   'Reported in a bespoke specification.',
+   '{"engine":"8.0 L quad-turbo W16","power":"1479","top_speed":"420","zero_to_100":"2.4"}'::jsonb,
+   '[{"title":"Cristiano Ronaldo Has Three Bugattis In One Garage","url":"https://www.carscoops.com/2026/08/cristiano-ronaldo-car-collection/","publisher":"Carscoops","retrieved":"2026-09-01"}]'::jsonb),
+
+  ('cristiano-ronaldo-mercedes-amg-one', 'cristiano-ronaldo', 'car',
+   'Mercedes-AMG ONE', 'Mercedes-AMG', 'ONE', null,
+   2700000::bigint, null::integer, 'reported', 'medium', 'Portugal',
+   'One of 275 built. Uses a Formula One derived hybrid powertrain.',
+   '{"engine":"1.6 L turbo V6 hybrid","power":"1063","top_speed":"352","production":"275"}'::jsonb,
+   '[{"title":"Cristiano Ronaldo Has Three Bugattis In One Garage","url":"https://www.carscoops.com/2026/08/cristiano-ronaldo-car-collection/","publisher":"Carscoops","retrieved":"2026-09-01"}]'::jsonb)
 ) as v(slug, owner, category, name, make, model, registration, value, acquired,
        status, confidence, region, summary, specs, sources)
 join celebrities c on c.slug = v.owner
