@@ -96,6 +96,62 @@ export async function GET(request: NextRequest) {
   const BUDGET_MS = 45_000;
   const outOfTime = () => Date.now() - startedAt > BUDGET_MS;
 
+  // ?probe=1 exercises each step once and reports how long it took, which is
+  // the only way to see inside a function that dies on a gateway timeout.
+  if (request.nextUrl.searchParams.get("probe") === "1") {
+    const steps: Record<string, string> = {};
+    const time = async <T,>(name: string, fn: () => Promise<T>): Promise<T | null> => {
+      const t0 = Date.now();
+      try {
+        const out = await fn();
+        steps[name] = `${Date.now() - t0}ms`;
+        return out;
+      } catch (e) {
+        steps[name] = `failed after ${Date.now() - t0}ms: ${
+          e instanceof Error ? e.message : String(e)
+        }`;
+        return null;
+      }
+    };
+
+    const first = (jets ?? [])[0];
+    const hex = first
+      ? String((first.specs as Record<string, unknown>)?.icao24 ?? "")
+      : "";
+
+    const DAY = 86_400;
+    const midnight = Math.floor(Date.now() / 1000 / DAY) * DAY;
+
+    const found = await time("openskyFlights", () =>
+      flightsFor(hex, midnight - DAY, midnight),
+    );
+    if (found?.[0]) {
+      await time("openskyTrack", () => trackFor(hex, found[0].firstSeen));
+    }
+
+    await time("supabaseWrite", async () => {
+      const { error } = await db.from("flights").upsert(
+        {
+          asset_id: first!.id,
+          icao24: hex,
+          first_seen: 1,
+          last_seen: 2,
+          path: [],
+        },
+        { onConflict: "icao24,first_seen", ignoreDuplicates: true },
+      );
+      if (error) throw new Error(`${error.code} ${error.message}`);
+      return true;
+    });
+
+    return NextResponse.json({
+      aircraft: first?.slug ?? "(none)",
+      icao24: hex,
+      flightsFound: found?.length ?? 0,
+      steps,
+    });
+  }
+
   const requested = Number(request.nextUrl.searchParams.get("days"));
   const days =
     Number.isFinite(requested) && requested > 0
