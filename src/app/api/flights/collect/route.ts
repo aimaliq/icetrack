@@ -153,8 +153,23 @@ export async function GET(request: NextRequest) {
             },
             { onConflict: "icao24,first_seen", ignoreDuplicates: true },
           );
-          if (error) problems.push(`${jet.slug}: ${error.message}`);
-          else added += 1;
+          if (error) {
+            // 42501 is permission denied: it will fail identically for every
+            // row, so stop rather than grinding through the fleet.
+            if (error.code === "42501") {
+              return NextResponse.json(
+                {
+                  error: "cannot write flights",
+                  detail: error.message,
+                  fix: "Apply supabase/migrations/0011_flights_grants.sql",
+                },
+                { status: 500 },
+              );
+            }
+            problems.push(`${jet.slug}: ${error.message}`);
+          } else {
+            added += 1;
+          }
         }
       } catch (e) {
         // One bad day should not abort the run and return an opaque 500.
