@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { Source } from "@/lib/types";
+import type { AssetCategory, Source } from "@/lib/types";
+import { CATEGORY_SPECS } from "@/lib/specs";
 
 export type EditState = { error?: string } | null;
 
@@ -87,6 +88,28 @@ function friendly(message: string): string {
   return message;
 }
 
+
+/**
+ * Category-specific fields, namespaced `spec_<key>` by the form so they can be
+ * told apart from the fields every asset shares. Only the keys that belong to
+ * the chosen category are kept, so switching category mid-edit does not carry
+ * a yacht's cabins onto a car.
+ */
+function specFields(form: FormData, category: string): Record<string, string> {
+  const allowed = new Set(
+    (CATEGORY_SPECS[category as AssetCategory] ?? []).map((f) => f.key),
+  );
+
+  const specs: Record<string, string> = {};
+  for (const [name, value] of form.entries()) {
+    if (!name.startsWith("spec_")) continue;
+    const key = name.slice(5);
+    if (!allowed.has(key)) continue;
+    const v = String(value).trim();
+    if (v !== "") specs[key] = v;
+  }
+  return specs;
+}
 
 /**
  * Image fields. The credit object is only built when a licence was chosen:
@@ -200,6 +223,7 @@ export async function updateAsset(
     region: region ?? "",
     summary: summaryText ?? "",
     sources: srcs,
+    specs: specFields(form, text(form, "category") ?? ""),
     ...imageFields(form),
   };
 
@@ -299,6 +323,7 @@ export async function createAsset(
     region: region ?? "",
     summary: summaryText ?? "",
     sources: srcs,
+    specs: specFields(form, text(form, "category") ?? ""),
     ...imageFields(form),
   };
 

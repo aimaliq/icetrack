@@ -63,6 +63,8 @@ export interface Asset {
   /** True when the photo shows the model generally, not this exact item. */
   imageIsRepresentative?: boolean;
   sources: Source[];
+  /** Category-specific fields; see src/lib/specs.ts for the shape. */
+  specs?: Record<string, string | number>;
   updatedAt?: string;
 }
 

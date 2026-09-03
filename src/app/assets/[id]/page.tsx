@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAsset, getAssets } from "@/lib/db";
 import { CATEGORY_META } from "@/lib/categories";
+import { readSpecs } from "@/lib/specs";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AssetImage } from "@/components/AssetImage";
 import { Avatar } from "@/components/Avatar";
@@ -64,7 +65,8 @@ export default async function AssetPage({ params }: Props) {
   const meta = CATEGORY_META[asset.category];
   const realSources = asset.sources.filter((s) => !isPlaceholderSource(s));
 
-  const specs = [
+  // What every asset has, whatever it is.
+  const general = [
     ["Category", meta.label],
     ["Make", asset.make],
     ["Model", asset.model],
@@ -77,6 +79,10 @@ export default async function AssetPage({ params }: Props) {
     string,
     string | number,
   ][];
+
+  // What only this kind of asset has: passengers and range for a jet, cabins
+  // and length for a yacht, floor area and bedrooms for a house.
+  const specs = readSpecs(asset.category, asset.specs);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -203,10 +209,31 @@ export default async function AssetPage({ params }: Props) {
       {specs.length > 0 && (
         <section className="mt-10 sm:mt-12">
           <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">
-            Specifications
+            {meta.label} details
+          </h2>
+          <dl className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-2xl
+                         bg-line sm:mt-5 sm:grid-cols-3">
+            {specs.map((s) => (
+              <div key={s.label} className="bg-elevated px-4 py-4">
+                <dd className="text-[18px] font-semibold tracking-tight tabular-nums">
+                  {s.value}
+                </dd>
+                <dt className="mt-0.5 text-[11px] uppercase tracking-widest text-faint">
+                  {s.label}
+                </dt>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
+
+      {general.length > 0 && (
+        <section className="mt-10 sm:mt-12">
+          <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">
+            Record
           </h2>
           <dl className="mt-4 divide-y divide-line border-y border-line sm:mt-5">
-            {specs.map(([label, value]) => (
+            {general.map(([label, value]) => (
               <div key={label} className="flex justify-between gap-6 py-3.5">
                 <dt className="text-[14px] text-muted">{label}</dt>
                 <dd className="text-right text-[14px]">{value}</dd>

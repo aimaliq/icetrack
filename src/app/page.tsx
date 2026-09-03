@@ -54,7 +54,7 @@ export default async function Home() {
             </p>
 
             <h1 className="mt-5 text-[2.5rem] font-semibold leading-[1.05] tracking-tightest sm:mt-6 sm:text-6xl">
-              Mapping VIP
+              Tracking VIP
               <br />
               <RotatingWord
                 words={["Jets", "Yachts", "Mansions", "Cars", "Watches"]}
@@ -63,9 +63,8 @@ export default async function Home() {
             </h1>
 
             <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted sm:mt-6 sm:text-[17px] lg:mx-0">
-              The jets, supercars, watches and yachts behind the world&apos;s
-              biggest names — each entry sourced, and open for anyone to
-              correct.
+              Jets, yachts, supercars and watches owned by the world&apos;s
+              biggest names.
             </p>
 
             <div className="mt-8 flex flex-col items-stretch justify-center gap-3

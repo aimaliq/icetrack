@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createAsset, type EditState } from "@/lib/edit/actions";
 import { CATEGORY_META, CATEGORY_ORDER } from "@/lib/categories";
 import {
@@ -11,6 +11,8 @@ import {
   EditFooter,
 } from "@/components/EditFields";
 import { ImageUpload } from "@/components/ImageUpload";
+import { SpecFields } from "@/components/SpecFields";
+import type { AssetCategory } from "@/lib/types";
 
 const STATUSES = [
   { value: "unverified", label: "Unverified — not yet sourced" },
@@ -31,6 +33,7 @@ export function NewAssetForm({
     createAsset,
     null,
   );
+  const [category, setCategory] = useState<AssetCategory>(CATEGORY_ORDER[0]);
 
   return (
     <form action={formAction} className="space-y-5">
@@ -53,11 +56,14 @@ export function NewAssetForm({
       <Select
         label="Category"
         name="category"
+        onChange={(v) => setCategory(v as AssetCategory)}
         options={CATEGORY_ORDER.map((c) => ({
           value: c,
           label: CATEGORY_META[c].label,
         }))}
       />
+
+      <SpecFields category={category} />
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Make" name="make" maxLength={80} />

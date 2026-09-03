@@ -61,6 +61,7 @@ type AssetRow = {
   image_credit: Asset["imageCredit"] | null;
   image_is_representative: boolean | null;
   sources: Asset["sources"] | null;
+  specs: Asset["specs"] | null;
   updated_at: string | null;
 };
 
@@ -68,7 +69,7 @@ const CELEB_COLS =
   "id, slug, name, real_name, category, nationality, born_year, bio, image_url, image_credit, wikipedia, updated_at";
 
 const ASSET_COLS =
-  "id, slug, celebrity_id, category, name, make, model, year, registration, estimated_value_usd, acquired_year, status, confidence, region, summary, image_url, image_credit, image_is_representative, sources, updated_at";
+  "id, slug, celebrity_id, category, name, make, model, year, registration, estimated_value_usd, acquired_year, status, confidence, region, summary, image_url, image_credit, image_is_representative, sources, specs, updated_at";
 
 /** The UI keys everything off the slug, so `id` carries it. `uuid` is the
  *  database key, needed for edits and revision history. */
@@ -110,6 +111,7 @@ function toAsset(r: AssetRow, ownerSlug: string): Asset & { uuid: string } {
     imageCredit: r.image_credit ?? undefined,
     imageIsRepresentative: r.image_is_representative ?? undefined,
     sources: r.sources ?? [],
+    specs: r.specs ?? undefined,
     updatedAt: r.updated_at ?? undefined,
   };
 }

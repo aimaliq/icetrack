@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { updateAsset, type EditState } from "@/lib/edit/actions";
 import { CATEGORY_META, CATEGORY_ORDER } from "@/lib/categories";
 import {
@@ -11,7 +11,8 @@ import {
   EditFooter,
 } from "@/components/EditFields";
 import { ImageUpload } from "@/components/ImageUpload";
-import type { Asset } from "@/lib/types";
+import { SpecFields } from "@/components/SpecFields";
+import type { Asset, AssetCategory } from "@/lib/types";
 
 const STATUSES = [
   { value: "unverified", label: "Unverified — not yet sourced" },
@@ -27,6 +28,8 @@ export function AssetForm({ asset }: { asset: Asset }) {
     action,
     null,
   );
+  // Tracked so the category-specific fields swap as soon as the select changes.
+  const [category, setCategory] = useState<AssetCategory>(asset.category);
 
   return (
     <form action={formAction} className="space-y-5">
@@ -36,11 +39,14 @@ export function AssetForm({ asset }: { asset: Asset }) {
         label="Category"
         name="category"
         defaultValue={asset.category}
+        onChange={(v) => setCategory(v as AssetCategory)}
         options={CATEGORY_ORDER.map((c) => ({
           value: c,
           label: CATEGORY_META[c].label,
         }))}
       />
+
+      <SpecFields category={category} current={asset.specs} />
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Make" name="make" defaultValue={asset.make} maxLength={80} />

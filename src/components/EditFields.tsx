@@ -74,12 +74,15 @@ export function Select({
   defaultValue,
   options,
   hint,
+  onChange,
 }: {
   label: string;
   name: string;
   defaultValue?: string | null;
   options: { value: string; label: string }[];
   hint?: string;
+  /** For selects that change what the rest of the form shows. */
+  onChange?: (value: string) => void;
 }) {
   return (
     <div>
@@ -90,6 +93,7 @@ export function Select({
         id={name}
         name={name}
         defaultValue={defaultValue ?? ""}
+        onChange={onChange ? (e) => onChange(e.target.value) : undefined}
         className={`${input} mt-1.5`}
       >
         {options.map((o) => (
