@@ -4,8 +4,7 @@ import type { Metadata } from "next";
 import { getAsset, getAssets } from "@/lib/db";
 import { CATEGORY_META } from "@/lib/categories";
 import { readSpecs } from "@/lib/specs";
-import { flightsForAsset } from "@/lib/flights/store";
-import { FlightMap } from "@/components/FlightMap";
+import { LiveTrackEmbed, isTrackable } from "@/components/LiveTrackEmbed";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AssetImage } from "@/components/AssetImage";
 import { Avatar } from "@/components/Avatar";
@@ -87,14 +86,8 @@ export default async function AssetPage({ params }: Props) {
   const specs = readSpecs(asset.category, asset.specs);
 
   // Aircraft that broadcast a transponder address can be shown on a map.
-  // Flight maps are paused. Collecting the positions needs far longer than a
-  // serverless function is allowed to run — requests to OpenSky from Vercel
-  // took around eighteen seconds each — and OpenSky's own map refuses to be
-  // embedded and asks for a human check. The pieces are all still here: the
-  // ICAO field, the flights table, the collector and the map component. See
-  // docs/FLIGHT-MAP.md for what a working version needs.
-  const trackable = false;
-  const flights: Awaited<ReturnType<typeof flightsForAsset>> = [];
+  const icao24 = String(asset.specs?.icao24 ?? "").trim();
+  const trackable = isTrackable(asset.category, icao24);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -258,15 +251,14 @@ export default async function AssetPage({ params }: Props) {
       {trackable && (
         <section className="mt-10 sm:mt-12">
           <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">
-            Recent flights
+            Live tracking
           </h2>
           <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-muted">
-            Where this aircraft has flown. Aircraft broadcast their position
-            continuously and in the clear; these are those broadcasts, collected
-            by a volunteer receiver network.
+            Aircraft broadcast their position continuously and in the clear.
+            This is that signal, picked up by a network of volunteer receivers.
           </p>
           <div className="mt-4 sm:mt-5">
-            <FlightMap flights={flights} />
+            <LiveTrackEmbed icao24={icao24} />
           </div>
         </section>
       )}
