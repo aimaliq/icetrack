@@ -1,5 +1,3 @@
-import { CATEGORY_META } from "@/lib/categories";
-
 /**
  * Live position, embedded from adsb.fi.
  *
@@ -28,9 +26,8 @@ export function LiveTrackEmbed({ icao24 }: { icao24: string }) {
       />
       <p className="border-t border-line px-4 py-3 text-[12px] leading-relaxed text-faint">
         Live position for{" "}
-        <span className="font-mono uppercase text-muted">{hex}</span> · shown
-        when the aircraft is transmitting, otherwise its last known position ·
-        map and data by{" "}
+        <span className="font-mono uppercase text-muted">{hex}</span>, otherwise
+        its last known position · map and data by{" "}
         <a
           href={`https://globe.adsb.fi/?icao=${hex}`}
           target="_blank"
@@ -39,7 +36,6 @@ export function LiveTrackEmbed({ icao24 }: { icao24: string }) {
         >
           adsb.fi
         </a>
-        , from receivers run by volunteers
       </p>
     </div>
   );
@@ -53,5 +49,3 @@ export function isTrackable(category: string, icao24: unknown): boolean {
     /^[0-9a-fA-F]{6}$/.test(icao24.trim())
   );
 }
-
-export const TRACK_LABEL = CATEGORY_META.jet.label;

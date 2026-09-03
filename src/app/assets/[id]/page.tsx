@@ -253,10 +253,6 @@ export default async function AssetPage({ params }: Props) {
           <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">
             Live tracking
           </h2>
-          <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-muted">
-            Aircraft broadcast their position continuously and in the clear.
-            This is that signal, picked up by a network of volunteer receivers.
-          </p>
           <div className="mt-4 sm:mt-5">
             <LiveTrackEmbed icao24={icao24} />
           </div>
