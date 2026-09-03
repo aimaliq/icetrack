@@ -7,9 +7,12 @@ import type { StoredFlight } from "@/lib/flights/store";
  * Flight paths on a map.
  *
  * Leaflet is imported on the client only: it touches `window` at module scope,
- * so it cannot be part of the server bundle. Tiles are CartoDB's Positron and
- * Dark Matter — near-monochrome basemaps that stay quiet under the flight
- * lines and match the site's two themes.
+ * so it cannot be part of the server bundle.
+ *
+ * Tiles come from Esri's light and dark grey canvases: near-monochrome, so
+ * they stay quiet under the flight lines, and free without a key. CARTO's
+ * equivalents look better still but stamp "API KEY REQUIRED" across every tile
+ * when a browser sends a Referer, which a curl check does not reveal.
  *
  * The map renders even with nothing to draw. An empty frame says the feature
  * exists and this aircraft simply has not been seen; no frame at all says
@@ -21,8 +24,9 @@ const COLOURS = [
 ];
 
 const TILES = {
-  light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-  dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+  light:
+    "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+  dark: "https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
 };
 
 export function FlightMap({ flights }: { flights: StoredFlight[] }) {
@@ -54,8 +58,7 @@ export function FlightMap({ flights }: { flights: StoredFlight[] }) {
 
       L.tileLayer(dark ? TILES.dark : TILES.light, {
         maxZoom: 11,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        attribution: "Tiles &copy; Esri",
       }).addTo(m);
 
       const bounds: [number, number][] = [];
