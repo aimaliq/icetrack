@@ -44,6 +44,9 @@ export interface Source {
 }
 
 export interface Asset {
+  /** Database key. Present on rows read from the database; the JSON seed
+   *  files have no such field, which is why it is optional. */
+  uuid?: string;
   id: string;
   ownerId: string;
   category: AssetCategory;

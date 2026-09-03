@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { getAsset, getAssets } from "@/lib/db";
 import { CATEGORY_META } from "@/lib/categories";
 import { readSpecs } from "@/lib/specs";
+import { flightsForAsset } from "@/lib/flights/store";
+import { FlightMap } from "@/components/FlightMap";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AssetImage } from "@/components/AssetImage";
 import { Avatar } from "@/components/Avatar";
@@ -83,6 +85,13 @@ export default async function AssetPage({ params }: Props) {
   // What only this kind of asset has: passengers and range for a jet, cabins
   // and length for a yacht, floor area and bedrooms for a house.
   const specs = readSpecs(asset.category, asset.specs);
+
+  // Aircraft that broadcast a transponder address can be shown on a map.
+  const icao24 = String(asset.specs?.icao24 ?? "").trim();
+  const flights =
+    asset.category === "jet" && /^[0-9a-fA-F]{6}$/.test(icao24)
+      ? await flightsForAsset(asset.uuid ?? "")
+      : [];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -240,6 +249,22 @@ export default async function AssetPage({ params }: Props) {
               </div>
             ))}
           </dl>
+        </section>
+      )}
+
+      {flights.length > 0 && (
+        <section className="mt-10 sm:mt-12">
+          <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">
+            Recent flights
+          </h2>
+          <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-muted">
+            Where this aircraft has flown. Aircraft broadcast their position
+            continuously and in the clear; these are those broadcasts, collected
+            by a volunteer receiver network.
+          </p>
+          <div className="mt-4 sm:mt-5">
+            <FlightMap flights={flights} />
+          </div>
         </section>
       )}
 

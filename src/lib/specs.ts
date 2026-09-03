@@ -26,6 +26,12 @@ export type SpecField = {
 
 export const CATEGORY_SPECS: Record<AssetCategory, SpecField[]> = {
   jet: [
+    {
+      key: "icao24",
+      label: "ICAO hex",
+      placeholder: "a835af",
+      hint: "The transponder's 24-bit address, six hex characters. Find it by searching the tail number on globe.adsbexchange.com. This is what the flight map needs.",
+    },
     { key: "passengers", label: "Passengers", type: "number", placeholder: "14" },
     { key: "range", label: "Range", type: "number", unit: "nm", placeholder: "7500" },
     { key: "cruise_speed", label: "Cruise speed", type: "number", unit: "kt" },

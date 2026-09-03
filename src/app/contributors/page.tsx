@@ -40,11 +40,10 @@ export default async function ContributorsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-14">
       <h1 className="text-2xl font-semibold tracking-tightest sm:text-4xl">
-        Contributors
+        Top Contributors
       </h1>
       <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">
-        IceTrack is built by whoever shows up. Every entry here was written,
-        sourced or corrected by someone on this list.
+        Every entry here was written, sourced or corrected by someone on this list.
       </p>
 
       {active.length === 0 ? (
