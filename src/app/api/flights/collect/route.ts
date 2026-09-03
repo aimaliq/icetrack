@@ -72,9 +72,24 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const tracked = (jets ?? []).filter(
-    (a) => typeof (a.specs as Record<string, unknown>)?.icao24 === "string",
-  );
+  // ?only=<slug or icao24> narrows the run to one aircraft, which is how to
+  // check the pipeline without waiting on the whole fleet.
+  const only = request.nextUrl.searchParams.get("only")?.toLowerCase().trim();
+
+  const tracked = (jets ?? [])
+    .filter((a) => typeof (a.specs as Record<string, unknown>)?.icao24 === "string")
+    .filter((a) => {
+      if (!only) return true;
+      const hex = String((a.specs as Record<string, unknown>).icao24).toLowerCase();
+      return a.slug.toLowerCase().includes(only) || hex === only;
+    });
+
+  // Track fetches cost about five seconds each, so a run has to watch the
+  // clock: Vercel kills the function at 300s and everything not yet written
+  // is lost. Stop early and leave the rest for the next run.
+  const startedAt = Date.now();
+  const BUDGET_MS = 240_000;
+  const outOfTime = () => Date.now() - startedAt > BUDGET_MS;
 
   const requested = Number(request.nextUrl.searchParams.get("days"));
   const days =
@@ -105,6 +120,8 @@ export async function GET(request: NextRequest) {
     const midnight = Math.floor(now / DAY) * DAY;
     let foundAny = false;
 
+    if (outOfTime()) break;
+
     for (let back = 1; back <= days; back++) {
       const begin = midnight - back * DAY;
       const end = begin + DAY;
@@ -114,7 +131,11 @@ export async function GET(request: NextRequest) {
         if (found.length > 0) foundAny = true;
 
         for (const f of found) {
-          const path = await trackFor(icao24, f.firstSeen);
+          // The flight row matters more than its path: write it first, so a
+          // run that runs out of time still leaves the record behind. Paths
+          // are filled in by a later pass.
+          const path = outOfTime() ? [] : await trackFor(icao24, f.firstSeen);
+
           const { error } = await db.from("flights").upsert(
             {
               asset_id: jet.id,
@@ -150,6 +171,8 @@ export async function GET(request: NextRequest) {
     days,
     mode: wantAll ? "full" : "latest",
     added,
+    seconds: Math.round((Date.now() - startedAt) / 1000),
+    ...(outOfTime() ? { note: "stopped on time budget; run again to continue" } : {}),
     ...(problems.length ? { problems } : {}),
   });
 }
