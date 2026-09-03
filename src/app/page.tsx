@@ -22,8 +22,16 @@ export default async function Home() {
   ) as Record<string, number>;
 
   const ownerBySlug = new Map(celebrities.map((c) => [c.id, c]));
-  // Enough rows that the duplicated track is taller than its window.
-  const marqueeAssets = assets.length >= 4 ? assets : [...assets, ...assets];
+  // The ten most valuable, not the first ten alphabetically: the strip is the
+  // first thing a visitor sees, so it should lead with the Eclipses and the
+  // Antilias. Ten is enough to fill the window twice over and few enough that
+  // the loop comes round rather than reading as an endless list.
+  const marqueeAssets = (() => {
+    const ranked = [...assets].sort(
+      (a, b) => (b.estimatedValueUsd ?? 0) - (a.estimatedValueUsd ?? 0),
+    );
+    return ranked.length >= 4 ? ranked.slice(0, 10) : [...ranked, ...ranked];
+  })();
 
   const top = [...celebrities]
     .sort((a, b) => totalValue(b.assets) - totalValue(a.assets))

@@ -24,6 +24,11 @@ export function AssetMarquee({
   // Duplicated for the seamless wrap; the copy is hidden from screen readers.
   const track = [...assets, ...assets];
 
+  // Scale the duration with the number of rows so the strip moves at the same
+  // speed whatever the database holds. A fixed duration meant that going from
+  // five entries to forty-six made it scroll nine times faster.
+  const seconds = Math.round(assets.length * 4.5);
+
   return (
     <div
       className="relative h-[380px] overflow-hidden sm:h-[460px] lg:h-[540px]"
@@ -35,7 +40,10 @@ export function AssetMarquee({
           "linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)",
       }}
     >
-      <div className="animate-marquee space-y-3 [animation-play-state:running] hover:[animation-play-state:paused]">
+      <div
+        className="animate-marquee space-y-3 [animation-play-state:running] hover:[animation-play-state:paused]"
+        style={{ animationDuration: `${seconds}s` }}
+      >
         {track.map((asset, i) => {
           const owner = owners.get(asset.ownerId);
           const value = formatValue(asset.estimatedValueUsd);
