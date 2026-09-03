@@ -100,8 +100,15 @@ export async function GET(request: NextRequest) {
   // clock: Vercel kills the function at 300s and everything not yet written
   // is lost. Stop early and leave the rest for the next run.
   const startedAt = Date.now();
-  const BUDGET_MS = 45_000;
-  const outOfTime = () => Date.now() - startedAt > BUDGET_MS;
+  const BUDGET_MS = 25_000;
+
+  // Two independent brakes. The clock is the one that matters, but a call
+  // count bounds the run even if every request returns instantly — the
+  // failure here has twice been "too many calls", not "one slow call".
+  const MAX_CALLS = 40;
+  let calls = 0;
+
+  const outOfTime = () => Date.now() - startedAt > BUDGET_MS || calls >= MAX_CALLS;
 
   // ?probe=1 exercises each step once and reports how long it took, which is
   // the only way to see inside a function that dies on a gateway timeout.
@@ -195,10 +202,16 @@ export async function GET(request: NextRequest) {
     if (outOfTime()) break;
 
     for (let back = 1; back <= days; back++) {
+      // Checked every day, not once per aircraft: the inner loop is where the
+      // time actually goes, and a check outside it can be skipped past for
+      // thirty iterations before anyone looks at the clock again.
+      if (outOfTime()) break;
+
       const begin = midnight - back * DAY;
       const end = begin + DAY;
 
       try {
+        calls += 1;
         const found = await flightsFor(icao24, begin, end);
         if (found.length > 0) foundAny = true;
 
@@ -206,7 +219,11 @@ export async function GET(request: NextRequest) {
           // The flight row matters more than its path: write it first, so a
           // run that runs out of time still leaves the record behind. Paths
           // are filled in by a later pass.
-          const path = outOfTime() ? [] : await trackFor(icao24, f.firstSeen);
+          let path: Awaited<ReturnType<typeof trackFor>> = [];
+          if (!outOfTime()) {
+            calls += 1;
+            path = await trackFor(icao24, f.firstSeen);
+          }
 
           const { error } = await db.from("flights").upsert(
             {
@@ -259,6 +276,7 @@ export async function GET(request: NextRequest) {
     mode: wantAll ? "full" : "latest",
     added,
     seconds: Math.round((Date.now() - startedAt) / 1000),
+    calls,
     ...(outOfTime() ? { note: "stopped on time budget; run again to continue" } : {}),
     ...(problems.length ? { problems } : {}),
   });

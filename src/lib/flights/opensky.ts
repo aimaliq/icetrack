@@ -68,7 +68,7 @@ async function token(): Promise<string | null> {
 }
 
 /** Every call is bounded: one hung request must not pin the whole run. */
-const TIMEOUT_MS = 15_000;
+const TIMEOUT_MS = 8_000;
 
 async function get<T>(path: string): Promise<T | null> {
   const bearer = await token();
