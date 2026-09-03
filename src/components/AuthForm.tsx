@@ -116,7 +116,6 @@ function CodeStep({
     initialError ? { error: initialError, sent: email } : null,
   );
   const [code, setCode] = useState("");
-  const [pasteFailed, setPasteFailed] = useState(false);
 
   return (
     <>
@@ -153,34 +152,6 @@ function CodeStep({
             className={`${input} text-center text-[24px] font-semibold tabular-nums tracking-[0.4em]`}
           />
 
-          {/* Copying the code out of the email and typing it back in is the
-              clumsiest step of signing up; this removes the typing. */}
-          <button
-            type="button"
-            onClick={async () => {
-              try {
-                const text = await navigator.clipboard.readText();
-                const digits = text.replace(/\D/g, "").slice(0, CODE_LENGTH);
-                if (digits.length === CODE_LENGTH) setCode(digits);
-                else setPasteFailed(true);
-              } catch {
-                // Firefox and Safari refuse clipboard reads outside a user
-                // gesture they trust; typing still works.
-                setPasteFailed(true);
-              }
-            }}
-            className="focus-ring mt-2 w-full rounded-full border border-line py-2
-                       text-[13px] transition-colors duration-150 ease-out-strong
-                       hover:bg-sunken"
-          >
-            Paste code from clipboard
-          </button>
-
-          {pasteFailed && (
-            <p className="mt-1.5 text-center text-[12px] text-faint">
-              Nothing to paste. Copy the code from the email first, or type it in.
-            </p>
-          )}
         </div>
 
         {state?.error && <ErrorNote>{state.error}</ErrorNote>}

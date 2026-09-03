@@ -1,0 +1,35 @@
+<!-- Supabase → Authentication → Emails → Templates
+     Paste this into BOTH "Magic Link" and "Confirm signup".
+     Subject: Your IceTrack sign-in code
+
+     Email clients do not run JavaScript, so a real copy-to-clipboard button
+     is not possible. What works instead is making the code trivial to select:
+     large, monospaced, well spaced, on its own line, with nothing beside it to
+     catch a drag. On phones, a long press selects it in one gesture. -->
+
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:480px;margin:0 auto;padding:32px 24px">
+
+  <h1 style="margin:0 0 8px;font-size:20px;font-weight:600;color:#101215">
+    Your sign-in code
+  </h1>
+
+  <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#5c646d">
+    Enter this code on IceTrack to finish signing in.
+  </p>
+
+  <!-- The code, alone on its line so a tap-and-hold selects it and nothing else. -->
+  <p style="margin:0 0 8px;padding:20px 16px;background:#f4f5f7;border-radius:12px;
+            text-align:center;font-family:'SF Mono',Menlo,Consolas,monospace;
+            font-size:34px;font-weight:700;letter-spacing:6px;color:#101215;
+            user-select:all;-webkit-user-select:all">{{ .Token }}</p>
+
+  <p style="margin:0 0 28px;text-align:center;font-size:12px;color:#8b939c">
+    Tap and hold to copy
+  </p>
+
+  <p style="margin:0;font-size:13px;line-height:1.6;color:#8b939c">
+    The code expires in one hour and can be used once. If you did not ask to
+    sign in, you can ignore this email.
+  </p>
+
+</div>
