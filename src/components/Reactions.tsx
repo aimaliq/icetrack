@@ -145,8 +145,8 @@ export function Reactions({
   );
 
   return (
-    <div className="flex flex-col items-end gap-1.5">
-      <div className="flex flex-wrap gap-2">
+    <div className="flex w-full flex-col items-end gap-1.5 sm:w-auto">
+      <div className="flex w-full justify-between gap-1 sm:w-auto sm:justify-end sm:gap-2">
       {ordered.map((r) => {
         const count = counts[r.key] ?? 0;
         const picked = mine === r.key;
@@ -159,9 +159,11 @@ export function Reactions({
             disabled={busy !== null}
             aria-label={`${r.label}${count ? `, ${count}` : ""}`}
             aria-pressed={picked}
-            className={`focus-ring group flex items-center gap-1.5 rounded-full border
-                        px-3.5 py-2 text-[19px] transition-[transform,background-color,border-color]
+            className={`focus-ring group flex shrink-0 items-center gap-1 rounded-full border
+                        sm:gap-1.5
+                        px-1.5 py-1.5 text-[16px] transition-[transform,background-color,border-color]
                         duration-150 ease-out-strong active:scale-[0.97]
+                        sm:px-3.5 sm:py-2 sm:text-[19px]
                         ${
                           picked
                             ? "border-accent bg-accent-soft"
@@ -193,7 +195,7 @@ export function Reactions({
             </span>
             {count > 0 && (
               <span
-                className={`text-[14px] font-medium tabular-nums ${
+                className={`text-[12px] font-medium tabular-nums sm:text-[14px] ${
                   picked ? "text-accent" : "text-muted"
                 }`}
               >
