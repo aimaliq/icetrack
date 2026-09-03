@@ -1,10 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getAssets, getCelebrities } from "@/lib/db";
-import { CATEGORY_META, CATEGORY_ORDER } from "@/lib/categories";
+import { CATEGORY_ORDER } from "@/lib/categories";
 import { AssetCard } from "@/components/AssetCard";
 import type { AssetCategory } from "@/lib/types";
 import { AddButton } from "@/components/AddButton";
+import { CategoryFilter } from "@/components/CategoryFilter";
 
 export const metadata: Metadata = {
   title: "Assets",
@@ -39,31 +40,7 @@ export default async function AssetsPage({ searchParams }: Props) {
         <AddButton href="/assets/new" label="Add an asset" />
       </div>
 
-      <div className="mt-6 flex gap-2 overflow-x-auto pb-1 sm:mt-8 sm:flex-wrap sm:overflow-visible">
-        <Link
-          href="/assets"
-          className={`focus-ring shrink-0 rounded-full border px-4 py-2 text-[14px] transition ${
-            active
-              ? "border-line text-muted hover:bg-sunken"
-              : "border-ink bg-ink text-surface"
-          }`}
-        >
-          All
-        </Link>
-        {CATEGORY_ORDER.map((cat) => (
-          <Link
-            key={cat}
-            href={`/assets?category=${cat}`}
-            className={`focus-ring shrink-0 rounded-full border px-4 py-2 text-[14px] transition ${
-              active === cat
-                ? "border-ink bg-ink text-surface"
-                : "border-line text-muted hover:bg-sunken"
-            }`}
-          >
-            {CATEGORY_META[cat].plural}
-          </Link>
-        ))}
-      </div>
+      <CategoryFilter basePath="/assets" active={active} />
 
       {assets.length === 0 ? (
         <p className="mt-14 text-[15px] text-muted">

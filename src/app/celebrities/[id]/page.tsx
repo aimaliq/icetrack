@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCelebrities, getCelebrity } from "@/lib/db";
-import { CELEBRITY_CATEGORY_LABEL } from "@/lib/categories";
+import { CELEBRITY_CATEGORY_LABEL, CATEGORY_ORDER } from "@/lib/categories";
+import type { AssetCategory } from "@/lib/types";
 import { AssetCard } from "@/components/AssetCard";
 import { Avatar } from "@/components/Avatar";
 import { ImageCredit } from "@/components/ImageCredit";
@@ -10,9 +11,13 @@ import { formatValue, formatValueExact, totalValue } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
 import { EditButton } from "@/components/EditButton";
 import { AddButton } from "@/components/AddButton";
+import { CategoryFilter } from "@/components/CategoryFilter";
 import { SITE_URL } from "@/lib/site";
 
-type Props = { params: Promise<{ id: string }> };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ category?: string }>;
+};
 
 export async function generateStaticParams() {
   return (await getCelebrities()).map((c) => ({ id: c.id }));
@@ -49,10 +54,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function CelebrityPage({ params }: Props) {
+export default async function CelebrityPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const { category } = await searchParams;
   const celeb = await getCelebrity(id);
   if (!celeb) notFound();
+
+  const active = CATEGORY_ORDER.includes(category as AssetCategory)
+    ? (category as AssetCategory)
+    : null;
+  const shown = active
+    ? celeb.assets.filter((a) => a.category === active)
+    : celeb.assets;
 
   const total = totalValue(celeb.assets);
   const valued = celeb.assets.filter((a) => a.estimatedValueUsd);
@@ -170,11 +183,21 @@ export default async function CelebrityPage({ params }: Props) {
             label="Add an asset"
           />
         </div>
-        {celeb.assets.length === 0 ? (
-          <p className="mt-6 text-[15px] text-muted">No assets catalogued yet.</p>
+        <CategoryFilter
+          basePath={`/celebrities/${celeb.id}`}
+          active={active}
+          assets={celeb.assets}
+        />
+
+        {shown.length === 0 ? (
+          <p className="mt-6 text-[15px] text-muted">
+            {celeb.assets.length === 0
+              ? "No assets catalogued yet."
+              : "Nothing in this category."}
+          </p>
         ) : (
           <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-            {celeb.assets.map((a) => (
+            {shown.map((a) => (
               <AssetCard key={a.id} asset={a} />
             ))}
           </div>

@@ -28,7 +28,7 @@ export default async function NewCelebrityPage() {
       </h1>
       <p className="mt-2 text-[14px] leading-relaxed text-muted">
         IceTrack catalogues public figures only — people whose lives are already
-        matters of public record. Never add a private individual.
+        matters of public record.
       </p>
 
       <div className="mt-8">
