@@ -87,6 +87,24 @@ single aircraft per run, a run managed two calls and wrote nothing.
 `X-Frame-Options: DENY`, and visiting it asks for a human verification check,
 so it is no use as an iframe or as a link.
 
+### Other ADS-B sources, checked September 2026
+
+OpenSky is not the only open network, but it is the only free one that serves
+*history*. The community aggregators are fast — adsb.fi answered in 109ms,
+against roughly eighteen seconds from Vercel to OpenSky — and they are fast
+because they only hold what is in the air right now.
+
+| Source | Result |
+| --- | --- |
+| `opendata.adsb.fi` | 200, ~110ms, no key. Live positions only, no tracks |
+| `api.adsb.lol` | 403 without a key; free key requires feeding data |
+| `api.airplanes.live` | 403 without a key |
+| ADS-B Exchange | Requires feeding data, or a paid plan |
+
+A live-only source would support a different feature — "in the air now",
+updated on page load, which the response times make entirely practical — but
+not "where this aircraft has been", which is what was being built.
+
 ### What a working version would need
 
 - A collector that runs somewhere without a per-request time limit: a GitHub
