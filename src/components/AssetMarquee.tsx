@@ -51,7 +51,7 @@ export function AssetMarquee({
                          transition-shadow duration-200 ease-out-strong hover:shadow-lg hover:shadow-black/5"
             >
               <div className="aspect-[3/2] w-28 shrink-0 overflow-hidden rounded-xl bg-sunken sm:w-32">
-                <AssetImage asset={asset} size="fill" bleed showBadge={false} />
+                <AssetImage asset={asset} size="fill" bleed />
               </div>
 
               <div className="min-w-0 flex-1">

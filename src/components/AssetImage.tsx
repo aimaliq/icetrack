@@ -22,15 +22,11 @@ export function AssetImage({
   asset,
   size = "md",
   bleed = false,
-  showBadge = true,
   fit = "cover",
 }: {
-  asset: Pick<Asset, "name" | "category" | "imageUrl" | "imageIsRepresentative">;
+  asset: Pick<Asset, "name" | "category" | "imageUrl">;
   size?: keyof typeof SIZES;
   bleed?: boolean;
-  /** Off at thumbnail sizes, where the label crowds the image and the entry
-   *  page it links to states the same caveat properly. */
-  showBadge?: boolean;
   /** `cover` fills the frame but crops; at small sizes that can leave a jet as
    *  a patch of sky, so thumbnails ask for `contain` and show the whole item. */
   fit?: "cover" | "contain";
@@ -40,17 +36,6 @@ export function AssetImage({
       className={`${SIZES[size]} relative grid w-full place-items-center
                   overflow-hidden bg-sunken ${bleed ? "" : "rounded-xl"}`}
     >
-      {/* A photo of the model must never read as a photo of the actual item. */}
-      {showBadge && asset.imageUrl && asset.imageIsRepresentative && (
-        <span
-          className="absolute right-2 top-2 z-10 rounded-full bg-surface/85 px-2
-                     py-0.5 text-[10px] font-medium uppercase tracking-wide
-                     text-muted backdrop-blur"
-        >
-          Model shown
-        </span>
-      )}
-
       {asset.imageUrl ? (
         /* eslint-disable-next-line @next/next/no-img-element */
         <img
