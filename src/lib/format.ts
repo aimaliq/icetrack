@@ -19,9 +19,18 @@ export function formatValueExact(usd: number): string {
   return `$ ${n}`;
 }
 
-/** Total tracked value across a set of assets. */
+/**
+ * Total tracked value across a set of assets.
+ *
+ * Only what the person still owns counts. `former` is something they sold and
+ * `disputed` is something we are not sure they ever had — adding either to a
+ * headline figure would state a total the database does not stand behind.
+ * They stay visible on the page; they just do not sum.
+ */
 export function totalValue(
-  assets: { estimatedValueUsd?: number }[],
+  assets: { estimatedValueUsd?: number; status?: string }[],
 ): number {
-  return assets.reduce((sum, a) => sum + (a.estimatedValueUsd ?? 0), 0);
+  return assets
+    .filter((a) => a.status !== "former" && a.status !== "disputed")
+    .reduce((sum, a) => sum + (a.estimatedValueUsd ?? 0), 0);
 }
