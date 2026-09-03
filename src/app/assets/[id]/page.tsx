@@ -154,10 +154,10 @@ export default async function AssetPage({ params }: Props) {
       </div>
 
       <header className="mt-6 sm:mt-8">
-        <AssetImage asset={asset} size="lg" />
-        <ImageCredit credit={asset.imageCredit} />
-
-        <div className="mt-6 flex flex-wrap items-center gap-2.5">
+        {/* Name and value first: the photo is usually of the model rather than
+            this particular item, so it illustrates the entry instead of
+            identifying it. */}
+        <div className="flex flex-wrap items-center gap-2.5">
           <StatusBadge status={asset.status} />
           <span className="text-[11px] uppercase tracking-widest text-faint">
             {meta.label}
@@ -176,6 +176,11 @@ export default async function AssetPage({ params }: Props) {
             </span>
           </p>
         ) : null}
+
+        <div className="mt-6">
+          <AssetImage asset={asset} size="lg" />
+          <ImageCredit credit={asset.imageCredit} />
+        </div>
 
         {owner && (
           <Link
