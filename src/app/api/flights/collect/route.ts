@@ -81,12 +81,19 @@ export async function GET(request: NextRequest) {
   // check the pipeline without waiting on the whole fleet.
   const only = request.nextUrl.searchParams.get("only")?.toLowerCase().trim();
 
+  const hexOf = (a: { specs: unknown }) =>
+    String((a.specs as Record<string, unknown>)?.icao24 ?? "")
+      .toLowerCase()
+      .trim();
+
   const tracked = (jets ?? [])
-    .filter((a) => typeof (a.specs as Record<string, unknown>)?.icao24 === "string")
+    // Six hex characters, the same shape the table's check constraint wants.
+    // An empty string used to pass here, and OpenSky takes twenty seconds to
+    // reject one — enough on its own to time the whole run out.
+    .filter((a) => /^[0-9a-f]{6}$/.test(hexOf(a)))
     .filter((a) => {
       if (!only) return true;
-      const hex = String((a.specs as Record<string, unknown>).icao24).toLowerCase();
-      return a.slug.toLowerCase().includes(only) || hex === only;
+      return a.slug.toLowerCase().includes(only) || hexOf(a) === only;
     });
 
   // Track fetches cost about five seconds each, so a run has to watch the
@@ -114,10 +121,14 @@ export async function GET(request: NextRequest) {
       }
     };
 
-    const first = (jets ?? [])[0];
-    const hex = first
-      ? String((first.specs as Record<string, unknown>)?.icao24 ?? "")
-      : "";
+    const first = tracked[0];
+    if (!first) {
+      return NextResponse.json({
+        error: "no aircraft with a valid icao24",
+        checked: (jets ?? []).length,
+      });
+    }
+    const hex = hexOf(first);
 
     const DAY = 86_400;
     const midnight = Math.floor(Date.now() / 1000 / DAY) * DAY;
@@ -132,7 +143,7 @@ export async function GET(request: NextRequest) {
     await time("supabaseWrite", async () => {
       const { error } = await db.from("flights").upsert(
         {
-          asset_id: first!.id,
+          asset_id: first.id,
           icao24: hex,
           first_seen: 1,
           last_seen: 2,
