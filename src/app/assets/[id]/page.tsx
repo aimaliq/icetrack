@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAsset, getAssets } from "@/lib/db";
+import { getAsset, getAssets, getReactions } from "@/lib/db";
 import { CATEGORY_META } from "@/lib/categories";
 import { readSpecs } from "@/lib/specs";
 import { LiveTrackEmbed, isTrackable } from "@/components/LiveTrackEmbed";
+import { Reactions } from "@/components/Reactions";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AssetImage } from "@/components/AssetImage";
 import { Avatar } from "@/components/Avatar";
@@ -88,6 +89,7 @@ export default async function AssetPage({ params }: Props) {
   // Aircraft that broadcast a transponder address can be shown on a map.
   const icao24 = String(asset.specs?.icao24 ?? "").trim();
   const trackable = isTrackable(asset.category, icao24);
+  const reactions = await getReactions(asset.uuid ?? "");
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -202,6 +204,10 @@ export default async function AssetPage({ params }: Props) {
             {asset.summary}
           </p>
         )}
+
+        <div className="mt-6">
+          <Reactions slug={asset.id} initial={reactions} />
+        </div>
       </header>
 
       {realSources.length === 0 && (

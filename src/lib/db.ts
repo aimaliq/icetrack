@@ -221,3 +221,21 @@ export async function getRecordId(
   const { data } = await db.from(table).select("id").eq("slug", slug).maybeSingle();
   return (data as { id: string } | null)?.id ?? null;
 }
+
+/** Reaction counts for one asset, keyed by emoji. */
+export async function getReactions(
+  assetUuid: string,
+): Promise<Record<string, number>> {
+  if (!assetUuid) return {};
+  const db = await reader();
+
+  const { data, error } = await db
+    .from("reactions")
+    .select("emoji, count")
+    .eq("asset_id", assetUuid);
+
+  if (error) return {};
+  return Object.fromEntries(
+    (data as { emoji: string; count: number }[]).map((r) => [r.emoji, r.count]),
+  );
+}

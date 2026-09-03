@@ -44,6 +44,9 @@ export default {
         // The list is rendered twice, so translating by half its height and
         // resetting lands on an identical frame — the loop is seamless.
         marquee: "marquee 42s linear infinite",
+        // A reaction is rare enough to be worth a moment of delight.
+        pop: "pop 320ms cubic-bezier(0.23, 1, 0.32, 1)",
+        "float-up": "floatUp 700ms cubic-bezier(0.23, 1, 0.32, 1) forwards",
       },
       keyframes: {
         fadeUp: {
@@ -53,6 +56,16 @@ export default {
         marquee: {
           "0%": { transform: "translateY(0)" },
           "100%": { transform: "translateY(-50%)" },
+        },
+        pop: {
+          "0%": { transform: "scale(1)" },
+          "40%": { transform: "scale(1.35)" },
+          "100%": { transform: "scale(1)" },
+        },
+        // The emoji that lifts away from the button as it is counted.
+        floatUp: {
+          "0%": { transform: "translateY(0) scale(1)", opacity: "0.9" },
+          "100%": { transform: "translateY(-28px) scale(1.5)", opacity: "0" },
         },
       },
     },
