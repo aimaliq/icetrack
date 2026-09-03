@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAsset, getAssets, getReactions } from "@/lib/db";
+import { ViewCounter } from "@/components/ViewCounter";
 import { CATEGORY_META } from "@/lib/categories";
 import { readSpecs } from "@/lib/specs";
 import { LiveTrackEmbed, isTrackable } from "@/components/LiveTrackEmbed";
@@ -137,6 +138,7 @@ export default async function AssetPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-4xl px-4 pb-8 pt-5 sm:px-6 sm:pb-16 sm:pt-6">
       <JsonLd data={jsonLd} />
+      <ViewCounter table="assets" slug={asset.id} />
       <div className="flex items-center justify-between gap-4">
         <Link
           href="/assets"

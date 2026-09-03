@@ -34,3 +34,14 @@ export function totalValue(
     .filter((a) => a.status !== "former" && a.status !== "disputed")
     .reduce((sum, a) => sum + (a.estimatedValueUsd ?? 0), 0);
 }
+
+/** Plain counts, shortened once they get long: "842", "1.2K", "45K", "1.3M". */
+export function formatCount(n: number): string {
+  if (n < 1000) return String(n);
+  if (n < 1_000_000) {
+    const k = n / 1000;
+    return `${k < 10 ? k.toFixed(1).replace(/\.0$/, "") : Math.round(k)}K`;
+  }
+  const m = n / 1_000_000;
+  return `${m < 10 ? m.toFixed(1).replace(/\.0$/, "") : Math.round(m)}M`;
+}

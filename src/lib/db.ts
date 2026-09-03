@@ -239,3 +239,19 @@ export async function getReactions(
     (data as { emoji: string; count: number }[]).map((r) => [r.emoji, r.count]),
   );
 }
+
+/** How many times a page has been viewed. */
+export async function getViews(
+  table: "celebrities" | "assets",
+  slug: string,
+): Promise<number> {
+  const db = await reader();
+  const { data } = await db
+    .from("page_views")
+    .select("count")
+    .eq("table_name", table)
+    .eq("slug", slug)
+    .maybeSingle();
+
+  return (data as { count: number } | null)?.count ?? 0;
+}
