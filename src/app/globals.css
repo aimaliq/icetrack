@@ -75,6 +75,50 @@ body {
     @apply outline-none focus-visible:ring-2 focus-visible:ring-accent
            focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
   }
+
+  /* Range input. The native control cannot be styled through a single
+     selector — WebKit and Firefox each expose their own pseudo-elements, and
+     neither accepts the other's, so the rules are duplicated rather than
+     grouped. A grouped selector would be dropped whole by both. */
+  .slider {
+    @apply h-6 w-full cursor-pointer appearance-none bg-transparent;
+  }
+
+  .slider::-webkit-slider-runnable-track {
+    @apply h-1.5 rounded-full bg-line;
+  }
+
+  .slider::-moz-range-track {
+    @apply h-1.5 rounded-full bg-line;
+  }
+
+  .slider::-webkit-slider-thumb {
+    @apply h-5 w-5 appearance-none rounded-full border-2 border-surface bg-ink
+           shadow-md transition-transform duration-150 ease-out-strong;
+    /* Centres the thumb on the track: half the thumb minus half the track. */
+    margin-top: -7px;
+  }
+
+  .slider::-moz-range-thumb {
+    @apply h-5 w-5 rounded-full border-2 border-surface bg-ink shadow-md
+           transition-transform duration-150 ease-out-strong;
+  }
+
+  .slider:active::-webkit-slider-thumb {
+    @apply scale-110;
+  }
+
+  .slider:active::-moz-range-thumb {
+    @apply scale-110;
+  }
+
+  .slider:focus-visible::-webkit-slider-thumb {
+    @apply ring-2 ring-accent ring-offset-2 ring-offset-surface;
+  }
+
+  .slider:focus-visible::-moz-range-thumb {
+    @apply ring-2 ring-accent ring-offset-2 ring-offset-surface;
+  }
 }
 
 @layer utilities {

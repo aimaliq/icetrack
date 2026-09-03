@@ -7,6 +7,7 @@ import { CATEGORY_META } from "@/lib/categories";
 import { readSpecs } from "@/lib/specs";
 import { LiveTrackEmbed, isTrackable } from "@/components/LiveTrackEmbed";
 import { Reactions } from "@/components/Reactions";
+import { EarningsBreakdown } from "@/components/EarningsBreakdown";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AssetImage } from "@/components/AssetImage";
 import { Avatar } from "@/components/Avatar";
@@ -16,15 +17,30 @@ import { formatValueExact } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
 import { EditButton } from "@/components/EditButton";
 import { SITE_URL } from "@/lib/site";
+import { STOPS } from "@/lib/earnings";
 
-type Props = { params: Promise<{ id: string }> };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ t?: string }>;
+};
 
 export async function generateStaticParams() {
   return (await getAssets()).map((a) => ({ id: a.id }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
+/** Read `?t=` as a slider stop, or null if it is absent or not one. The value
+ *  comes from a URL anyone can edit, so it is validated rather than trusted. */
+function stopIndex(t: string | undefined): number | null {
+  if (t === undefined) return null;
+  const n = Number(t);
+  return Number.isInteger(n) && n >= 0 && n < STOPS.length ? n : null;
+}
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
+  const [{ id }, { t }] = await Promise.all([params, searchParams]);
   const found = await getAsset(id);
   if (!found) return { title: "Not found", robots: { index: false } };
 
@@ -40,6 +56,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       owner ? `attributed to ${owner.name}` : "entry"
     }, listed as ${asset.status} on IceTrack.${value}`;
 
+  // A link shared from the earnings breakdown carries the span it was read at.
+  // That link gets the card showing those figures; a plain link gets the
+  // entry's own card, which is about the asset rather than the wage.
+  const span = stopIndex(t);
+  const image =
+    span !== null && asset.estimatedValueUsd
+      ? `/assets/${asset.id}/share?t=${span}`
+      : `/assets/${asset.id}/opengraph-image`;
+
   return {
     title: owner ? `${asset.name} — ${owner.name}` : asset.name,
     description,
@@ -49,18 +74,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${asset.name}${owner ? ` — ${owner.name}` : ""}`,
       description,
       url: `/assets/${asset.id}`,
-      images: [{ url: `/assets/${asset.id}/opengraph-image` }],
+      images: [{ url: image }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${asset.name}${owner ? ` — ${owner.name}` : ""}`,
       description,
+      images: [image],
     },
   };
 }
 
-export default async function AssetPage({ params }: Props) {
-  const { id } = await params;
+export default async function AssetPage({ params, searchParams }: Props) {
+  const [{ id }, { t }] = await Promise.all([params, searchParams]);
   const found = await getAsset(id);
   if (!found) notFound();
 
@@ -229,7 +255,7 @@ export default async function AssetPage({ params }: Props) {
 
       {specs.length > 0 && (
         <section className="mt-10 sm:mt-12">
-          <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">
+          <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">
             {meta.label} details
           </h2>
           <dl className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:grid-cols-3">
@@ -250,9 +276,22 @@ export default async function AssetPage({ params }: Props) {
         </section>
       )}
 
+      {/* Only where there is a figure to divide. A `former` asset is left out
+          too: working out the wage for something they no longer own frames a
+          sale as a purchase. */}
+      {asset.estimatedValueUsd && asset.status !== "former" && (
+        <EarningsBreakdown
+          value={asset.estimatedValueUsd}
+          assetName={asset.name}
+          ownerName={owner?.name}
+          url={`${SITE_URL}/assets/${asset.id}`}
+          startAt={stopIndex(t)}
+        />
+      )}
+
       {general.length > 0 && (
         <section className="mt-10 sm:mt-12">
-          <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">
+          <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">
             Record
           </h2>
           <dl className="mt-4 divide-y divide-line border-y border-line sm:mt-5">
@@ -268,7 +307,7 @@ export default async function AssetPage({ params }: Props) {
 
       {trackable && (
         <section className="mt-10 sm:mt-12">
-          <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">
+          <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">
             Live tracking
           </h2>
           <div className="mt-4 sm:mt-5">
@@ -278,7 +317,7 @@ export default async function AssetPage({ params }: Props) {
       )}
 
       <section className="mt-10 sm:mt-12">
-        <h2 className="text-[11px] uppercase tracking-[0.24em] text-faint">Sources</h2>
+        <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">Sources</h2>
         <ul className="mt-4 space-y-3 sm:mt-5">
           {asset.sources.map((s, i) => {
             const placeholder = isPlaceholderSource(s);
