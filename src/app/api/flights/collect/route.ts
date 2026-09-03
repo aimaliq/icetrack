@@ -15,13 +15,17 @@ import { flightsFor, trackFor } from "@/lib/flights/opensky";
 export const maxDuration = 300;
 
 /**
- * Days covered per run. Thirty days across nine aircraft is over 270 requests
- * plus a track fetch for every flight found, which does not fit in the 300
- * second function limit. The job runs daily, so a shorter window still keeps
- * the 30 days on the page filled in — it just takes a few runs to backfill.
- * `?days=` overrides it for a manual catch-up run.
+ * How far back to look for an aircraft's most recent flight.
+ *
+ * The collector stops at the first day that has one, so a jet that flew
+ * yesterday costs a single request. Only aircraft that have been sitting still
+ * for weeks walk the full window, and they are the cheap case anyway: no
+ * flights means no track fetches.
+ *
+ * `?days=` raises it, and `?all=1` keeps going instead of stopping at the
+ * first day with flights, for a full backfill.
  */
-const DEFAULT_DAYS = 7;
+const DEFAULT_DAYS = 30;
 
 export async function GET(request: NextRequest) {
   // Vercel Cron signs its requests; anything else needs the shared secret.
@@ -58,9 +62,14 @@ export async function GET(request: NextRequest) {
   );
 
   const requested = Number(request.nextUrl.searchParams.get("days"));
-  const days = Number.isFinite(requested) && requested > 0
-    ? Math.min(requested, 30)
-    : DEFAULT_DAYS;
+  const days =
+    Number.isFinite(requested) && requested > 0
+      ? Math.min(requested, 30)
+      : DEFAULT_DAYS;
+
+  // By default take the most recent flights and stop; ?all=1 walks the whole
+  // window, which is what a first run or a backfill wants.
+  const wantAll = request.nextUrl.searchParams.get("all") === "1";
 
   const now = Math.floor(Date.now() / 1000);
   let added = 0;
@@ -79,6 +88,7 @@ export async function GET(request: NextRequest) {
     // two arbitrary 24-hour periods, so query one UTC day at a time.
     const DAY = 86_400;
     const midnight = Math.floor(now / DAY) * DAY;
+    let foundAny = false;
 
     for (let back = 1; back <= days; back++) {
       const begin = midnight - back * DAY;
@@ -86,6 +96,8 @@ export async function GET(request: NextRequest) {
 
       try {
         const found = await flightsFor(icao24, begin, end);
+        if (found.length > 0) foundAny = true;
+
         for (const f of found) {
           const path = await trackFor(icao24, f.firstSeen);
           const { error } = await db.from("flights").upsert(
@@ -109,6 +121,9 @@ export async function GET(request: NextRequest) {
           `${jet.slug} day -${back}: ${e instanceof Error ? e.message : String(e)}`,
         );
       }
+
+      // Found the aircraft's latest activity; no need to keep walking back.
+      if (foundAny && !wantAll) break;
     }
   }
 
@@ -118,6 +133,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     tracked: tracked.length,
     days,
+    mode: wantAll ? "full" : "latest",
     added,
     ...(problems.length ? { problems } : {}),
   });
