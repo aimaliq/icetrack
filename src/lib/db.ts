@@ -240,6 +240,29 @@ export async function getReactions(
   );
 }
 
+/**
+ * View counts for a whole table, keyed by slug.
+ *
+ * One query for the listing rather than one per row. Pages nobody has opened
+ * have no row at all, so callers should read a missing slug as zero.
+ */
+export async function getAllViews(
+  table: "celebrities" | "assets",
+): Promise<Record<string, number>> {
+  const db = await reader();
+  const { data, error } = await db
+    .from("page_views")
+    .select("slug, count")
+    .eq("table_name", table);
+
+  // A missing table (migration not yet applied) should leave the listing
+  // working with every count at zero, not break the page.
+  if (error) return {};
+  return Object.fromEntries(
+    (data as { slug: string; count: number }[]).map((r) => [r.slug, r.count]),
+  );
+}
+
 /** How many times a page has been viewed. */
 export async function getViews(
   table: "celebrities" | "assets",
