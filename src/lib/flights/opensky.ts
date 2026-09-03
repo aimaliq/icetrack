@@ -40,15 +40,21 @@ async function token(): Promise<string | null> {
 
   if (cached && cached.expires > Date.now() + 30_000) return cached.token;
 
-  const res = await fetch(TOKEN_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-      client_id: id,
-      client_secret: secret,
-    }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(TOKEN_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: id,
+        client_secret: secret,
+      }),
+      signal: AbortSignal.timeout(15_000),
+    });
+  } catch {
+    return null;
+  }
   if (!res.ok) return null;
 
   const json = (await res.json()) as { access_token?: string; expires_in?: number };
@@ -61,14 +67,41 @@ async function token(): Promise<string | null> {
   return cached.token;
 }
 
+/** Every call is bounded: one hung request must not pin the whole run. */
+const TIMEOUT_MS = 15_000;
+
 async function get<T>(path: string): Promise<T | null> {
   const bearer = await token();
-  const res = await fetch(`${API}${path}`, {
-    headers: bearer ? { Authorization: `Bearer ${bearer}` } : {},
-    // Positions change constantly; nothing here should be cached by the fetch
-    // layer, since we store what we collect ourselves.
-    cache: "no-store",
-  });
+
+  let res: Response;
+  try {
+    res = await fetch(`${API}${path}`, {
+      headers: bearer ? { Authorization: `Bearer ${bearer}` } : {},
+      // Positions change constantly; nothing here should be cached by the
+      // fetch layer, since we store what we collect ourselves.
+      cache: "no-store",
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+  } catch {
+    return null;
+  }
+  // Tokens last 30 minutes. On a warm instance the cached one can be stale, so
+  // a 401 means "get a new token and try once more", not "give up".
+  if (res.status === 401) {
+    cached = null;
+    const fresh = await token();
+    if (!fresh) return null;
+    try {
+      res = await fetch(`${API}${path}`, {
+        headers: { Authorization: `Bearer ${fresh}` },
+        cache: "no-store",
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+    } catch {
+      return null;
+    }
+  }
+
   // 404 means "no data for that window", which is normal for an aircraft that
   // has not flown, not an error worth throwing over.
   if (res.status === 404) return null;

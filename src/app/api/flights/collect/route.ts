@@ -12,7 +12,12 @@ import { flightsFor, trackFor } from "@/lib/flights/opensky";
  * Writes with the service role because the flights table grants no insert to
  * any client role — a contributor must not be able to fabricate a flight path.
  */
-export const maxDuration = 300;
+/**
+ * Vercel caps this by plan — 60s on Hobby — and the platform kills the
+ * function without warning when it overruns. Ask for 60 and keep the internal
+ * budget well under it, so the run stops on its own terms and reports back.
+ */
+export const maxDuration = 60;
 
 /**
  * How far back to look for an aircraft's most recent flight.
@@ -88,7 +93,7 @@ export async function GET(request: NextRequest) {
   // clock: Vercel kills the function at 300s and everything not yet written
   // is lost. Stop early and leave the rest for the next run.
   const startedAt = Date.now();
-  const BUDGET_MS = 240_000;
+  const BUDGET_MS = 45_000;
   const outOfTime = () => Date.now() - startedAt > BUDGET_MS;
 
   const requested = Number(request.nextUrl.searchParams.get("days"));
