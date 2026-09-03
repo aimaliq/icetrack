@@ -32,7 +32,8 @@ export function Reactions({
   initial: Counts;
 }) {
   const [counts, setCounts] = useState<Counts>(initial);
-  const [mine, setMine] = useState<Set<string>>(new Set());
+  // One reaction per visitor, so this is a single key rather than a set.
+  const [mine, setMine] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   // Which button is mid-animation, so the pop restarts on each fresh click.
   const [popping, setPopping] = useState<string | null>(null);
@@ -43,47 +44,94 @@ export function Reactions({
   useEffect(() => {
     try {
       const saved = localStorage.getItem(storageKey);
-      if (saved) setMine(new Set(JSON.parse(saved) as string[]));
+      // Older versions stored an array; take the first entry from one.
+      if (saved) {
+        const parsed: unknown = JSON.parse(saved);
+        setMine(
+          Array.isArray(parsed)
+            ? ((parsed[0] as string) ?? null)
+            : typeof parsed === "string"
+              ? parsed
+              : null,
+        );
+      }
     } catch {
       // Private browsing, or storage disabled. Reacting still works; the page
-      // just will not remember which ones were picked.
+      // just will not remember which one was picked.
     }
   }, [storageKey]);
 
-  async function react(key: string) {
-    if (busy || mine.has(key)) return;
-    setBusy(key);
-    setPopping(key);
-    window.setTimeout(() => setPopping(null), 700);
-
-    // Move the number immediately: a counter that waits on a round trip feels
-    // broken even when it is working.
-    setCounts((c) => ({ ...c, [key]: (c[key] ?? 0) + 1 }));
-    const next = new Set(mine).add(key);
-    setMine(next);
+  function remember(key: string | null) {
     try {
-      localStorage.setItem(storageKey, JSON.stringify([...next]));
+      if (key) localStorage.setItem(storageKey, JSON.stringify(key));
+      else localStorage.removeItem(storageKey);
     } catch {
       // As above.
     }
+  }
 
-    const db = createClient();
-    const { data, error } = await db.rpc("react", {
-      target_slug: slug,
-      chosen: key,
+  async function react(key: string) {
+    if (busy) return;
+
+    const previous = mine;
+    const clearing = previous === key;
+
+    setBusy(key);
+    if (!clearing) {
+      setPopping(key);
+      window.setTimeout(() => setPopping(null), 700);
+    }
+
+    // Move the numbers before the round trip: a counter that waits on the
+    // network feels broken even when it is working.
+    setCounts((c) => {
+      const next = { ...c };
+      if (previous) next[previous] = Math.max(0, (next[previous] ?? 1) - 1);
+      if (!clearing) next[key] = (next[key] ?? 0) + 1;
+      return next;
     });
 
-    if (error) {
-      // Put it back rather than leaving a number that is not real, and say so:
-      // a count that appears and then vanishes reads as a broken page.
-      setCounts((c) => ({ ...c, [key]: Math.max(0, (c[key] ?? 1) - 1) }));
-      const reverted = new Set(next);
-      reverted.delete(key);
-      setMine(reverted);
+    const chosen = clearing ? null : key;
+    setMine(chosen);
+    remember(chosen);
+
+    const db = createClient();
+
+    // Take the old one away first, so a visitor switching reactions never
+    // counts twice even if the second call fails.
+    let failedAny = false;
+    if (previous) {
+      const { error } = await db.rpc("unreact", {
+        target_slug: slug,
+        chosen: previous,
+      });
+      if (error) failedAny = true;
+    }
+
+    if (!clearing) {
+      const { data, error } = await db.rpc("react", {
+        target_slug: slug,
+        chosen: key,
+      });
+      if (error) failedAny = true;
+      else if (typeof data === "number") {
+        setCounts((c) => ({ ...c, [key]: data }));
+      }
+    }
+
+    if (failedAny) {
+      // Put everything back rather than leaving numbers that are not real.
+      setCounts((c) => {
+        const back = { ...c };
+        if (!clearing) back[key] = Math.max(0, (back[key] ?? 1) - 1);
+        if (previous) back[previous] = (back[previous] ?? 0) + 1;
+        return back;
+      });
+      setMine(previous);
+      remember(previous);
       setFailed(true);
-    } else if (typeof data === "number") {
+    } else {
       setFailed(false);
-      setCounts((c) => ({ ...c, [key]: data }));
     }
 
     setBusy(null);
@@ -101,14 +149,14 @@ export function Reactions({
       <div className="flex flex-wrap gap-2">
       {ordered.map((r) => {
         const count = counts[r.key] ?? 0;
-        const picked = mine.has(r.key);
+        const picked = mine === r.key;
 
         return (
           <button
             key={r.key}
             type="button"
             onClick={() => void react(r.key)}
-            disabled={picked}
+            disabled={busy !== null}
             aria-label={`${r.label}${count ? `, ${count}` : ""}`}
             aria-pressed={picked}
             className={`focus-ring group flex items-center gap-1.5 rounded-full border
