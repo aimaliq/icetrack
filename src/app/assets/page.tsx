@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getAssets, getCelebrities } from "@/lib/db";
+import { getAssets, getCelebrities, getAllReactions } from "@/lib/db";
 import { CATEGORY_ORDER } from "@/lib/categories";
 import { AssetCard } from "@/components/AssetCard";
 import type { AssetCategory } from "@/lib/types";
@@ -31,6 +31,7 @@ export default async function AssetsPage({ searchParams }: Props) {
   const celebrities = await getCelebrities();
   const byId = new Map(celebrities.map((c) => [c.id, c]));
   const all = await getAssets();
+  const traction = await getAllReactions();
   const assets = active ? all.filter((a) => a.category === active) : all;
 
   return (
@@ -49,7 +50,12 @@ export default async function AssetsPage({ searchParams }: Props) {
       ) : (
         <div className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {assets.map((a) => (
-            <AssetCard key={a.id} asset={a} owner={byId.get(a.ownerId)} />
+            <AssetCard
+              key={a.id}
+              asset={a}
+              owner={byId.get(a.ownerId)}
+              reactions={traction[a.uuid ?? ""]}
+            />
           ))}
         </div>
       )}

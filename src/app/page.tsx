@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAssets, getCelebritiesWithAssets, getStats } from "@/lib/db";
+import { getAssets, getCelebritiesWithAssets, getStats, getAllReactions } from "@/lib/db";
 import { CATEGORY_ORDER } from "@/lib/categories";
 import { CategoryTile } from "@/components/CategoryTile";
 import { AssetCard } from "@/components/AssetCard";
@@ -14,6 +14,7 @@ export default async function Home() {
   const stats = await getStats();
   const celebrities = await getCelebritiesWithAssets();
   const assets = await getAssets();
+  const traction = await getAllReactions();
   const byId = new Map(celebrities.map((c) => [c.id, c]));
   const tracked = formatValue(totalValue(assets));
 
@@ -179,7 +180,12 @@ export default async function Home() {
         </div>
         <div className="mt-6 grid grid-cols-1 gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {assets.slice(0, 6).map((a) => (
-            <AssetCard key={a.id} asset={a} owner={byId.get(a.ownerId)} />
+            <AssetCard
+              key={a.id}
+              asset={a}
+              owner={byId.get(a.ownerId)}
+              reactions={traction[a.uuid ?? ""]}
+            />
           ))}
         </div>
       </section>

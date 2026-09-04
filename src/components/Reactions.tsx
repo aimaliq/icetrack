@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { REACTIONS } from "@/lib/reactions";
 
 /**
  * Emoji reactions.
@@ -13,14 +14,7 @@ import { createClient } from "@/lib/supabase/client";
  * orphaning counts. Which ones a visitor has picked lives in localStorage —
  * the database holds counts only and no record of who reacted.
  */
-const REACTIONS = [
-  { key: "heart_eyes", emoji: "😍", label: "Love it" },
-  { key: "heart", emoji: "❤️", label: "Heart" },
-  { key: "wow", emoji: "😮", label: "Wow" },
-  { key: "money", emoji: "💸", label: "Expensive" },
-  { key: "thumbs_down", emoji: "👎", label: "Dislike" },
-  { key: "poop", emoji: "💩", label: "Awful" },
-] as const;
+
 
 type Counts = Record<string, number>;
 

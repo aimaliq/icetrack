@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getCelebrities, getCelebrity, getViews } from "@/lib/db";
+import { getCelebrities, getCelebrity, getViews, getAllReactions } from "@/lib/db";
 import { CELEBRITY_CATEGORY_LABEL, CATEGORY_ORDER } from "@/lib/categories";
 import type { AssetCategory } from "@/lib/types";
 import { AssetCard } from "@/components/AssetCard";
@@ -70,6 +70,7 @@ export default async function CelebrityPage({ params, searchParams }: Props) {
 
   const total = totalValue(celeb.assets);
   const views = await getViews("celebrities", celeb.id);
+  const traction = await getAllReactions();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -200,7 +201,7 @@ export default async function CelebrityPage({ params, searchParams }: Props) {
         ) : (
           <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             {shown.map((a) => (
-              <AssetCard key={a.id} asset={a} />
+              <AssetCard key={a.id} asset={a} reactions={traction[a.uuid ?? ""]} />
             ))}
           </div>
         )}

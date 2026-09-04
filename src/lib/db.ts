@@ -252,6 +252,26 @@ export async function getRecordId(
   return (data as { id: string } | null)?.id ?? null;
 }
 
+/**
+ * Reaction counts for every asset at once, keyed by asset uuid then emoji.
+ * One query for a listing page — the per-asset variant would be N.
+ */
+export async function getAllReactions(): Promise<
+  Record<string, Record<string, number>>
+> {
+  const db = await reader();
+  const { data, error } = await db
+    .from("reactions")
+    .select("asset_id, emoji, count");
+  if (error) return {};
+
+  const out: Record<string, Record<string, number>> = {};
+  for (const r of data as { asset_id: string; emoji: string; count: number }[]) {
+    (out[r.asset_id] ??= {})[r.emoji] = r.count;
+  }
+  return out;
+}
+
 /** Reaction counts for one asset, keyed by emoji. */
 export async function getReactions(
   assetUuid: string,

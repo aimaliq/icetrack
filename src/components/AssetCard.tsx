@@ -4,13 +4,17 @@ import { CATEGORY_META } from "@/lib/categories";
 import { formatValue } from "@/lib/format";
 import { StatusBadge } from "./StatusBadge";
 import { AssetImage } from "./AssetImage";
+import { ReactionCluster } from "./ReactionCluster";
 
 export function AssetCard({
   asset,
   owner,
+  reactions,
 }: {
   asset: Asset;
   owner?: Celebrity | null;
+  /** Per-emoji counts for the traction badge; omit and no badge renders. */
+  reactions?: Record<string, number>;
 }) {
   const value = formatValue(asset.estimatedValueUsd);
 
@@ -21,8 +25,14 @@ export function AssetCard({
                  bg-elevated transition-shadow duration-200 ease-out-strong
                  hover:shadow-lg hover:shadow-black/5"
     >
-      {/* Image fills the top half, edge to edge. */}
-      <AssetImage asset={asset} bleed />
+      {/* Image fills the top half, edge to edge. The traction badge floats
+          over its corner - it belongs to the thing, not to the caption. */}
+      <div className="relative">
+        <AssetImage asset={asset} bleed />
+        <span className="absolute right-2 top-2">
+          <ReactionCluster counts={reactions} />
+        </span>
+      </div>
 
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-2">
