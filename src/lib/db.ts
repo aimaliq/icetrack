@@ -313,6 +313,53 @@ export async function getAllViews(
   );
 }
 
+/** One comment in an asset's discussion, author resolved to a username. */
+export type CommentRow = {
+  id: string;
+  parentId: string | null;
+  body: string;
+  author: string;
+  isDeleted: boolean;
+  createdAt: string;
+};
+
+/**
+ * The discussion under one asset, oldest first — the tree is built by the
+ * component. Returns nothing when the migration is missing, so the page
+ * works before the SQL has run.
+ */
+export async function getComments(assetUuid: string): Promise<CommentRow[]> {
+  if (!assetUuid) return [];
+  const db = await reader();
+  const { data, error } = await db
+    .from("comments")
+    .select("id, parent_id, body, is_deleted, created_at, profiles(username)")
+    .eq("asset_id", assetUuid)
+    .order("created_at");
+  if (error) return [];
+
+  return (
+    data as unknown as {
+      id: string;
+      parent_id: string | null;
+      body: string;
+      is_deleted: boolean;
+      created_at: string;
+      profiles: { username: string } | { username: string }[] | null;
+    }[]
+  ).map((r) => {
+    const p = Array.isArray(r.profiles) ? r.profiles[0] : r.profiles;
+    return {
+      id: r.id,
+      parentId: r.parent_id,
+      body: r.is_deleted ? "" : r.body,
+      author: p?.username ?? "unknown",
+      isDeleted: r.is_deleted,
+      createdAt: r.created_at,
+    };
+  });
+}
+
 /** How many times a page has been viewed. */
 export async function getViews(
   table: "celebrities" | "assets",

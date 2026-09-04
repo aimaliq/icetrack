@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAsset, getAssets, getReactions } from "@/lib/db";
+import { getAsset, getAssets, getComments, getReactions } from "@/lib/db";
 import { ViewCounter } from "@/components/ViewCounter";
 import { CATEGORY_META } from "@/lib/categories";
 import { readSpecs } from "@/lib/specs";
@@ -22,6 +22,8 @@ import { isPlaceholderSource } from "@/lib/types";
 import { formatValueExact } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
 import { EditButton } from "@/components/EditButton";
+import { Comments } from "@/components/Comments";
+import { getCurrentProfile } from "@/lib/auth/actions";
 import { SITE_URL } from "@/lib/site";
 import { STOPS, shareNoun } from "@/lib/earnings";
 
@@ -131,6 +133,8 @@ export default async function AssetPage({ params, searchParams }: Props) {
   const shipTrackable =
     currentlyOwned && isTrackableShip(asset.category, mmsi);
   const reactions = await getReactions(asset.uuid ?? "");
+  const comments = await getComments(asset.uuid ?? "");
+  const profile = await getCurrentProfile();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -384,6 +388,25 @@ export default async function AssetPage({ params, searchParams }: Props) {
             );
           })}
         </ul>
+      </section>
+
+      <section className="mt-10 sm:mt-12">
+        <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">
+          Discussion
+          {comments.length > 0 && (
+            <span className="ml-2 font-normal normal-case tracking-normal text-faint">
+              {comments.filter((c) => !c.isDeleted).length}
+            </span>
+          )}
+        </h2>
+        <div className="mt-4 sm:mt-5">
+          <Comments
+            comments={comments}
+            me={profile?.username ?? null}
+            assetUuid={asset.uuid ?? ""}
+            assetSlug={asset.id}
+          />
+        </div>
       </section>
 
       {asset.updatedAt && (
