@@ -338,7 +338,14 @@ export default async function AssetPage({ params, searchParams }: Props) {
 
       {(trackable || shipTrackable) && (
         <section className="mt-10 sm:mt-12">
-          <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">
+          <h2 className="flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">
+            {/* The pulse ring says "receiving now" the way a broadcast badge
+                does. Reduced-motion kills the ping outright in globals.css —
+                collapsed to 0.01ms an infinite loop flickers instead. */}
+            <span className="relative flex h-2.5 w-2.5" aria-hidden>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+            </span>
             Live tracking
           </h2>
           <div className="mt-4 sm:mt-5">
