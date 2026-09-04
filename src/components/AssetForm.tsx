@@ -11,6 +11,7 @@ import {
   EditFooter,
 } from "@/components/EditFields";
 import { ImageUpload } from "@/components/ImageUpload";
+import { GalleryUpload } from "@/components/GalleryUpload";
 import { SpecFields } from "@/components/SpecFields";
 import type { Asset, AssetCategory } from "@/lib/types";
 
@@ -121,6 +122,8 @@ export function AssetForm({ asset }: { asset: Asset }) {
         currentUrl={asset.imageUrl}
         currentCredit={asset.imageCredit}
       />
+
+      <GalleryUpload initial={asset.gallery} />
 
       <SourceEditor initial={asset.sources} />
 

@@ -8,7 +8,7 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { createPublicClient } from "@/lib/supabase/public";
-import type { Asset, Celebrity, CelebrityWithAssets } from "./types";
+import type { Asset, Celebrity, CelebrityWithAssets, GalleryImage } from "./types";
 
 /**
  * Reads here are public data. Prefer the cookie-backed client so a signed-in
@@ -62,6 +62,7 @@ type AssetRow = {
   image_is_representative: boolean | null;
   sources: Asset["sources"] | null;
   specs: Asset["specs"] | null;
+  gallery: GalleryImage[] | null;
   updated_at: string | null;
 };
 
@@ -69,7 +70,27 @@ const CELEB_COLS =
   "id, slug, name, real_name, category, nationality, born_year, bio, image_url, image_credit, wikipedia, updated_at";
 
 const ASSET_COLS =
-  "id, slug, celebrity_id, category, name, make, model, year, registration, estimated_value_usd, acquired_year, status, confidence, region, summary, image_url, image_credit, image_is_representative, sources, specs, updated_at";
+  "id, slug, celebrity_id, category, name, make, model, year, registration, estimated_value_usd, acquired_year, status, confidence, region, summary, image_url, image_credit, image_is_representative, sources, specs, gallery, updated_at";
+
+/** ASSET_COLS before migration 0015 added `gallery`. */
+const ASSET_COLS_LEGACY = ASSET_COLS.replace(", gallery", "");
+
+/**
+ * Run an asset query, falling back to the pre-gallery column list when the
+ * migration has not been applied yet. Without this, deploying ahead of the
+ * SQL would take down every asset read at once — the failure mode that
+ * matters on a site that auto-deploys from main.
+ */
+async function withGalleryFallback<T>(
+  // PromiseLike, not Promise: the supabase builder is a lazy thenable.
+  run: (cols: string) => PromiseLike<{ data: T; error: { message: string } | null }>,
+): Promise<{ data: T; error: { message: string } | null }> {
+  const first = await run(ASSET_COLS);
+  if (first.error && first.error.message.includes("gallery")) {
+    return run(ASSET_COLS_LEGACY);
+  }
+  return first;
+}
 
 /** The UI keys everything off the slug, so `id` carries it. `uuid` is the
  *  database key, needed for edits and revision history. */
@@ -112,6 +133,7 @@ function toAsset(r: AssetRow, ownerSlug: string): Asset & { uuid: string } {
     imageIsRepresentative: r.image_is_representative ?? undefined,
     sources: r.sources ?? [],
     specs: r.specs ?? undefined,
+    gallery: r.gallery ?? undefined,
     updatedAt: r.updated_at ?? undefined,
   };
 }
@@ -129,7 +151,7 @@ export async function getCelebrities(): Promise<Celebrity[]> {
 export async function getAssets(): Promise<Asset[]> {
   const db = await reader();
   const [{ data: assets, error }, celebs] = await Promise.all([
-    db.from("assets").select(ASSET_COLS).order("name"),
+    withGalleryFallback((cols) => db.from("assets").select(cols).order("name")),
     getCelebrities(),
   ]);
   if (error) throw new Error(`Failed to load assets: ${error.message}`);
@@ -138,7 +160,7 @@ export async function getAssets(): Promise<Asset[]> {
   const slugByUuid = new Map(
     (celebs as (Celebrity & { uuid?: string })[]).map((c) => [c.uuid!, c.id]),
   );
-  return (assets as AssetRow[]).map((r) =>
+  return (assets as unknown as AssetRow[]).map((r) =>
     toAsset(r, slugByUuid.get(r.celebrity_id) ?? ""),
   );
 }
@@ -147,15 +169,19 @@ export async function getCelebrity(
   slug: string,
 ): Promise<CelebrityWithAssets | null> {
   const db = await reader();
-  const { data, error } = await db
-    .from("celebrities")
-    .select(`${CELEB_COLS}, assets(${ASSET_COLS})`)
-    .eq("slug", slug)
-    .maybeSingle();
+  const { data, error } = await withGalleryFallback((cols) =>
+    db
+      .from("celebrities")
+      .select(`${CELEB_COLS}, assets(${cols})`)
+      .eq("slug", slug)
+      .maybeSingle(),
+  );
   if (error) throw new Error(`Failed to load celebrity: ${error.message}`);
   if (!data) return null;
 
-  const { assets = [], ...row } = data as CelebRow & { assets: AssetRow[] };
+  const { assets = [], ...row } = data as unknown as CelebRow & {
+    assets: AssetRow[];
+  };
   const celeb = toCelebrity(row);
   return {
     ...celeb,
@@ -169,11 +195,13 @@ export async function getAsset(
   slug: string,
 ): Promise<{ asset: Asset; owner: Celebrity | null } | null> {
   const db = await reader();
-  const { data, error } = await db
-    .from("assets")
-    .select(`${ASSET_COLS}, celebrities(${CELEB_COLS})`)
-    .eq("slug", slug)
-    .maybeSingle();
+  const { data, error } = await withGalleryFallback((cols) =>
+    db
+      .from("assets")
+      .select(`${cols}, celebrities(${CELEB_COLS})`)
+      .eq("slug", slug)
+      .maybeSingle(),
+  );
   if (error) throw new Error(`Failed to load asset: ${error.message}`);
   if (!data) return null;
 
@@ -188,13 +216,15 @@ export async function getAsset(
 
 export async function getCelebritiesWithAssets(): Promise<CelebrityWithAssets[]> {
   const db = await reader();
-  const { data, error } = await db
-    .from("celebrities")
-    .select(`${CELEB_COLS}, assets(${ASSET_COLS})`)
-    .order("name");
+  const { data, error } = await withGalleryFallback((cols) =>
+    db
+      .from("celebrities")
+      .select(`${CELEB_COLS}, assets(${cols})`)
+      .order("name"),
+  );
   if (error) throw new Error(`Failed to load celebrities: ${error.message}`);
 
-  return (data as (CelebRow & { assets: AssetRow[] })[]).map((row) => {
+  return (data as unknown as (CelebRow & { assets: AssetRow[] })[]).map((row) => {
     const { assets = [], ...celebRow } = row;
     const celeb = toCelebrity(celebRow);
     return { ...celeb, assets: assets.map((a) => toAsset(a, celeb.id)) };

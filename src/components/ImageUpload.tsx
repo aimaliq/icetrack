@@ -3,17 +3,31 @@
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-const LICENCES = [
+export const LICENCES = [
   { value: "", label: "Choose a licence" },
   { value: "CC0", label: "CC0 — public domain dedication" },
   { value: "Public domain", label: "Public domain" },
   { value: "CC BY 4.0", label: "CC BY — credit required" },
   { value: "CC BY-SA 4.0", label: "CC BY-SA — credit, share alike" },
+  { value: "CC BY-NC 4.0", label: "CC BY-NC — credit, non-commercial" },
+  { value: "CC BY-NC-SA 4.0", label: "CC BY-NC-SA — credit, non-commercial" },
   { value: "CC BY 3.0", label: "CC BY 3.0" },
   { value: "CC BY-SA 3.0", label: "CC BY-SA 3.0" },
+  { value: "CC BY-NC 2.0", label: "CC BY-NC 2.0" },
   { value: "CC BY 2.0", label: "CC BY 2.0" },
   { value: "CC BY-SA 2.0", label: "CC BY-SA 2.0" },
+  {
+    value: "Used with permission",
+    label: "© With the photographer's permission",
+  },
 ];
+
+/** Everything except a public-domain dedication obliges us to name the
+ *  photographer. What a credit can NOT do is license a photo by itself:
+ *  an all-rights-reserved image stays unusable no matter who is named. */
+export function licenceNeedsAuthor(license: string): boolean {
+  return license !== "" && license !== "CC0" && license !== "Public domain";
+}
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -34,9 +48,12 @@ type Credit = {
  * licence that permits it and hotlinking is expected. Uploading suits
  * everything else.
  *
- * Author and licence are collected either way. The licences this project
- * accepts oblige us to credit the photographer, so an image whose author is
- * unknown cannot be published.
+ * Author and licence are collected either way. Besides the free licences,
+ * non-commercial ones (CC BY-NC and friends) and photos shared with the
+ * photographer's explicit permission are accepted — the site runs no ads.
+ * Every one of those obliges us to credit the photographer, so an image
+ * whose author is unknown cannot be published. A credit alone is not a
+ * licence: an all-rights-reserved photo stays out no matter who is named.
  */
 export function ImageUpload({
   currentUrl,
@@ -110,8 +127,7 @@ export function ImageUpload({
     setLinkDraft("");
   }
 
-  const needsCredit =
-    url !== "" && license !== "" && license !== "CC0" && license !== "Public domain";
+  const needsCredit = url !== "" && licenceNeedsAuthor(license);
 
   return (
     <div className="space-y-3">

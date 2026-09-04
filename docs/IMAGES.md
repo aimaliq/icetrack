@@ -27,10 +27,21 @@ outcome. It is not a gap in the design.
 
 **Usable:** `CC0`, `Public Domain`, `CC BY`, `CC BY-SA`
 
-**Not usable, even though they say Creative Commons:**
+**Usable while the site carries no advertising** (owner's decision,
+2026-09-04):
 
-- **`CC BY-NC`** — non-commercial only. It would block ever monetising the
-  site, and the boundary is vague enough to be a liability.
+- **`CC BY-NC` / `CC BY-NC-SA`** — non-commercial use with credit. IceTrack
+  is not monetised, so this use qualifies. **If the site ever takes ads or
+  sponsorship, every NC-licensed image must be reviewed first** — that is the
+  price of accepting them.
+- **"Used with permission"** — the photographer explicitly agreed to the use.
+  Record their name; keep the message or post where they agreed.
+
+**Not usable:**
+
+- **All-rights-reserved photos** — Getty, news sites, someone's Instagram.
+  A credit is an obligation that comes *with* a licence, not a substitute for
+  one: naming the photographer does not make their photo usable.
 - **`CC BY-ND`** — no derivatives. Cropping a photo into a circular avatar is a
   derivative, so this rules out our own layout.
 - **"Fair use" / "non-free"** on Wikipedia — those files are uploaded under a

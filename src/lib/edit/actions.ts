@@ -136,6 +136,57 @@ function imageFields(form: FormData) {
   };
 }
 
+/**
+ * The gallery arrives as one JSON field. Parsed defensively: it comes from a
+ * hidden input anyone can tamper with, so shape, size and every URL are
+ * checked here rather than trusted. Returns the clean list or an error.
+ */
+function galleryField(
+  form: FormData,
+): { gallery: { url: string; author?: string; license?: string; sourcePage?: string }[] } | { problem: string } {
+  const raw = text(form, "gallery");
+  if (!raw) return { gallery: [] };
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return { problem: "The photo list could not be read. Reload and retry." };
+  }
+  if (!Array.isArray(parsed) || parsed.length > 10) {
+    return { problem: "At most 10 extra photos per entry." };
+  }
+
+  const clean: { url: string; author?: string; license?: string; sourcePage?: string }[] = [];
+  for (const item of parsed) {
+    if (typeof item !== "object" || item === null) continue;
+    const it = item as Record<string, unknown>;
+    const url = typeof it.url === "string" ? it.url.trim() : "";
+    if (!/^https:\/\//i.test(url)) {
+      return { problem: "Every extra photo needs a full https:// address." };
+    }
+    const license = typeof it.license === "string" ? it.license.trim() : "";
+    const author = typeof it.author === "string" ? it.author.trim() : "";
+    const sourcePage =
+      typeof it.sourcePage === "string" ? it.sourcePage.trim() : "";
+    if (!license) {
+      return { problem: "Choose a licence for every extra photo." };
+    }
+    if (!["CC0", "Public domain"].includes(license) && !author) {
+      return {
+        problem: `${license} requires crediting the photographer on every photo.`,
+      };
+    }
+    clean.push({
+      url: url.slice(0, 500),
+      ...(author ? { author: author.slice(0, 120) } : {}),
+      license: license.slice(0, 60),
+      ...(sourcePage ? { sourcePage: sourcePage.slice(0, 500) } : {}),
+    });
+  }
+  return { gallery: clean };
+}
+
 /** Licences that oblige us to name the photographer. */
 function creditProblem(form: FormData): string | null {
   const url = text(form, "image_url");
@@ -206,6 +257,9 @@ export async function updateAsset(
   const region = text(form, "region");
   const summaryText = text(form, "summary");
 
+  const galleryResult = galleryField(form);
+  if ("problem" in galleryResult) return { error: galleryResult.problem };
+
   const patch = {
     name: text(form, "name"),
     category: text(form, "category"),
@@ -224,6 +278,7 @@ export async function updateAsset(
     summary: summaryText ?? "",
     sources: srcs,
     specs: specFields(form, text(form, "category") ?? ""),
+    gallery: galleryResult.gallery,
     ...imageFields(form),
   };
 

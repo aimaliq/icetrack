@@ -36,6 +36,14 @@ export interface ImageCredit {
   sourcePage?: string;
 }
 
+/** One extra photo on an asset. The licence attaches per photo. */
+export interface GalleryImage {
+  url: string;
+  author?: string;
+  license?: string;
+  sourcePage?: string;
+}
+
 export interface Source {
   title: string;
   url: string;
@@ -65,6 +73,7 @@ export interface Asset {
   imageCredit?: ImageCredit;
   /** True when the photo shows the model generally, not this exact item. */
   imageIsRepresentative?: boolean;
+  gallery?: GalleryImage[];
   sources: Source[];
   /** Category-specific fields; see src/lib/specs.ts for the shape. */
   specs?: Record<string, string | number>;

@@ -15,6 +15,7 @@ import { Reactions } from "@/components/Reactions";
 import { EarningsBreakdown } from "@/components/EarningsBreakdown";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AssetImage } from "@/components/AssetImage";
+import { AssetGallery } from "@/components/AssetGallery";
 import { Avatar } from "@/components/Avatar";
 import { ImageCredit } from "@/components/ImageCredit";
 import { isPlaceholderSource } from "@/lib/types";
@@ -227,8 +228,24 @@ export default async function AssetPage({ params, searchParams }: Props) {
         </div>
 
         <div className="mt-6">
-          <AssetImage asset={asset} size="lg" />
-          <ImageCredit credit={asset.imageCredit} />
+          {/* One photo renders as it always has; more become a carousel.
+              The main photo leads, gallery photos follow in their order. */}
+          {(() => {
+            const photos = [
+              ...(asset.imageUrl
+                ? [{ url: asset.imageUrl, ...asset.imageCredit }]
+                : []),
+              ...(asset.gallery ?? []),
+            ];
+            return photos.length > 1 ? (
+              <AssetGallery photos={photos} name={asset.name} />
+            ) : (
+              <>
+                <AssetImage asset={asset} size="lg" />
+                <ImageCredit credit={asset.imageCredit} />
+              </>
+            );
+          })()}
         </div>
 
         {owner && (
