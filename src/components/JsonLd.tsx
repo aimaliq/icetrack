@@ -6,8 +6,13 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
-      // The payload is built from our own data files, not user input.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      // Names, bios and summaries in here are contributor-written, and a
+      // literal "</script>" inside a script tag ends it no matter what the
+      // JSON around it says. Escaping "<" closes that door; the JSON parses
+      // identically.
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
+      }}
     />
   );
 }

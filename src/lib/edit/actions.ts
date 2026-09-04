@@ -187,6 +187,35 @@ function galleryField(
   return { gallery: clean };
 }
 
+/**
+ * Every stored link must be plain https. React does not sanitise hrefs, so a
+ * javascript: URL accepted today executes on whoever clicks it tomorrow —
+ * this check is what stands between an edit form and that click.
+ *
+ * Source URLs may also be legacy "TODO:" placeholders, which render as text,
+ * never as links.
+ */
+function linkProblem(form: FormData): string | null {
+  const https = (v: string | null) => !v || /^https:\/\//i.test(v);
+
+  if (!https(text(form, "image_url"))) {
+    return "The photo address must start with https://.";
+  }
+  if (!https(text(form, "image_source_page"))) {
+    return "The photo's source page must start with https://.";
+  }
+  if (!https(text(form, "wikipedia"))) {
+    return "The Wikipedia link must start with https://.";
+  }
+  for (const raw of form.getAll("source_url")) {
+    const url = String(raw).trim();
+    if (url && !/^https:\/\//i.test(url) && !/^TODO/i.test(url)) {
+      return "Source links must start with https://.";
+    }
+  }
+  return null;
+}
+
 /** Licences that oblige us to name the photographer. */
 function creditProblem(form: FormData): string | null {
   const url = text(form, "image_url");
@@ -213,6 +242,14 @@ export async function updateCelebrity(
     data: { user },
   } = await db.auth.getUser();
   if (!user) return { error: "You need to be signed in to edit." };
+
+  const linkIssue = linkProblem(form);
+  if (linkIssue) return { error: linkIssue };
+
+  // Celebrity photos went unchecked while assets were strict - same photo,
+  // same licences, same rule.
+  const creditIssue = creditProblem(form);
+  if (creditIssue) return { error: creditIssue };
 
   const patch = {
     name: text(form, "name"),
@@ -251,6 +288,9 @@ export async function updateAsset(
     data: { user },
   } = await db.auth.getUser();
   if (!user) return { error: "You need to be signed in to edit." };
+
+  const linkIssue = linkProblem(form);
+  if (linkIssue) return { error: linkIssue };
 
   const srcs = sources(form);
   const status = text(form, "status");
@@ -320,6 +360,12 @@ export async function createCelebrity(
   } = await db.auth.getUser();
   if (!user) return { error: "You need to be signed in to add an entry." };
 
+  const linkIssue = linkProblem(form);
+  if (linkIssue) return { error: linkIssue };
+
+  const creditIssue = creditProblem(form);
+  if (creditIssue) return { error: creditIssue };
+
   const patch = {
     name: text(form, "name"),
     real_name: text(form, "real_name") ?? "",
@@ -354,6 +400,9 @@ export async function createAsset(
     data: { user },
   } = await db.auth.getUser();
   if (!user) return { error: "You need to be signed in to add an entry." };
+
+  const linkIssue = linkProblem(form);
+  if (linkIssue) return { error: linkIssue };
 
   const srcs = sources(form);
   const status = text(form, "status") ?? "unverified";
