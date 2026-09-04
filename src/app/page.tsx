@@ -3,6 +3,7 @@ import { getAssets, getCelebritiesWithAssets, getStats, getAllReactions } from "
 import { CATEGORY_ORDER } from "@/lib/categories";
 import { CategoryTile } from "@/components/CategoryTile";
 import { AssetCard } from "@/components/AssetCard";
+import { CountUp } from "@/components/CountUp";
 import { AssetMarquee } from "@/components/AssetMarquee";
 import { RotatingWord } from "@/components/RotatingWord";
 import { Avatar } from "@/components/Avatar";
@@ -16,7 +17,6 @@ export default async function Home() {
   const assets = await getAssets();
   const traction = await getAllReactions();
   const byId = new Map(celebrities.map((c) => [c.id, c]));
-  const tracked = formatValue(totalValue(assets));
 
   const counts = Object.fromEntries(
     CATEGORY_ORDER.map((c) => [c, assets.filter((a) => a.category === c).length]),
@@ -97,9 +97,17 @@ export default async function Home() {
             <dl className="mx-auto mt-10 grid max-w-lg grid-cols-3 overflow-hidden
                            rounded-2xl bg-elevated text-center sm:mt-12 lg:mx-0">
               {[
-                { label: "Tracked value", value: tracked ?? "—" },
-                { label: "Assets", value: String(stats.assets) },
-                { label: "Celebrities", value: String(stats.celebrities) },
+                {
+                  label: "Tracked value",
+                  value: totalValue(assets),
+                  kind: "money" as const,
+                },
+                { label: "Assets", value: stats.assets, kind: "plain" as const },
+                {
+                  label: "Celebrities",
+                  value: stats.celebrities,
+                  kind: "plain" as const,
+                },
               ].map((s) => (
                 <div key={s.label} className="px-3 py-5 sm:px-4 sm:py-6">
                   <dd
@@ -107,7 +115,7 @@ export default async function Home() {
                       s.label === "Tracked value" ? "text-money" : ""
                     }`}
                   >
-                    {s.value}
+                    <CountUp value={s.value} kind={s.kind} />
                   </dd>
                   <dt className="mt-1 text-[10px] uppercase tracking-widest text-faint sm:text-[11px]">
                     {s.label}
