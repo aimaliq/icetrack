@@ -40,6 +40,12 @@ export const CATEGORY_SPECS: Record<AssetCategory, SpecField[]> = {
   ],
 
   yacht: [
+    {
+      key: "mmsi",
+      label: "MMSI",
+      placeholder: "518999189",
+      hint: "The vessel's nine-digit AIS identifier, from its public registry entry — searchable on vesselfinder.com. This is what the ship map needs.",
+    },
     { key: "length", label: "Length", type: "number", unit: "m", placeholder: "78" },
     { key: "beam", label: "Beam", type: "number", unit: "m" },
     { key: "cabins", label: "Cabins", type: "number", placeholder: "6" },

@@ -5,7 +5,12 @@ import { getAsset, getAssets, getReactions } from "@/lib/db";
 import { ViewCounter } from "@/components/ViewCounter";
 import { CATEGORY_META } from "@/lib/categories";
 import { readSpecs } from "@/lib/specs";
-import { LiveTrackEmbed, isTrackable } from "@/components/LiveTrackEmbed";
+import {
+  LiveTrackEmbed,
+  ShipTrackEmbed,
+  isTrackable,
+  isTrackableShip,
+} from "@/components/LiveTrackEmbed";
 import { Reactions } from "@/components/Reactions";
 import { EarningsBreakdown } from "@/components/EarningsBreakdown";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -113,9 +118,17 @@ export default async function AssetPage({ params, searchParams }: Props) {
   // and length for a yacht, floor area and bedrooms for a house.
   const specs = readSpecs(asset.category, asset.specs);
 
-  // Aircraft that broadcast a transponder address can be shown on a map.
+  // Aircraft that broadcast a transponder address can be shown on a map,
+  // and so can ships that broadcast AIS — but only while the entry still
+  // belongs to its subject. A sold yacht's live position tracks whoever
+  // bought it, which is not what this page is about.
+  const currentlyOwned =
+    asset.status !== "former" && asset.status !== "disputed";
   const icao24 = String(asset.specs?.icao24 ?? "").trim();
-  const trackable = isTrackable(asset.category, icao24);
+  const trackable = currentlyOwned && isTrackable(asset.category, icao24);
+  const mmsi = String(asset.specs?.mmsi ?? "").trim();
+  const shipTrackable =
+    currentlyOwned && isTrackableShip(asset.category, mmsi);
   const reactions = await getReactions(asset.uuid ?? "");
 
   const jsonLd = {
@@ -306,13 +319,17 @@ export default async function AssetPage({ params, searchParams }: Props) {
         </section>
       )}
 
-      {trackable && (
+      {(trackable || shipTrackable) && (
         <section className="mt-10 sm:mt-12">
           <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">
             Live tracking
           </h2>
           <div className="mt-4 sm:mt-5">
-            <LiveTrackEmbed icao24={icao24} />
+            {trackable ? (
+              <LiveTrackEmbed icao24={icao24} />
+            ) : (
+              <ShipTrackEmbed mmsi={mmsi} />
+            )}
           </div>
         </section>
       )}
