@@ -321,6 +321,9 @@ export type CommentRow = {
   author: string;
   isDeleted: boolean;
   createdAt: string;
+  score: number;
+  /** How the signed-in reader voted: 1, -1, or 0 for not at all. */
+  myVote: -1 | 0 | 1;
 };
 
 /**
@@ -338,16 +341,35 @@ export async function getComments(assetUuid: string): Promise<CommentRow[]> {
     .order("created_at");
   if (error) return [];
 
-  return (
-    data as unknown as {
-      id: string;
-      parent_id: string | null;
-      body: string;
-      is_deleted: boolean;
-      created_at: string;
-      profiles: { username: string } | { username: string }[] | null;
-    }[]
-  ).map((r) => {
+  const rows = data as unknown as {
+    id: string;
+    parent_id: string | null;
+    body: string;
+    is_deleted: boolean;
+    created_at: string;
+    profiles: { username: string } | { username: string }[] | null;
+  }[];
+  const ids = rows.map((r) => r.id);
+
+  // Totals come from the aggregate view; which way *I* voted comes straight
+  // from the votes table, which RLS trims to my own rows. Either query
+  // failing (migration not run, signed out) degrades to zeros.
+  const scores: Record<string, number> = {};
+  const mine: Record<string, number> = {};
+  if (ids.length > 0) {
+    const [scoreRes, mineRes] = await Promise.all([
+      db.from("comment_scores").select("comment_id, score").in("comment_id", ids),
+      db.from("comment_votes").select("comment_id, value").in("comment_id", ids),
+    ]);
+    for (const r of (scoreRes.data ?? []) as { comment_id: string; score: number }[]) {
+      scores[r.comment_id] = r.score;
+    }
+    for (const r of (mineRes.data ?? []) as { comment_id: string; value: number }[]) {
+      mine[r.comment_id] = r.value;
+    }
+  }
+
+  return rows.map((r) => {
     const p = Array.isArray(r.profiles) ? r.profiles[0] : r.profiles;
     return {
       id: r.id,
@@ -356,6 +378,8 @@ export async function getComments(assetUuid: string): Promise<CommentRow[]> {
       author: p?.username ?? "unknown",
       isDeleted: r.is_deleted,
       createdAt: r.created_at,
+      score: scores[r.id] ?? 0,
+      myVote: (mine[r.id] ?? 0) as -1 | 0 | 1,
     };
   });
 }
