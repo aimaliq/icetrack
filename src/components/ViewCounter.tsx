@@ -30,8 +30,16 @@ export function ViewCounter({
       // Private browsing. Counting a few extra views is better than none.
     }
 
+    // The supabase builder is lazy: no request is sent until something calls
+    // `.then()` on it. A bare `void` discards it unexecuted — which is how
+    // every view counted as zero while the code looked right. The empty
+    // rejection handler is deliberate; a lost count is not worth a console
+    // error on someone else's screen.
     const db = createClient();
-    void db.rpc("record_view", { target_table: table, target_slug: slug });
+    db.rpc("record_view", { target_table: table, target_slug: slug }).then(
+      null,
+      () => {},
+    );
   }, [table, slug]);
 
   return null;
