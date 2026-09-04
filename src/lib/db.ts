@@ -336,7 +336,12 @@ export async function getComments(assetUuid: string): Promise<CommentRow[]> {
   const db = await reader();
   const { data, error } = await db
     .from("comments")
-    .select("id, parent_id, body, is_deleted, created_at, profiles(username)")
+    // The FK is named: since comment_votes arrived there are two paths from
+    // comments to profiles (author, and voters), and an unnamed embed is
+    // ambiguous - PostgREST refuses it outright.
+    .select(
+      "id, parent_id, body, is_deleted, created_at, profiles!comments_author_id_fkey(username)",
+    )
     .eq("asset_id", assetUuid)
     .order("created_at");
   if (error) return [];
