@@ -12,6 +12,7 @@ import {
 } from "@/components/EditFields";
 import { ImageUpload } from "@/components/ImageUpload";
 import { SpecFields } from "@/components/SpecFields";
+import { REGISTRATION_HELP } from "@/lib/specs";
 import type { AssetCategory } from "@/lib/types";
 
 const STATUSES = [
@@ -76,7 +77,8 @@ export function NewAssetForm({
         label="Registration"
         name="registration"
         maxLength={40}
-        hint="Public registry identifiers only — an aircraft tail number, say. Never a VIN or a deed number."
+        placeholder={REGISTRATION_HELP[category].placeholder}
+        hint={REGISTRATION_HELP[category].hint}
       />
 
       <Field

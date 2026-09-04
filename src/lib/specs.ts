@@ -85,6 +85,35 @@ export const CATEGORY_SPECS: Record<AssetCategory, SpecField[]> = {
   ],
 };
 
+/**
+ * What "Registration" means per category — it is the public registry
+ * identifier for that kind of thing, and each registry has its own.
+ * Categories whose identifiers are private (VINs, deeds, plates) say so
+ * instead of inviting one.
+ */
+export const REGISTRATION_HELP: Record<
+  AssetCategory,
+  { hint: string; placeholder?: string }
+> = {
+  jet: {
+    hint: "The aircraft's tail number, painted on the fuselage — a public registry identifier.",
+    placeholder: "N628TS",
+  },
+  yacht: {
+    hint: "The vessel's IMO number — assigned once at build and kept through every rename and reflagging. Find it on vesselfinder.com. The MMSI for the live map goes in the details below.",
+    placeholder: "IMO 9819820",
+  },
+  car: {
+    hint: "Usually left empty. A licence plate says where a car lives, and a VIN is a private identifier — neither belongs here.",
+  },
+  estate: {
+    hint: "Leave empty — deed and parcel numbers are private identifiers, and this site stores no precise locations.",
+  },
+  accessories: {
+    hint: "Usually empty — a watch's reference number goes in the details below.",
+  },
+};
+
 export type Specs = Record<string, string | number>;
 
 /** The filled-in fields for an asset, in the order the category declares. */
