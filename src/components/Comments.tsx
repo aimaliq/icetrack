@@ -225,15 +225,7 @@ function Thread({
 
   return (
     <div className={depth > 0 ? "border-l-2 border-line pl-4 sm:pl-5" : ""}>
-      <div className="flex gap-2">
-        {!comment.isDeleted && (
-          <VoteControl
-            commentId={comment.id}
-            initialScore={comment.score}
-            initialMine={comment.myVote}
-            canVote={me !== null}
-          />
-        )}
+      <div className="flex gap-3">
       <div className="min-w-0 flex-1 py-2.5">
         <p className="text-[12px] text-faint">
           {comment.isDeleted ? (
@@ -292,6 +284,17 @@ function Thread({
           </div>
         )}
       </div>
+
+        {/* Votes sit on the right, clear of the indent rules - nested
+            threads keep the arrows in one column instead of a staircase. */}
+        {!comment.isDeleted && (
+          <VoteControl
+            commentId={comment.id}
+            initialScore={comment.score}
+            initialMine={comment.myVote}
+            canVote={me !== null}
+          />
+        )}
       </div>
 
       {replies.map((r) => (
