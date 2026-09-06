@@ -370,6 +370,7 @@ export default async function AssetPage({ params, searchParams }: Props) {
           </h2>
           <ShareButton
             url={shareUrl}
+            label="Share"
             text={`Where is ${asset.name} right now? ${
               owner ? `${owner.name}'s ` : ""
             }${trackable ? "jet" : "yacht"}, tracked live on IceTrack`}

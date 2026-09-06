@@ -30,13 +30,6 @@ export default function AboutPage() {
         jets, cars, watches, yachts and houses.
       </p>
 
-      <p className={P}>
-        This information is already all over the internet, spread across forums,
-        car pages and watch accounts. Most of it is repeated without anyone
-        saying where it came from. Here, every entry has to say where it came
-        from.
-      </p>
-
       <h2 className={H2}>Why the name</h2>
 
       <p className={P}>
@@ -127,11 +120,6 @@ export default function AboutPage() {
           @alimenjorf
         </a>{" "}
         on X. You do not need an account.
-      </p>
-
-      <p className={P}>
-        Corrections that come with documents are applied quickly. Anything
-        disputed is marked as such while we look into it.
       </p>
 
       <h2 className={H2}>Disclaimer</h2>
