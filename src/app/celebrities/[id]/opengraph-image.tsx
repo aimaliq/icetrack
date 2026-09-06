@@ -20,6 +20,12 @@ export default async function Image({ params }: { params: Promise<{ id: string }
     ? [...new Set(celeb.assets.map((a) => CATEGORY_META[a.category].plural))]
     : [];
 
+  // Satori decodes PNG and JPEG only; anything else is skipped rather than
+  // risked, and the card falls back to the plain ground it always had.
+  const portrait = /\.(png|jpe?g)(\?|$)/i.test(celeb?.imageUrl ?? "")
+    ? celeb!.imageUrl
+    : null;
+
   return new ImageResponse(
     (
       <div
@@ -33,8 +39,44 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           color: "#f2f8fb",
           padding: 72,
           fontFamily: "sans-serif",
+          position: "relative",
         }}
       >
+        {/* A portrait down the right edge rather than a full bleed: a face
+            under a dark wash reads as a mugshot, and the fade carries it
+            into the ground instead of stopping at a hard line. */}
+        {portrait && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={portrait}
+              alt=""
+              width={520}
+              height={630}
+              style={{
+                position: "absolute",
+                top: -72,
+                right: -72,
+                width: 520,
+                height: 630,
+                objectFit: "cover",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: -72,
+                right: -72,
+                width: 560,
+                height: 630,
+                display: "flex",
+                background:
+                  "linear-gradient(to right, #08090a 0%, rgba(8,9,10,0.85) 30%, rgba(8,9,10,0.15) 100%)",
+              }}
+            />
+          </>
+        )}
+
         <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 28 }}>
           <span>💎</span>
           <span style={{ display: "flex", fontWeight: 600 }}>IceTrack</span>

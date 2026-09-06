@@ -26,6 +26,13 @@ export default async function Image({ params }: { params: Promise<{ id: string }
   const owner = found?.owner;
   const value = asset?.estimatedValueUsd ? formatValue(asset.estimatedValueUsd) : null;
 
+  // Satori decodes PNG and JPEG only; a WebP source renders nothing and takes
+  // the whole card down, so it is left off rather than risked. Without a
+  // photo the card falls back to the plain dark ground it always had.
+  const photo = /\.(png|jpe?g)(\?|$)/i.test(asset?.imageUrl ?? "")
+    ? asset!.imageUrl
+    : null;
+
   return new ImageResponse(
     (
       <div
@@ -39,8 +46,45 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           color: "#f2f8fb",
           padding: 72,
           fontFamily: "sans-serif",
+          position: "relative",
         }}
       >
+        {photo && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photo}
+              alt=""
+              width={1200}
+              height={630}
+              style={{
+                // Satori insets an absolute child by the parent's padding,
+                // so the offsets pull it back out to the real edges.
+                position: "absolute",
+                top: -72,
+                left: -72,
+                width: 1200,
+                height: 630,
+                objectFit: "cover",
+              }}
+            />
+            {/* Dark wash over the photo: white text on an unknown image is a
+                coin toss, and a shared card cannot afford an unreadable one.
+                Heavier at the bottom, where the value sits. */}
+            <div
+              style={{
+                position: "absolute",
+                top: -72,
+                left: -72,
+                width: 1200,
+                height: 630,
+                display: "flex",
+                background:
+                  "linear-gradient(to bottom, rgba(8,9,10,0.72) 0%, rgba(8,9,10,0.62) 45%, rgba(8,9,10,0.90) 100%)",
+              }}
+            />
+          </>
+        )}
         <div style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 28 }}>
           <span>💎</span>
           <span style={{ display: "flex", fontWeight: 600 }}>IceTrack</span>
