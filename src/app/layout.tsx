@@ -155,6 +155,14 @@ function Footer() {
           <Link href="/about#removals" className="hover:text-ink">
             Corrections &amp; removals
           </Link>
+          <a
+            href="https://discord.gg/4vSC9ss9h"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-ink"
+          >
+            Discord
+          </a>
         </div>
 
         <p className="mt-6 text-[12px] text-faint">
