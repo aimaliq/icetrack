@@ -23,6 +23,7 @@ import { formatValueExact } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
 import { EditButton } from "@/components/EditButton";
 import { Comments } from "@/components/Comments";
+import { ShareButton } from "@/components/ShareButton";
 import { getCurrentProfile } from "@/lib/auth/actions";
 import { SITE_URL } from "@/lib/site";
 import { STOPS, shareNoun } from "@/lib/earnings";
@@ -132,6 +133,17 @@ export default async function AssetPage({ params, searchParams }: Props) {
   const mmsi = String(asset.specs?.mmsi ?? "").trim();
   const shipTrackable =
     currentlyOwned && isTrackableShip(asset.category, mmsi);
+  // One sentence, reused by both share controls: what it is, whose it is,
+  // what it costs.
+  const shareUrl = `${SITE_URL}/assets/${asset.id}`;
+  const shareText = [
+    `${asset.name}${owner ? ` — ${owner.name}` : ""}`,
+    asset.estimatedValueUsd ? formatValueExact(asset.estimatedValueUsd) : null,
+    "on IceTrack",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
   const reactions = await getReactions(asset.uuid ?? "");
   const comments = await getComments(asset.uuid ?? "");
   const profile = await getCurrentProfile();
@@ -191,6 +203,7 @@ export default async function AssetPage({ params, searchParams }: Props) {
           ← Assets
         </Link>
         <div className="flex items-center gap-2">
+          <ShareButton url={shareUrl} text={shareText} />
           <Link
             href={`/assets/${asset.id}/history`}
             className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-muted transition-colors duration-150 ease-out-strong hover:text-ink"
@@ -342,6 +355,7 @@ export default async function AssetPage({ params, searchParams }: Props) {
 
       {(trackable || shipTrackable) && (
         <section className="mt-10 sm:mt-12">
+          <div className="flex items-center justify-between gap-4">
           <h2 className="flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">
             {/* The pulse ring says "receiving now" the way a broadcast badge
                 does. Reduced-motion kills the ping outright in globals.css —
@@ -352,6 +366,13 @@ export default async function AssetPage({ params, searchParams }: Props) {
             </span>
             Live tracking
           </h2>
+          <ShareButton
+            url={shareUrl}
+            text={`Where is ${asset.name} right now? ${
+              owner ? `${owner.name}'s ` : ""
+            }${trackable ? "jet" : "yacht"}, tracked live on IceTrack`}
+          />
+          </div>
           <div className="mt-4 sm:mt-5">
             {trackable ? (
               <LiveTrackEmbed icao24={icao24} />
