@@ -203,7 +203,6 @@ export default async function AssetPage({ params, searchParams }: Props) {
           ← Assets
         </Link>
         <div className="flex items-center gap-2">
-          <ShareButton url={shareUrl} text={shareText} />
           <Link
             href={`/assets/${asset.id}/history`}
             className="focus-ring rounded-full px-3 py-1.5 text-[13px] text-muted transition-colors duration-150 ease-out-strong hover:text-ink"
@@ -218,10 +217,13 @@ export default async function AssetPage({ params, searchParams }: Props) {
         {/* Name and value first: the photo is usually of the model rather than
             this particular item, so it illustrates the entry instead of
             identifying it. */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex items-center gap-2.5">
           <StatusBadge status={asset.status} />
           <span className="text-[11px] uppercase tracking-widest text-faint">
             {meta.label}
+          </span>
+          <span className="ml-auto">
+            <ShareButton url={shareUrl} text={shareText} label="Share" />
           </span>
         </div>
 
