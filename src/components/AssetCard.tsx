@@ -28,7 +28,15 @@ export function AssetCard({
       {/* Image fills the top half, edge to edge. The traction badge floats
           over its corner - it belongs to the thing, not to the caption. */}
       <div className="relative">
-        <AssetImage asset={asset} bleed />
+        {/* Accessories are single objects shot against a backdrop, usually
+            portrait: cropping one to fill a landscape frame cuts the dial in
+            half. Everything else — a jet on a runway, a house — reads better
+            filling the frame. */}
+        <AssetImage
+          asset={asset}
+          bleed
+          fit={asset.category === "accessories" ? "contain" : "cover"}
+        />
         <span className="absolute right-2 top-2">
           <ReactionCluster counts={reactions} />
         </span>
