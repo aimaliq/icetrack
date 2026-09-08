@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Check, RotateCcw, X } from "lucide-react";
 import { CATEGORY_META } from "@/lib/categories";
@@ -38,26 +38,57 @@ type Phase = "playing" | "revealing" | "over";
  * Under prefers-reduced-motion the number simply appears: a spinning
  * counter is exactly what that setting exists to stop.
  */
-function SpinningValue({ value }: { value: number }) {
-  const [shown, setShown] = useState(0);
+function SpinningValue({
+  value,
+  durationMs = 650,
+  compact = false,
+  startAt,
+}: {
+  value: number;
+  durationMs?: number;
+  /** Compact renders "$ 4.1B"; otherwise the figure in full. */
+  compact?: boolean;
+  /** Where the first roll begins. Revealing a price counts up from zero;
+   *  a running total carries on from where it was. */
+  startAt?: number;
+}) {
+  const [shown, setShown] = useState(startAt ?? value);
+  // Where this roll starts. A ref, not state: changing it must not itself
+  // trigger a render, or the roll restarts from wherever it had reached.
+  const from = useRef(startAt ?? value);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const start = from.current;
+    if (
+      start === value ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       setShown(value);
+      from.current = value;
       return;
     }
+
     let frame = 0;
-    const start = performance.now();
+    const t0 = performance.now();
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / 650);
+      const t = Math.min(1, (now - t0) / durationMs);
       const eased = 1 - Math.pow(1 - t, 4);
-      setShown(Math.round(value * eased));
+      setShown(Math.round(start + (value - start) * eased));
       if (t < 1) frame = requestAnimationFrame(tick);
+      else from.current = value;
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [value]);
+  }, [value, durationMs]);
 
+  if (compact) {
+    return (
+      <>
+        {shown < 0 ? "−" : ""}
+        {formatValue(Math.abs(shown)) ?? "$ 0"}
+      </>
+    );
+  }
   return <>{formatValueExact(shown)}</>;
 }
 
@@ -114,18 +145,23 @@ function Card({
         )}
 
         {state !== null && (
-          <span
-            className={`animate-pop absolute left-1/2 top-1/2 grid h-12 w-12
-                        -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full
-                        text-surface ${
-                          state === "won" ? "bg-money" : "bg-ink/70"
-                        }`}
-          >
-            {state === "won" ? (
-              <Check className="h-6 w-6" aria-hidden />
-            ) : (
-              <X className="h-6 w-6" aria-hidden />
-            )}
+          // Two elements, because one cannot both hold a centring translate
+          // and animate a scale: the keyframe's transform replaces the
+          // translate and the badge slides off-centre as it pops. The outer
+          // span centres, the inner one animates.
+          <span className="pointer-events-none absolute inset-0 grid place-items-center">
+            <span
+              className={`animate-pop grid h-12 w-12 place-items-center rounded-full
+                          text-surface ${
+                            state === "won" ? "bg-money" : "bg-ink/70"
+                          }`}
+            >
+              {state === "won" ? (
+                <Check className="h-6 w-6" aria-hidden />
+              ) : (
+                <X className="h-6 w-6" aria-hidden />
+              )}
+            </span>
           </span>
         )}
       </div>
@@ -148,7 +184,7 @@ function Card({
           {state === null ? (
             <span className="text-faint">?</span>
           ) : (
-            <SpinningValue value={asset.estimatedValueUsd ?? 0} />
+            <SpinningValue value={asset.estimatedValueUsd ?? 0} startAt={0} />
           )}
         </div>
       </div>
@@ -388,8 +424,7 @@ export function PriceGame({ pool }: { pool: Contender[] }) {
               wallet >= 0 ? "text-money" : "text-rose-600 dark:text-rose-400"
             }`}
           >
-            {wallet < 0 ? "−" : ""}
-            {formatValue(Math.abs(wallet)) ?? "$ 0"}
+            <SpinningValue value={wallet} durationMs={800} compact />
           </p>
           <p className="mt-0.5 text-[10px] uppercase tracking-widest text-faint sm:text-[11px]">
             Total guessed
