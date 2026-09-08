@@ -68,9 +68,11 @@ export const viewport: Viewport = {
 };
 
 const LINKS = [
+  // Play leads and is styled apart: it is the one thing here a first-time
+  // visitor can do rather than read.
+  { href: "/play", label: "Play", feature: true },
   { href: "/celebrities", label: "Celebrities" },
   { href: "/assets", label: "Assets" },
-  { href: "/play", label: "Play" },
   { href: "/about", label: "About" },
 ];
 
@@ -96,15 +98,27 @@ async function Nav() {
 
         {/* Full nav on tablet and up; below that it moves to its own row. */}
         <div className="hidden items-center gap-6 text-[13px] text-muted sm:flex">
-          {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="focus-ring rounded transition-colors duration-150 ease-out-strong hover:text-ink"
-            >
-              {l.label}
-            </Link>
-          ))}
+          {LINKS.map((l) =>
+            l.feature ? (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="focus-ring rounded-full bg-accent-soft px-3.5 py-1.5 font-semibold
+                           text-accent transition-transform duration-150 ease-out-strong
+                           hover:scale-105 active:scale-[0.97]"
+              >
+                {l.label}
+              </Link>
+            ) : (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="focus-ring rounded transition-colors duration-150 ease-out-strong hover:text-ink"
+              >
+                {l.label}
+              </Link>
+            ),
+          )}
         </div>
         <span className="sm:hidden" />
 
@@ -121,8 +135,12 @@ async function Nav() {
           <Link
             key={l.href}
             href={l.href}
-            className="focus-ring shrink-0 rounded-full px-3.5 py-1.5 text-[13px]
-                       text-muted transition-colors duration-150 ease-out-strong hover:bg-sunken hover:text-ink"
+            className={`focus-ring shrink-0 rounded-full px-3.5 py-1.5 text-[13px]
+                        transition-colors duration-150 ease-out-strong ${
+                          l.feature
+                            ? "bg-accent-soft font-semibold text-accent"
+                            : "text-muted hover:bg-sunken hover:text-ink"
+                        }`}
           >
             {l.label}
           </Link>

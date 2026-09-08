@@ -47,6 +47,10 @@ export default {
         // A reaction is rare enough to be worth a moment of delight.
         pop: "pop 320ms cubic-bezier(0.23, 1, 0.32, 1)",
         "float-up": "floatUp 700ms cubic-bezier(0.23, 1, 0.32, 1) forwards",
+        // The game's reveal: the winner jumps, the loser flinches. Rare
+        // enough — once a round — to be worth the movement.
+        win: "win 420ms cubic-bezier(0.23, 1, 0.32, 1)",
+        lose: "lose 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97)",
       },
       keyframes: {
         fadeUp: {
@@ -61,6 +65,16 @@ export default {
           "0%": { transform: "scale(1)" },
           "40%": { transform: "scale(1.35)" },
           "100%": { transform: "scale(1)" },
+        },
+        win: {
+          "0%": { transform: "scale(1)" },
+          "45%": { transform: "scale(1.035)" },
+          "100%": { transform: "scale(1)" },
+        },
+        lose: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "25%": { transform: "translateX(-5px)" },
+          "75%": { transform: "translateX(5px)" },
         },
         // The emoji that lifts away from the button as it is counted.
         floatUp: {

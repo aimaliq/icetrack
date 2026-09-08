@@ -30,6 +30,37 @@ const REVEAL_MS = 1400;
 
 type Phase = "playing" | "revealing" | "over";
 
+/**
+ * The figure rolls up to its value instead of appearing, the way a slot
+ * machine settles. Short — 650ms — because it sits inside the reveal pause
+ * and the round has to keep moving.
+ *
+ * Under prefers-reduced-motion the number simply appears: a spinning
+ * counter is exactly what that setting exists to stop.
+ */
+function SpinningValue({ value }: { value: number }) {
+  const [shown, setShown] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setShown(value);
+      return;
+    }
+    let frame = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / 650);
+      const eased = 1 - Math.pow(1 - t, 4);
+      setShown(Math.round(value * eased));
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
+  return <>{formatValueExact(shown)}</>;
+}
+
 function Card({
   asset,
   side,
@@ -59,8 +90,8 @@ function Card({
                       ? "hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5 active:scale-[0.99]"
                       : ""
                   }
-                  ${state === "won" ? "ring-2 ring-money" : ""}
-                  ${state === "lost" ? "opacity-60" : ""}`}
+                  ${state === "won" ? "animate-win ring-2 ring-money" : ""}
+                  ${state === "lost" ? "animate-lose opacity-60" : ""}`}
     >
       <div className="relative grid h-36 w-full place-items-center overflow-hidden bg-sunken sm:h-52">
         {asset.imageUrl ? (
@@ -92,7 +123,7 @@ function Card({
         )}
       </div>
 
-      <div className="flex flex-1 flex-col p-3 sm:p-4">
+      <div className="flex flex-1 flex-col items-center p-3 text-center sm:p-4">
         <p className="text-[11px] uppercase tracking-widest text-faint">
           {meta.label}
         </p>
@@ -103,14 +134,16 @@ function Card({
           <p className="mt-0.5 text-[13px] text-muted">{asset.ownerName}</p>
         )}
 
-        {/* The number is the answer, so it only appears once the guess is in. */}
-        <p className="mt-auto pt-2 text-[17px] font-bold tabular-nums text-money sm:text-[20px]">
+        {/* The number is the answer, so it only appears once the guess is in.
+            It counts up rather than snapping: the pause is the moment the
+            round turns, and a figure that climbs draws the eye to it. */}
+        <div className="mt-auto pt-2.5 text-[20px] font-bold tabular-nums text-money sm:text-[26px]">
           {state === null ? (
             <span className="text-faint">?</span>
           ) : (
-            formatValueExact(asset.estimatedValueUsd ?? 0)
+            <SpinningValue value={asset.estimatedValueUsd ?? 0} />
           )}
-        </p>
+        </div>
       </div>
     </button>
   );
@@ -302,17 +335,27 @@ export function PriceGame({ pool }: { pool: Contender[] }) {
 
   return (
     <div className="mt-8 sm:mt-10">
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-[13px] text-muted">
-          Round <span className="font-semibold text-ink">{index + 1}</span>
+      <div className="flex items-end justify-between gap-4">
+        <p className="text-[15px] text-muted sm:text-[16px]">
+          Round{" "}
+          <span className="text-[20px] font-bold text-ink sm:text-[24px]">
+            {index + 1}
+          </span>
           <span className="text-faint"> / {rounds.length}</span>
         </p>
-        <div className="flex items-center gap-5">
-          <p className="text-[13px] text-muted">
-            Streak <span className="font-semibold text-ink">{streak}</span>
+        <div className="flex items-end gap-6">
+          <p className="text-[15px] text-muted sm:text-[16px]">
+            Streak{" "}
+            <span
+              className={`text-[20px] font-bold sm:text-[24px] ${
+                streak > 0 ? "text-ink" : "text-faint"
+              }`}
+            >
+              {streak}
+            </span>
           </p>
           <p
-            className={`text-[13px] font-semibold tabular-nums ${
+            className={`text-[20px] font-bold tabular-nums sm:text-[24px] ${
               wallet >= 0 ? "text-money" : "text-rose-600 dark:text-rose-400"
             }`}
           >
