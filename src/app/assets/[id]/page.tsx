@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getAsset, getAssets, getComments, getReactions } from "@/lib/db";
+import {
+  getAllReactions,
+  getAsset,
+  getAssets,
+  getComments,
+  getReactions,
+} from "@/lib/db";
 import { ViewCounter } from "@/components/ViewCounter";
 import { CATEGORY_META } from "@/lib/categories";
 import { readSpecs } from "@/lib/specs";
@@ -23,6 +29,8 @@ import { formatValueExact } from "@/lib/format";
 import { JsonLd } from "@/components/JsonLd";
 import { EditButton } from "@/components/EditButton";
 import { Comments } from "@/components/Comments";
+import { AssetCard } from "@/components/AssetCard";
+import { similarAssets } from "@/lib/similar";
 import { ShareButton } from "@/components/ShareButton";
 import { getCurrentProfile } from "@/lib/auth/actions";
 import { SITE_URL } from "@/lib/site";
@@ -146,6 +154,13 @@ export default async function AssetPage({ params, searchParams }: Props) {
 
   const reactions = await getReactions(asset.uuid ?? "");
   const comments = await getComments(asset.uuid ?? "");
+
+  // Nearest entries by category and price, for the foot of the page.
+  const [everything, traction] = await Promise.all([
+    getAssets(),
+    getAllReactions(),
+  ]);
+  const similar = similarAssets(asset, everything, 3);
   const profile = await getCurrentProfile();
 
   const jsonLd = {
@@ -413,6 +428,23 @@ export default async function AssetPage({ params, searchParams }: Props) {
           })}
         </ul>
       </section>
+
+      {similar.length > 0 && (
+        <section className="mt-10 sm:mt-12">
+          <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">
+            Similar
+          </h2>
+          <div className="mt-4 grid gap-3 sm:mt-5 sm:grid-cols-3 sm:gap-4">
+            {similar.map((a) => (
+              <AssetCard
+                key={a.id}
+                asset={a}
+                reactions={traction[a.uuid ?? ""]}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mt-10 sm:mt-12">
         <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-accent sm:text-[14px]">
