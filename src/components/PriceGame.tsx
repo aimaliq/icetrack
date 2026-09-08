@@ -82,7 +82,7 @@ function Card({
       type="button"
       onClick={() => onPick(side)}
       disabled={disabled}
-      className={`focus-ring group relative flex flex-1 flex-col overflow-hidden rounded-2xl
+      className={`focus-ring group relative flex flex-1 flex-col rounded-2xl
                   bg-elevated text-left transition-[transform,box-shadow] duration-150
                   ease-out-strong disabled:cursor-default
                   ${
@@ -90,26 +90,33 @@ function Card({
                       ? "hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5 active:scale-[0.99]"
                       : ""
                   }
-                  ${state === "won" ? "animate-win ring-2 ring-money" : ""}
+                  ${
+                    state === "won"
+                      ? "animate-win border-runner ring-2 ring-money"
+                      : ""
+                  }
                   ${state === "lost" ? "animate-lose opacity-60" : ""}`}
     >
-      <div className="relative grid h-36 w-full place-items-center overflow-hidden bg-sunken sm:h-52">
+      <div className="relative h-36 w-full shrink-0 overflow-hidden rounded-t-2xl bg-sunken sm:h-52">
         {asset.imageUrl ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={asset.imageUrl}
             alt=""
-            className="h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
-          <span className="h-1/3 w-1/3 text-accent/25">
-            {CATEGORY_SILHOUETTE[asset.category]}
+          <span className="absolute inset-0 grid place-items-center text-accent/25">
+            <span className="h-16 w-16">
+              {CATEGORY_SILHOUETTE[asset.category]}
+            </span>
           </span>
         )}
 
         {state !== null && (
           <span
-            className={`animate-pop absolute grid h-12 w-12 place-items-center rounded-full
+            className={`animate-pop absolute left-1/2 top-1/2 grid h-12 w-12
+                        -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full
                         text-surface ${
                           state === "won" ? "bg-money" : "bg-ink/70"
                         }`}

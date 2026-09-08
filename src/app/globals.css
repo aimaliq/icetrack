@@ -128,3 +128,60 @@ body {
     @apply min-h-11 min-w-11;
   }
 }
+
+/* A light running around a border.
+ *
+ * A conic gradient rotated by an animated custom property, so the bright arc
+ * travels the perimeter rather than the whole edge blinking. @property is what
+ * makes the angle animatable — without the registration browsers treat it as a
+ * string and jump straight to the end value.
+ *
+ * The mask is what keeps it a border: two stacked fills composited with
+ * xor leave only the 2px rim, so the gradient never bleeds across the card.
+ * Painting it behind the card instead would show through wherever the card's
+ * own background is transparent. */
+@property --runner {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.border-runner::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--runner),
+    transparent 0deg,
+    transparent 240deg,
+    rgb(var(--money) / 0.35) 300deg,
+    rgb(var(--money)) 340deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: runner 900ms linear 2;
+}
+
+@keyframes runner {
+  to {
+    --runner: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* A light circling the card is exactly the motion this setting stops;
+     the ring already marks the winner. */
+  .border-runner::after {
+    display: none;
+  }
+}
