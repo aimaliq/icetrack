@@ -8,6 +8,7 @@ import { CATEGORY_SILHOUETTE } from "@/lib/silhouettes";
 import { formatValue, formatValueExact } from "@/lib/format";
 import { buildRounds, winner, type Contender, type Round } from "@/lib/game";
 import { ShareButton } from "@/components/ShareButton";
+import { RunChart, runGrid } from "@/components/RunChart";
 
 /**
  * "Which costs more?" — two entries, pick the pricier one.
@@ -122,6 +123,8 @@ export function PriceGame({ pool }: { pool: Contender[] }) {
   const [picked, setPicked] = useState<"left" | "right" | null>(null);
   const [streak, setStreak] = useState(0);
   const [wallet, setWallet] = useState(0);
+  /** One entry per answered round, for the chart and the shareable grid. */
+  const [history, setHistory] = useState<{ ok: boolean; balance: number }[]>([]);
   const [best, setBest] = useState(0);
 
   const start = useCallback(() => {
@@ -129,6 +132,7 @@ export function PriceGame({ pool }: { pool: Contender[] }) {
     setIndex(0);
     setStreak(0);
     setWallet(0);
+    setHistory([]);
     setPicked(null);
     setPhase("playing");
   }, [pool]);
@@ -166,6 +170,9 @@ export function PriceGame({ pool }: { pool: Contender[] }) {
       round.right.estimatedValueUsd ?? 0,
     );
 
+    const balance = wallet + (correct ? high : -low);
+    setHistory((h) => [...h, { ok: correct, balance }]);
+
     if (correct) {
       const nextStreak = streak + 1;
       setStreak(nextStreak);
@@ -194,16 +201,19 @@ export function PriceGame({ pool }: { pool: Contender[] }) {
     }, REVEAL_MS);
   }
 
+  // Wordle's real trick is that the result pastes as text anywhere — no
+  // image, no link preview required. The grid carries the whole run.
   const shareText = useMemo(
     () =>
       [
-        `I got ${streak} in a row on IceTrack's "Which costs more?"`,
-        wallet !== 0 ? `${formatValue(Math.abs(wallet))} ${wallet > 0 ? "banked" : "in the red"}.` : "",
+        `IceTrack · Which costs more?`,
+        `${streak} in a row · ${wallet < 0 ? "−" : ""}${
+          formatValue(Math.abs(wallet)) ?? "$ 0"
+        }`,
+        runGrid(history),
         "Can you beat it?",
-      ]
-        .filter(Boolean)
-        .join(" "),
-    [streak, wallet],
+      ].join("\n"),
+    [streak, wallet, history],
   );
 
   if (rounds.length === 0) {
@@ -251,6 +261,14 @@ export function PriceGame({ pool }: { pool: Contender[] }) {
             </p>
           </div>
         </div>
+
+        <RunChart points={history} />
+
+        {/* The same grid the share text carries, so what you post is what you
+            saw. */}
+        <p className="mt-3 text-[17px] leading-relaxed tracking-[0.12em] break-all">
+          {runGrid(history)}
+        </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <button
