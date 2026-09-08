@@ -28,13 +28,17 @@ export function AssetImage({
   size?: keyof typeof SIZES;
   bleed?: boolean;
   /** `cover` fills the frame but crops; at small sizes that can leave a jet as
-   *  a patch of sky, so thumbnails ask for `contain` and show the whole item. */
-  fit?: "cover" | "contain";
+   *  a patch of sky, so thumbnails ask for `contain` and show the whole item.
+   *  `height` scales to the frame's height instead — a portrait object like a
+   *  watch then shows whole, cropped at the sides where there is only
+   *  backdrop. */
+  fit?: "cover" | "contain" | "height";
 }) {
   return (
     <div
       className={`${SIZES[size]} relative grid w-full place-items-center
-                  overflow-hidden bg-sunken ${bleed ? "" : "rounded-xl"}`}
+                  overflow-hidden ${fit === "height" ? "bg-white" : "bg-sunken"}
+                  ${bleed ? "" : "rounded-xl"}`}
     >
       {asset.imageUrl ? (
         /* eslint-disable-next-line @next/next/no-img-element */
@@ -43,7 +47,17 @@ export function AssetImage({
           alt={asset.name}
           loading="lazy"
           className={
-            fit === "contain"
+            fit === "height"
+              ? // Whole object, height-driven, on white: a watch photographed
+                // against a backdrop shows entire rather than cropped to the
+                // frame's shape. What the source itself has cropped, no fit
+                // can bring back.
+                `max-h-full w-auto max-w-full object-contain ${
+                  bleed
+                    ? "transition-transform duration-500 ease-out-strong group-hover:scale-[1.03]"
+                    : ""
+                }`
+              : fit === "contain"
               ? `h-full w-full object-contain ${bleed ? "p-4" : "p-1.5"}`
               : bleed
                 ? "h-full w-full object-cover object-top transition-transform duration-500 ease-out-strong group-hover:scale-[1.03]"
