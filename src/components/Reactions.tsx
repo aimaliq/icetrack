@@ -155,7 +155,7 @@ export function Reactions({
             aria-pressed={picked}
             className={`focus-ring group flex shrink-0 items-center gap-1 rounded-full border
                         sm:gap-1.5
-                        px-1.5 py-1.5 text-[16px] transition-[transform,background-color,border-color]
+                        px-2 py-2 text-[19px] transition-[transform,background-color,border-color]
                         duration-150 ease-out-strong active:scale-[0.97]
                         sm:px-3.5 sm:py-2 sm:text-[19px]
                         ${
@@ -189,7 +189,7 @@ export function Reactions({
             </span>
             {count > 0 && (
               <span
-                className={`text-[12px] font-medium tabular-nums sm:text-[14px] ${
+                className={`text-[13px] font-medium tabular-nums sm:text-[14px] ${
                   picked ? "text-accent" : "text-muted"
                 }`}
               >
