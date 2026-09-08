@@ -27,7 +27,10 @@ export function AssetCard({
     >
       {/* Image fills the top half, edge to edge. The traction badge floats
           over its corner - it belongs to the thing, not to the caption. */}
-      <div className="relative">
+      {/* The wrapper the traction badge is positioned against. It has to
+          clip too: the frame inside sets a height, but an unclipped parent
+          lets a tall photo spill past the card. */}
+      <div className="relative overflow-hidden rounded-t-2xl">
         {/* A watch is a portrait object on a plain backdrop: filling the
             frame by width crops the dial away, so accessories scale to the
             frame's height and lose only backdrop at the sides. */}

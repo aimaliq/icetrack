@@ -48,11 +48,20 @@ export function AssetImage({
           loading="lazy"
           className={
             fit === "height"
-              ? // Whole object, height-driven, on white: a watch photographed
-                // against a backdrop shows entire rather than cropped to the
-                // frame's shape. What the source itself has cropped, no fit
-                // can bring back.
-                `max-h-full w-auto max-w-full object-contain ${
+              ? // Whole object on white, driven by whichever side runs out
+                // first — height for a standing photo, which then fills the
+                // frame top to bottom and leaves white at the sides.
+                //
+                // h-full w-full, not w-auto: with an auto width the element
+                // sizes itself from the image and a tall photo overflows the
+                // frame downward. Filling both and letting object-contain do
+                // the scaling is what keeps it inside.
+                // Absolute, not just h-full: the frame is a centring grid,
+                // and a grid item sizes itself from its content first, so a
+                // tall photo lays out at its own height and h-full is
+                // ignored. Pinning to the box makes the height real, and
+                // object-contain then scales the photo to fit inside it.
+                `absolute inset-0 h-full w-full object-contain ${
                   bleed
                     ? "transition-transform duration-500 ease-out-strong group-hover:scale-[1.03]"
                     : ""
