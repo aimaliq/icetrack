@@ -44,11 +44,7 @@ export function AssetImage({
           loading="lazy"
           className={
             fit === "contain"
-              ? `h-full w-full object-contain ${
-                  bleed
-                    ? "p-4 transition-transform duration-500 ease-out-strong group-hover:scale-[1.03]"
-                    : "p-1.5"
-                }`
+              ? `h-full w-full object-contain ${bleed ? "p-4" : "p-1.5"}`
               : bleed
                 ? "h-full w-full object-cover object-top transition-transform duration-500 ease-out-strong group-hover:scale-[1.03]"
                 : "max-h-[520px] w-auto max-w-full object-contain p-3"
