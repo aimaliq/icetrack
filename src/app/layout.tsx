@@ -70,6 +70,7 @@ export const viewport: Viewport = {
 const LINKS = [
   { href: "/celebrities", label: "Celebrities" },
   { href: "/assets", label: "Assets" },
+  { href: "/play", label: "Play" },
   { href: "/about", label: "About" },
 ];
 
