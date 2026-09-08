@@ -51,6 +51,8 @@ export default {
         // enough — once a round — to be worth the movement.
         win: "win 420ms cubic-bezier(0.23, 1, 0.32, 1)",
         lose: "lose 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97)",
+        // The streak catching: a hard kick out, then a settle.
+        "streak-up": "streakUp 500ms cubic-bezier(0.23, 1, 0.32, 1)",
       },
       keyframes: {
         fadeUp: {
@@ -69,6 +71,12 @@ export default {
         win: {
           "0%": { transform: "scale(1)" },
           "45%": { transform: "scale(1.035)" },
+          "100%": { transform: "scale(1)" },
+        },
+        streakUp: {
+          "0%": { transform: "scale(1)" },
+          "30%": { transform: "scale(1.45)" },
+          "55%": { transform: "scale(0.94)" },
           "100%": { transform: "scale(1)" },
         },
         lose: {

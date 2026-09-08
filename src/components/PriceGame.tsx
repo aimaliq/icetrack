@@ -335,25 +335,47 @@ export function PriceGame({ pool }: { pool: Contender[] }) {
 
   return (
     <div className="mt-8 sm:mt-10">
-      <div className="flex items-end justify-between gap-4">
-        <p className="text-[15px] text-muted sm:text-[16px]">
-          Round{" "}
-          <span className="text-[20px] font-bold text-ink sm:text-[24px]">
+      {/* Three columns so the streak sits dead centre whatever the side
+          figures are: it is the number people quote to each other, and the
+          only one that deserves the eye. Both flanks are labelled — an
+          unlabelled figure makes the reader work out what it counts. */}
+      <div className="grid grid-cols-3 items-end gap-3">
+        <div>
+          {/* No denominator: the 24-round cap is how far the data stretches,
+              not a goal the player is working toward. Showing it invites a
+              question the run never answers, since one wrong ends it. */}
+          <p className="text-[20px] font-bold tabular-nums sm:text-[24px]">
             {index + 1}
-          </span>
-          <span className="text-faint"> / {rounds.length}</span>
-        </p>
-        <div className="flex items-end gap-6">
-          <p className="text-[15px] text-muted sm:text-[16px]">
-            Streak{" "}
-            <span
-              className={`text-[20px] font-bold sm:text-[24px] ${
-                streak > 0 ? "text-ink" : "text-faint"
-              }`}
-            >
-              {streak}
-            </span>
           </p>
+          <p className="mt-0.5 text-[10px] uppercase tracking-widest text-faint sm:text-[11px]">
+            Round
+          </p>
+        </div>
+
+        <div className="text-center">
+          <p
+            // Re-keyed on the value so the animation restarts each time it
+            // changes; without the key React reuses the node and the
+            // keyframe never replays.
+            key={streak}
+            className={`${streak > 0 ? "animate-streak-up" : ""}
+              text-[40px] font-bold leading-none tabular-nums sm:text-[52px] ${
+                streak >= 5
+                  ? "text-amber-500"
+                  : streak > 0
+                    ? "text-ink"
+                    : "text-faint"
+              }`}
+          >
+            {streak}
+          </p>
+          <p className="mt-1 text-[10px] uppercase tracking-widest text-faint sm:text-[11px]">
+            {/* Past five the run is worth showing off about. */}
+            {streak >= 5 ? "🔥 On fire" : "Streak"}
+          </p>
+        </div>
+
+        <div className="text-right">
           <p
             className={`text-[20px] font-bold tabular-nums sm:text-[24px] ${
               wallet >= 0 ? "text-money" : "text-rose-600 dark:text-rose-400"
@@ -362,14 +384,24 @@ export function PriceGame({ pool }: { pool: Contender[] }) {
             {wallet < 0 ? "−" : ""}
             {formatValue(Math.abs(wallet)) ?? "$ 0"}
           </p>
+          <p className="mt-0.5 text-[10px] uppercase tracking-widest text-faint sm:text-[11px]">
+            Total guessed
+          </p>
         </div>
       </div>
 
-      <p className="mt-5 text-center text-[15px] text-muted sm:text-[16px]">
-        Which one costs more?
-      </p>
-
-      <div className="mt-4 flex gap-3 sm:mt-5 sm:gap-4">
+      <div className="relative mt-6 flex gap-3 sm:mt-7 sm:gap-4">
+        {/* Sits over the gap, so the pair reads as a head-to-head rather
+            than as two list items that happen to be adjacent. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 z-10 grid h-10 w-10
+                     -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full
+                     border border-line bg-surface text-[12px] font-bold uppercase
+                     tracking-wide text-muted shadow-md sm:h-12 sm:w-12 sm:text-[13px]"
+        >
+          vs
+        </span>
         <Card
           asset={round.left}
           side="left"
