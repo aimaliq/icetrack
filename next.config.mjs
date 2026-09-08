@@ -20,13 +20,13 @@ const isDev = process.env.NODE_ENV === "development";
  */
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://vercel.live https://*.clarity.ms`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://vercel.live https://*.clarity.ms https://datafa.st`,
   "style-src 'self' 'unsafe-inline'",
   // Contributors link photos from Wikimedia and elsewhere; https-anywhere for
   // images is the feature, not an oversight.
   "img-src 'self' https: data: blob:",
   "font-src 'self' data:",
-  `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vercel.live https://*.clarity.ms https://c.bing.com${isDev ? " ws:" : ""}`,
+  `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vercel.live https://*.clarity.ms https://c.bing.com https://datafa.st${isDev ? " ws:" : ""}`,
   // The two tracking maps are the only third-party frames.
   "frame-src https://globe.adsb.fi https://www.vesselfinder.com https://vercel.live",
   "frame-ancestors 'none'",

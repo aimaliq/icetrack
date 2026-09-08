@@ -205,6 +205,18 @@ export default function RootLayout({
             }}
           />
         )}
+
+        {/* DataFast. Same production-only rule and the same reason it lives
+            here rather than in next/script: a plain tag in the HTML is what
+            analytics verifiers look for. */}
+        {process.env.NODE_ENV === "production" && (
+          <script
+            defer
+            data-website-id="dfid_YVWTLw5LxtZ7GLhKYkVqu"
+            data-domain="icetrack.vip"
+            src="https://datafa.st/js/script.js"
+          />
+        )}
       </head>
       {/* Browser extensions commonly stamp attributes on <body> before React
           hydrates — ColorZilla adds cz-shortcut-listen, password managers add
