@@ -5,6 +5,7 @@ import {
   getAllReactions,
   getAsset,
   getAssets,
+  getCelebrities,
   getComments,
   getReactions,
 } from "@/lib/db";
@@ -156,11 +157,15 @@ export default async function AssetPage({ params, searchParams }: Props) {
   const comments = await getComments(asset.uuid ?? "");
 
   // Nearest entries by category and price, for the foot of the page.
-  const [everything, traction] = await Promise.all([
+  const [everything, traction, people] = await Promise.all([
     getAssets(),
     getAllReactions(),
+    getCelebrities(),
   ]);
   const similar = similarAssets(asset, everything, 3);
+  // Whose it is matters as much as what it is: two Gulfstreams are only
+  // worth comparing once you know who flies each.
+  const ownerBySlug = new Map(people.map((c) => [c.id, c]));
   const profile = await getCurrentProfile();
 
   const jsonLd = {
@@ -439,6 +444,7 @@ export default async function AssetPage({ params, searchParams }: Props) {
               <AssetCard
                 key={a.id}
                 asset={a}
+                owner={ownerBySlug.get(a.ownerId)}
                 reactions={traction[a.uuid ?? ""]}
               />
             ))}
