@@ -123,21 +123,25 @@ export default async function CelebrityPage({ params, searchParams }: Props) {
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-center gap-3 sm:justify-start">
+            {/* Share sits at the right edge of the label row, as it does on
+                asset pages. */}
+            <div className="flex items-center gap-2.5">
               <p className="text-[11px] uppercase tracking-[0.24em] text-accent">
                 {CELEBRITY_CATEGORY_LABEL[celeb.category]}
               </p>
-              <ShareButton
-                url={`${SITE_URL}/celebrities/${celeb.id}`}
-                label="Share"
-                text={[
-                  celeb.name,
-                  total > 0 ? `${formatValue(total)} in tracked assets` : null,
-                  "on IceTrack",
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
+              <span className="ml-auto">
+                <ShareButton
+                  url={`${SITE_URL}/celebrities/${celeb.id}`}
+                  label="Share"
+                  text={[
+                    celeb.name,
+                    total > 0 ? `${formatValue(total)} in tracked assets` : null,
+                    "on IceTrack",
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                />
+              </span>
             </div>
             <h1 className="mt-2 text-3xl font-semibold tracking-tightest sm:text-5xl">
               {celeb.name}
